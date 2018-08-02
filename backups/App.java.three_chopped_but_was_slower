@@ -138,12 +138,12 @@ class ConsoleColors {
 public class App 
 {
     public static final int _ROUNDS = 1;
-    public static final int _CLIENT_NUMBER = 1000;
+    public static final int _CLIENT_NUMBER = 2000;
     public static final int _STUDENT_COUNT = 2;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
     public static final int _COURSE_COUNT = 3;
-    public static final int _LAT_THRESHOLD = 3000;
+    public static final int _LAT_THRESHOLD = 2000;
     public static final int _TRANSCRIPT_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _TRIAL = 6;
@@ -157,16 +157,6 @@ public class App
     	System.out.print(s);
     }
 
-
-
-  public static void waitForStart(Ignite ignite){
-  	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
-		System.out.println(">>>> Waiting for global start...");
-		while (cache_sync.get(1)==0){
-			try{Thread.sleep(500);}catch(Exception e){}
-		}
-		System.out.println(">>>> Starting");
-  }
 
 
   public static boolean shouldInit (Ignite ignite){
@@ -265,23 +255,32 @@ public class App
 
 
 ////////////// ENROLL STUDENT TRANSACTION
-	public static long enroll_student(int iter,long startTime, Ignite ignite){
+	public static long enroll_student1(int iter,long startTime, Ignite ignite){
 			long timePassed = 0;
-			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL_OPTIMAL)) {
 				int coid = ThreadLocalRandom.current().nextInt(0, _COLLEGE_COUNT);
 				int age = ThreadLocalRandom.current().nextInt(17, 60);
 				int st_id = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT);
 				String name = UUID.randomUUID().toString();
 				String gender = UUID.randomUUID().toString();
 				IgniteCache<Integer, Student> cache_student = ignite.cache("student");
-				IgniteCache<Integer, College> cache_college = ignite.cache("college");
 				cache_student.put(st_id,new Student(name,age,gender,coid,true));
+				tx.commit();
+			}catch(TransactionOptimisticException e){}
+			return (System.currentTimeMillis() - startTime);
+	}
+	public static long enroll_student2(int iter,long startTime, Ignite ignite){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				IgniteCache<Integer, College> cache_college = ignite.cache("college");
+				int coid = ThreadLocalRandom.current().nextInt(0, _COLLEGE_COUNT); //TODO: the coid must be passed from enroll_student1 (it's okay for testing time)
 				College old_col = cache_college.get(coid);
  				cache_college.put (coid,new College(old_col.name,old_col.founded,old_col.st_count+1,true));
 				tx.commit();
 			}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
+
 //////////////////////////////////////////////////////////////////////
 
 
@@ -518,16 +517,9 @@ public class App
 	double sum=0;
 	Ignition.setClientMode(true);
 	Ignite ignite = Ignition.start("/home/ubuntu/apache-ignite-fabric-2.5.0-bin/test_client.xml");
-	/////////////////////
-	// IF MASTER:
-	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
-	cache_sync.put(1,0);
+	// DB INITIALIZATION
 	Set<DoubleKey> all_keys = initialize (ignite);
 	System.out.println ("Initial rows inserted");
-	cache_sync.put(1,1);
-
-	// IF CLIENT
-	waitForStart(ignite);
 
 	// CLIENTS TASKS
 	Runnable r = new Runnable(){
@@ -542,7 +534,9 @@ public class App
 					long estimatedTime = 1010101010;
 					String color=ConsoleColors.RESET;
 					if (txn_type_rand<10){
-						estimatedTime = enroll_student (_TRIAL,startTime,ignite);
+						enroll_student1 (_TRIAL,startTime,ignite);
+						enroll_student2 (_TRIAL,startTime,ignite);
+						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
 					}

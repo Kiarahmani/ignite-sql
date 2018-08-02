@@ -1,0 +1,438 @@
+// READY for GLOBAL test4
+package com.mycompany.app;
+import java.util.*;
+import  java.util.concurrent.atomic.AtomicLongArray;
+import java.util.concurrent.ThreadLocalRandom;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.lang.*;
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.Ignition;
+import org.apache.ignite.IgniteTransactions;
+import org.apache.ignite.transactions.*;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.cache.query.QueryCursor;
+import org.apache.ignite.cache.QueryEntity;
+import org.apache.ignite.cache.query.ScanQuery;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
+
+// TABLES
+class DoubleKey {
+  public int k1;
+  public int k2;
+  public DoubleKey(int k1, int k2){
+  	this.k1=k1;
+	this.k2=k2;	
+  }
+}
+	
+class Student { 
+  public String name; 
+  public int age; 
+  public String gender; 
+  public int coid; 
+  public boolean isAlive;
+  public Student(String name, int age, String gender, int coid) { 
+		this.isAlive = false;
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+    this.coid = coid;
+  } 
+} 
+
+class Instructor { 
+  public String name; 
+  public int age; 
+  public String specialty; 
+  public boolean isAlive;
+  public Instructor(String name, int age, String specialty) {  
+		this.isAlive = false;
+    this.name = name;
+    this.age = age;
+    this.specialty = specialty;
+  } 
+} 
+
+class Transcript { 
+  public int grade; 
+  public int iid; 
+  public boolean isAlive;
+  public Transcript(int grade, int  iid) { 
+		this.isAlive = false;
+    this.grade = grade;
+    this.iid = iid;
+  } 
+} 
+
+class College {
+  public int id;
+  public String name;
+  public String founded;
+  public int st_count;
+  public boolean isAlive;
+  public College(String name, String founded, int st_count) {
+		this.isAlive = false;
+    this.name = name;
+    this.founded = founded;
+    this.st_count = st_count;
+  }
+}
+
+class Course {
+  public String title;
+  public int coid;
+  public int iid;
+  public int credit;
+  public int capacity;
+  public boolean isAlive;
+  public Course(String title, int coid, int iid, int credit, int capacity) {
+		this.isAlive = false;
+    this.title = title;
+    this.coid = coid;
+    this.iid = iid;
+    this.credit = credit;
+    this.capacity = capacity;
+  }
+}
+
+class Register {
+  public String regdate;
+  public boolean isAlive;
+  public Register (String regdate){
+		this.isAlive = false;
+    this.regdate = regdate;
+  }
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+public class App 
+{
+    public static final int _ROUNDS = 1;
+    public static final int _CLIENT_NUMBER = 200;
+    public static final int _STUDENT_COUNT = 30;
+    public static final int _INSTRUCTOR_COUNT = 15;
+    public static final int _COLLEGE_COUNT = 1;
+    public static final int _TRANSCRIPT_COUNT = 5;
+    public static final int _COURSE_COUNT = 10;
+    public static final int _REGISTER_COUNT = 15;
+    public static final int _TRIAL = 6;
+    public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
+   // public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.READ_COMMITTED;
+    static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
+    private static AtomicLongArray at = new AtomicLongArray(myArray);
+    public static void print(String s){
+    	System.out.print(s);
+    }
+
+	public static void initialize (IgniteCache<Integer, Student> cache_student,IgniteCache<Integer, College> cache_college){
+
+		for (int i=0;i<_STUDENT_COUNT;i++){
+			print("s");
+			cache_student.put(i,new Student("",0,"",0));
+		}
+		for (int i=0;i<_COLLEGE_COUNT;i++){
+			print("c");
+			cache_college.put(i,new College("","",0));
+		}
+	/*	for (int i=0;i<_REGISTER_COUNT;i++){
+			print("r");
+			cache_register.put(i,new Register(""));
+		}
+		for (int i=0;i<_TRANSCRIPT_COUNT;i++){
+			print("t");
+			cache_transcript.put(i,new Transcript(0,0));
+		}
+		for (int i=0;i<_INSTRUCTOR_COUNT;i++){
+			print("i");
+			cache_instuctor.put(i,new Instructor("",0,""));
+		}
+		for (int i=0;i<_COURSE_COUNT;i++){
+			print("cr");
+			cache_course.put(i,new Course("",0,0,0,0));
+		}
+
+*/
+
+	}
+
+
+
+	// SAMPLE TRANSACTION
+	public static long sample_transaction(int iter,long startTime, Ignite ignite,IgniteCache<Integer, Student> cache_student,IgniteCache<Integer, College> cache_college){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				
+				tx.commit();
+			}catch(TransactionOptimisticException e){
+				if (iter>0){
+					try{Thread.sleep(1);}catch(InterruptedException e2){}
+					return (enroll_student (iter-1,startTime, ignite, cache_student,cache_college));
+				}else{
+					timePassed = 1010101010;
+					System.out.print(".");
+				}
+			}
+			if (timePassed!=1010101010)
+				timePassed = System.currentTimeMillis() - startTime;
+			System.out.print(".");
+			return timePassed;
+	}
+
+
+
+
+	// ENROLL STUDENT TRANSACTION
+	public static long enroll_student(int iter,long startTime, Ignite ignite,IgniteCache<Integer, Student> cache_student,IgniteCache<Integer, College> cache_college){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				int coid = ThreadLocalRandom.current().nextInt(0, _COLLEGE_COUNT + 1);
+				int age = ThreadLocalRandom.current().nextInt(17, 60);
+				int st_id = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT + 1);
+				String name = UUID.randomUUID().toString();
+				String gender = UUID.randomUUID().toString();
+				//long temptime = System.currentTimeMillis();
+				cache_student.put(st_id,new Student(name,age,gender,coid));
+				College old_col = cache_college.get(coid);
+				cache_college.put (coid,new College(old_col.name,old_col.founded,old_col.st_count+1));
+				tx.commit();
+			}catch(TransactionOptimisticException e){
+				if (iter>0){
+					try{Thread.sleep(1);}catch(InterruptedException e2){}
+					return (enroll_student (iter-1,startTime, ignite, cache_student,cache_college));
+				}else{
+					timePassed = 1010101010;
+					System.out.print(".");
+				}
+			}
+			if (timePassed!=1010101010)
+				timePassed = System.currentTimeMillis() - startTime;
+			System.out.print(".");
+			return timePassed;
+	}
+	
+	// QUERY STUDENT TRANSACTION
+	public static long query_student(int iter,long startTime, 
+						 Ignite ignite,IgniteCache<Integer, Student> cache_student,
+						 IgniteCache<Integer, College> cache_college,
+						 IgniteCache<DoubleKey, Transcript> cache_transcript,
+						 IgniteCache<Integer, Course> cache_course,
+						 IgniteCache<DoubleKey, Register> cache_register){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				int st_id = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT + 1);
+				
+				Student student = cache_student.get(st_id);
+				//read all the registers of this student
+				Set<DoubleKey> keys = new HashSet<DoubleKey>();
+				for (int i=0;i<_COURSE_COUNT;i++) 
+					keys.add(new DoubleKey(st_id,i));
+				Map<DoubleKey,Register> regMap = cache_register.getAll(keys);
+				// read all the transcripts of this student
+				Set<DoubleKey> tr_keys = new HashSet<DoubleKey>();
+				for (int i=0;i<_TRANSCRIPT_COUNT;i++){
+					tr_keys.add(new DoubleKey(st_id,i));
+				}
+				Map<DoubleKey,Transcript> trMap = cache_transcript.getAll(tr_keys);
+				
+				College college = cache_college.get(student.coid);
+				for (DoubleKey reg:regMap.keySet()){
+					Course course = cache_course.get(reg.k2);
+				}
+				tx.commit();
+			}catch(TransactionOptimisticException e){
+				if (iter>0){
+					try{Thread.sleep(1);}catch(InterruptedException e2){}
+					return (enroll_student (iter-1,startTime, ignite, cache_student,cache_college));
+				}else{
+					timePassed = 1010101010;
+					System.out.print(".");
+				}
+			}
+		if (timePassed!=1010101010)
+			timePassed = System.currentTimeMillis() - startTime;
+		System.out.print(".");
+		return timePassed;
+	}
+
+	// INSERT COURSE TRANSACTION
+	public static long add_course(int iter,long startTime, Ignite ignite,IgniteCache<Integer, Course> cache_course){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				int cid = ThreadLocalRandom.current().nextInt(0, _COURSE_COUNT + 1);
+				int coid = ThreadLocalRandom.current().nextInt(0, _COLLEGE_COUNT + 1);
+				int iid = ThreadLocalRandom.current().nextInt(0, _INSTRUCTOR_COUNT + 1);
+				int credit = ThreadLocalRandom.current().nextInt(1, 4);
+				int cap = ThreadLocalRandom.current().nextInt(5, 140);
+				String title = UUID.randomUUID().toString();
+				//long temptime = System.currentTimeMillis();
+				cache_course.put(cid,new Course(title,coid,iid,credit,cap));
+				//System.out.println(System.currentTimeMillis()-temptime);
+				tx.commit();
+			}catch(TransactionOptimisticException e){
+				}
+			if (timePassed!=1010101010)
+				timePassed = System.currentTimeMillis() - startTime;
+			System.out.print(".");
+			return timePassed;
+	}
+
+	// REMOVE COURSE TRANSACTION
+	public static long remove_course(int iter,long startTime, Ignite ignite,
+						 IgniteCache<Integer, Course> cache_course,
+						 IgniteCache<DoubleKey, Register> cache_register){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				int cid = ThreadLocalRandom.current().nextInt(0, _COURSE_COUNT + 1);
+				cache_course.remove(cid);
+				HashSet<DoubleKey> regset = new HashSet<DoubleKey>();
+        for (int i=0;i<_STUDENT_COUNT;i++)
+        	regset.add(new DoubleKey(i,cid));
+				Map<DoubleKey,Register> resmap = cache_register.getAllOutTx(regset);
+				for (DoubleKey k:resmap.keySet()){
+								cache_register.clearAsync(k);
+				}
+				tx.commit();
+			}catch(TransactionOptimisticException e){
+				}
+			if (timePassed!=1010101010)
+				timePassed = System.currentTimeMillis() - startTime;
+			System.out.print(".");
+			return timePassed;
+	}
+
+	// REGISTER COURSE TRANSACTION
+	public static long register_course(int iter,long startTime, Ignite ignite,
+						 IgniteCache<Integer, Course> cache_course,
+						 IgniteCache<DoubleKey, Register> cache_register){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				int cid = ThreadLocalRandom.current().nextInt(0, _COURSE_COUNT + 1);
+				int sid = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT + 1);
+				Course old_course = cache_course.get(cid);
+				String today = "8/1/2018";
+				if (old_course != null){
+					cache_course.put(cid,new Course(old_course.title,old_course.coid,old_course.iid,old_course.credit,old_course.capacity-1));
+					cache_register.put(new DoubleKey(sid,cid),new Register(today));
+				}
+				tx.commit();
+			}catch(TransactionOptimisticException e){
+				}
+			if (timePassed!=1010101010)
+				timePassed = System.currentTimeMillis() - startTime;
+			System.out.print(".");
+			return timePassed;
+	}
+
+
+
+  
+	public static void main(String[] args) {
+	// CACHE INITIALIZATION
+	double sum=0;
+	Ignition.setClientMode(true);
+	Ignite ignite = Ignition.start("/home/ubuntu/apache-ignite-fabric-2.5.0-bin/test_client.xml");
+	IgniteCache<Integer, Student> cache_student = ignite.cache("student");
+	IgniteCache<Integer, Instructor> cache_instuctor = ignite.cache("instructor");
+	IgniteCache<DoubleKey, Transcript> cache_transcript = ignite.cache("transcript");
+	IgniteCache<Integer, College> cache_college = ignite.cache("college");
+	IgniteCache<Integer, Course> cache_course = ignite.cache("course");
+	IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
+	// DB INITIALIZATION
+	initialize (cache_student,cache_college);
+	System.out.println ("Initial rows inserted");
+
+	// CLIENTS TASKS
+	Runnable r = new Runnable(){
+		@Override
+		public void run(){
+			try{
+				int threadId = (int) (Thread.currentThread().getId()%_CLIENT_NUMBER);
+				//System.out.print (" Client started:"+threadId);
+				for (int i=0;i<_ROUNDS;i++){
+					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 101);
+					long startTime = System.currentTimeMillis();
+					long estimatedTime = 1010101010;
+					if (txn_type_rand<10){
+						//System.out.println("-- Insert Student TXN ("+txn_type_rand+")");
+						estimatedTime = enroll_student (_TRIAL,startTime,ignite,cache_student,cache_college);
+					}
+					if (10<=txn_type_rand && txn_type_rand<30){
+						//System.out.println("-- QUERY Student TXN ("+txn_type_rand+")");
+						estimatedTime = query_student (_TRIAL,startTime,ignite,cache_student,cache_college,cache_transcript,cache_course,cache_register);
+					}
+					if (30<=txn_type_rand && txn_type_rand<35){
+						//System.out.println("-- Add Course TXN ("+txn_type_rand+")");
+						estimatedTime = add_course (_TRIAL,startTime,ignite,cache_course);
+					}
+					if (35<=txn_type_rand && txn_type_rand<40){
+						//System.out.println("-- Add Course TXN ("+txn_type_rand+")");
+						estimatedTime = remove_course (_TRIAL,startTime,ignite,cache_course,cache_register);
+					}
+					if (40<=txn_type_rand && txn_type_rand<50){
+						//System.out.println("-- Add Course TXN ("+txn_type_rand+")");
+						estimatedTime = register_course (_TRIAL,startTime,ignite,cache_course,cache_register);
+					}
+
+
+
+					at.set(threadId*_ROUNDS+i,estimatedTime);
+				}
+			}
+			catch (Exception e){
+				System.out.println(e);
+			}
+		}
+        };
+
+	long startTime = System.currentTimeMillis();
+	// INITIATE CONCURRENT CLIENTS
+	Thread threads[] = new Thread[_CLIENT_NUMBER];
+        for (int i=0; i<_CLIENT_NUMBER; i++){
+                threads[i] = new Thread(r);
+                threads[i].start();
+        }
+	// WAIT FOR ALL CLEINTS
+        for (int i=0; i<_CLIENT_NUMBER; i++){
+                try{
+			threads[i].join();
+		}catch(InterruptedException e){
+			System.out.println(e);
+		}
+        }
+	// PRINT STATS
+	long estimatedTime_tp = System.currentTimeMillis() - startTime;
+	long sum_time = 0;
+	int failed=0;
+        for (int i=0; i<_CLIENT_NUMBER*_ROUNDS; i++ ){
+		if(at.get(i)!=1010101010)
+			sum_time += at.get(i);
+		else
+			failed++;
+	}
+	System.out.println("\n\n===============================");
+	System.out.println("AVG TXN TIME: "+ sum_time/(_CLIENT_NUMBER*_ROUNDS-failed)+"ms");
+	System.out.println("Throuput: "+ (_ROUNDS*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
+	System.out.println("TOTAL RUNNING TIME: "+estimatedTime_tp/1000.0+"s");
+	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
+	System.out.println("===============================\n\n\n");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
