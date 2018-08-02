@@ -536,7 +536,7 @@ public class App
         // CACHE INITIALIZATION
         double sum=0;
         Ignition.setClientMode(true);
-        Ignite ignite = Ignition.start("/home/ubuntu/apache-ignite-fabric-2.5.0-bin/test_client.xml");
+        Ignite ignite = Ignition.start("./test_client.xml");
         /////////////////////
         // IF MASTER:
         IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
