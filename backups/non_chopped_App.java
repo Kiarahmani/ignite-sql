@@ -1,4 +1,6 @@
 // READY for GLOBAL test4
+// NON CHOPPED
+// NON CHOPPED
 package com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
@@ -138,25 +140,35 @@ class ConsoleColors {
 public class App 
 {
     public static final int _ROUNDS = 1;
-    public static final int _CLIENT_NUMBER = 2000;
+    public static final int _CLIENT_NUMBER = 1000;
     public static final int _STUDENT_COUNT = 2;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
     public static final int _COURSE_COUNT = 3;
-    public static final int _LAT_THRESHOLD = 2000;
+    public static final int _LAT_THRESHOLD = 3000;
     public static final int _TRANSCRIPT_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _TRIAL = 6;
     //ISOL
 	 public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
     public static void print(String s){
     	System.out.print(s);
     }
 
+
+
+  public static void waitForStart(Ignite ignite){
+  	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+		System.out.println(">>>> Waiting for global start...");
+		while (cache_sync.get(1)==0){
+			try{Thread.sleep(500);}catch(Exception e){}
+		}
+		System.out.println(">>>> Starting");
+  }
 
 
   public static boolean shouldInit (Ignite ignite){
@@ -508,9 +520,16 @@ public class App
 	double sum=0;
 	Ignition.setClientMode(true);
 	Ignite ignite = Ignition.start("/home/ubuntu/apache-ignite-fabric-2.5.0-bin/test_client.xml");
-	// DB INITIALIZATION
+	/////////////////////
+	// IF MASTER:
+	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+	cache_sync.put(1,0);
 	Set<DoubleKey> all_keys = initialize (ignite);
 	System.out.println ("Initial rows inserted");
+	cache_sync.put(1,1);
+
+	// IF CLIENT
+	waitForStart(ignite);
 
 	// CLIENTS TASKS
 	Runnable r = new Runnable(){

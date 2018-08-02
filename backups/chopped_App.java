@@ -1,4 +1,7 @@
 // READY for GLOBAL test4
+//
+// CHOPPED
+// CHOPPED
 package com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
@@ -149,8 +152,8 @@ public class App
     public static final int _TRIAL = 6;
     //ISOL
 	 public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
     public static void print(String s){
@@ -158,6 +161,14 @@ public class App
     }
 
 
+  public static void waitForStart(Ignite ignite){
+        IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+                System.out.println(">>>> Waiting for global start...");
+                while (cache_sync.get(1)==0){
+                        try{Thread.sleep(500);}catch(Exception e){}
+                }
+                System.out.println(">>>> Starting");
+  }
 
   public static boolean shouldInit (Ignite ignite){
   	IgniteCache<Integer, Student> cache_student = ignite.cache("student");
@@ -362,22 +373,31 @@ public class App
 	
 
 ////////////// REGISTER COURSE TRANSACTION
-	public static long register_course(int iter,long startTime, Ignite ignite){
+	public static int register_course1(int iter,long startTime, Ignite ignite){
 			long timePassed = 0;
-			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
-				int cid = ThreadLocalRandom.current().nextInt(0, _COURSE_COUNT);
+			Course course;
+			int cid = ThreadLocalRandom.current().nextInt(0, _COURSE_COUNT);
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL_OPTIMAL)) {
 				int sid = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT);
-				IgniteCache<Integer, Course> cache_course = ignite.cache("course");
 				IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
 				String today = "8/1/2018";
+				tx.commit();
+			}catch(TransactionOptimisticException e){}
+			return cid;
+	}
+	public static long register_course2(int cid, int iter,long startTime, Ignite ignite){
+			long timePassed = 0;
+			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+				IgniteCache<Integer, Course> cache_course = ignite.cache("course");
 				Course course = cache_course.get(cid);
-				if (course.capacity>0 && course.isAlive){
+				if (course.isAlive&&course.capacity>0 )
 					cache_course.put(cid,new Course(course.title,course.coid,course.iid,course.credit,course.capacity-1,true));
-				}
 				tx.commit();
 			}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
+
+
 //////////////////////////////////////////////////////////////////////
 
 
@@ -513,13 +533,21 @@ public class App
 
   
 	public static void main(String[] args) {
-	// CACHE INITIALIZATION
-	double sum=0;
-	Ignition.setClientMode(true);
-	Ignite ignite = Ignition.start("/home/ubuntu/apache-ignite-fabric-2.5.0-bin/test_client.xml");
-	// DB INITIALIZATION
-	Set<DoubleKey> all_keys = initialize (ignite);
-	System.out.println ("Initial rows inserted");
+        // CACHE INITIALIZATION
+        double sum=0;
+        Ignition.setClientMode(true);
+        Ignite ignite = Ignition.start("/home/ubuntu/apache-ignite-fabric-2.5.0-bin/test_client.xml");
+        /////////////////////
+        // IF MASTER:
+        IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+        cache_sync.put(1,0);
+        Set<DoubleKey> all_keys = initialize (ignite);
+        System.out.println ("Initial rows inserted");
+        cache_sync.put(1,1);
+
+        // IF CLIENT
+        waitForStart(ignite);
+
 
 	// CLIENTS TASKS
 	Runnable r = new Runnable(){
@@ -556,7 +584,8 @@ public class App
 						System.out.println(color+"Remove_Course     ("+estimatedTime+"ms)");
 					}
 					if (40<=txn_type_rand && txn_type_rand<50){
-						estimatedTime = register_course (_TRIAL,startTime,ignite);
+						register_course2 (register_course1 (_TRIAL,startTime,ignite),_TRIAL,startTime,ignite);
+						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
 					}

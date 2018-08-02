@@ -1,4 +1,6 @@
 // READY for GLOBAL test4
+// NON CHOPPED
+// NON CHOPPED
 package com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
