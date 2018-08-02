@@ -149,8 +149,8 @@ public class App
     public static final int _TRIAL = 6;
     //ISOL
 	 public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
     public static void print(String s){
