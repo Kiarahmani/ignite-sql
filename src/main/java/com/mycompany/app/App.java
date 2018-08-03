@@ -604,7 +604,7 @@ public class App
 							init_count += cache_college.get(i).st_count;
 					}
 					
-					try{Thread.sleep(1200);}catch(Exception e){}
+					try{Thread.sleep(900);}catch(Exception e){}
 		
 				}else{
         	all_keys = initialize (ignite);
