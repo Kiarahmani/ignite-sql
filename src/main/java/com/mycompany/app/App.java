@@ -143,7 +143,7 @@ public class App
     public static final int _ROUNDS = 1;
     public static final boolean _CHOPPED = true;
     public static final boolean _MASTER = true;
-    public static final int _CLIENT_NUMBER = 500;
+    public static final int _CLIENT_NUMBER = 750;
     public static final int _STUDENT_COUNT = 12;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
