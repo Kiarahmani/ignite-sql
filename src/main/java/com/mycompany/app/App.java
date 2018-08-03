@@ -143,11 +143,11 @@ public class App
     public static final int _ROUNDS = 1;
     public static final boolean _CHOPPED = false;
     public static final boolean _MASTER = true;
-    public static final int _CLIENT_NUMBER = 750;
-    public static final int _STUDENT_COUNT = 30;
+    public static final int _CLIENT_NUMBER = 1;
+    public static final int _STUDENT_COUNT = 20;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
-    public static final int _COURSE_COUNT = 20;
+    public static final int _COURSE_COUNT = 10;
     public static final int _LAT_THRESHOLD = 4000;
     public static final int _TRANSCRIPT_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
