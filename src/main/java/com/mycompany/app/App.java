@@ -600,7 +600,8 @@ public class App
 	        cache_sync.put(1,1);
 					try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
 			IgniteCache<Integer, College> cache_college = ignite.cache("college");
-						init_count = cache_college.get(1).st_count;
+						for(int i=0;i<_COLLEGE_COUNT;i++)
+							init_count += cache_college.get(i).st_count;
 					}
 					
 					try{Thread.sleep(500);}catch(Exception e){}
@@ -633,6 +634,7 @@ public class App
 						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
+						did_reg=1;
 					}
 					if (10<=txn_type_rand && txn_type_rand<30){
 						estimatedTime = query_student (_TRIAL,startTime,ignite,all_keys);
@@ -657,7 +659,6 @@ public class App
 						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
-						did_reg=1;
 					}
 					if (50<=txn_type_rand && txn_type_rand<80){
 						estimatedTime = query_course (_TRIAL,startTime,ignite,all_keys);
@@ -729,15 +730,17 @@ public class App
 	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
 	System.out.println("===============================\n");
 	try{Thread.sleep(2000);}catch(Exception e){}
+	int final_count=0;
 	try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
   	IgniteCache<Integer, College> cache_college = ignite.cache("college");
-		test_college = cache_college.get(1);
+		for(int i=0;i<_COLLEGE_COUNT;i++)
+			final_count += cache_college.get(i).st_count;
 	}
 	System.out.print("SAFETY CHECKS: ");
 	System.out.println("Total registrations: "+sum_reg);
 	if(_MASTER){
 		System.out.println("initial # of students: "+init_count);
-		System.out.println("final # of students: "+ test_college.st_count);
+		System.out.println("final # of students: "+ final_count);
 	}
     }
 }
