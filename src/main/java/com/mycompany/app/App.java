@@ -153,8 +153,9 @@ public class App
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _TRIAL = 6;
     //ISOL
-	 public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
+	 //public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
     public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
+    public static final TransactionIsolation _ISOLATION_LEVEL=TransactionIsolation.READ_COMMITTED;
     //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
