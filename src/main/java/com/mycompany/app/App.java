@@ -143,20 +143,20 @@ public class App
     public static final int _ROUNDS = 1;
     public static final boolean _CHOPPED = true;
     public static final boolean _MASTER = true;
-    public static final int _CLIENT_NUMBER = 512;
-    public static final int _STUDENT_COUNT = 8;
+    public static final int _CLIENT_NUMBER = 1500;
+    public static final int _STUDENT_COUNT = 20;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
-    public static final int _COURSE_COUNT = 4;
-    public static final int _LAT_THRESHOLD = 2000;
+    public static final int _COURSE_COUNT = 15;
+    public static final int _LAT_THRESHOLD = 4000;
     public static final int _TRANSCRIPT_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _TRIAL = 6;
     //ISOL
-	 //public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
-    public static final TransactionIsolation _ISOLATION_LEVEL=TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+	 	public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
+    //public static final TransactionIsolation _ISOLATION_LEVEL=TransactionIsolation.READ_COMMITTED;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
 		static long[] myArray2 = new long[_CLIENT_NUMBER*_ROUNDS];
@@ -605,7 +605,7 @@ public class App
 							init_count += cache_college.get(i).st_count;
 					}
 					
-					try{Thread.sleep(900);}catch(Exception e){}
+					try{Thread.sleep(800);}catch(Exception e){}
 		
 				}else{
         	all_keys = initialize (ignite);
