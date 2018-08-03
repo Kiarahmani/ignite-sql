@@ -141,6 +141,8 @@ class ConsoleColors {
 public class App 
 {
     public static final int _ROUNDS = 1;
+    public static final boolean _CHOPPED = true;
+    public static final boolean _MASTER = true;
     public static final int _CLIENT_NUMBER = 680;
     public static final int _STUDENT_COUNT = 8;
     public static final int _INSTRUCTOR_COUNT = 10;
@@ -173,12 +175,8 @@ public class App
   public static boolean shouldInit (Ignite ignite){
   	IgniteCache<Integer, Student> cache_student = ignite.cache("student");
 	HashSet<Integer> test_keys = new HashSet<Integer>();
-	try{Thread.sleep(10000);}catch(Exception e){}
-	return true;
-	//for (int i=0;i<_STUDENT_COUNT;i++)
-//		test_keys.add(i);
-//	Map<Integer,Student> results = cache_student.getAll(test_keys);
-//	return (results.size()==0);
+	try{Thread.sleep(5000);}catch(Exception e){}
+	return _MASTER;
   }
 
 
@@ -256,9 +254,18 @@ public class App
 	print("initial transcripts inserted\n");
 
 	}
-	else
+	else{
 		print("cache is already initialized\n");
-		return all_double_keys;
+		for (int i=0;i<_STUDENT_COUNT;i++){
+					for(int j=0;j<_COURSE_COUNT;j++){
+						System.out.print("t"+i+"-"+j+" ");
+						all_double_keys.add(new DoubleKey(i,j));
+					}
+	}
+
+
+	}
+	return all_double_keys;
 }
 
 
@@ -291,7 +298,23 @@ public class App
 			}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
-
+	  public static long enroll_student(int iter,long startTime, Ignite ignite){
+                        long timePassed = 0;
+                        try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+                                int coid = ThreadLocalRandom.current().nextInt(0, _COLLEGE_COUNT);
+                                int age = ThreadLocalRandom.current().nextInt(17, 60);
+                                int st_id = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT);
+                                String name = UUID.randomUUID().toString();
+                                String gender = UUID.randomUUID().toString();
+                                IgniteCache<Integer, Student> cache_student = ignite.cache("student");
+                                IgniteCache<Integer, College> cache_college = ignite.cache("college");
+                                cache_student.put(st_id,new Student(name,age,gender,coid,true));
+                                College old_col = cache_college.get(coid);
+                                cache_college.put (coid,new College(old_col.name,old_col.founded,old_col.st_count+1,true));
+                                tx.commit();
+                        }catch(TransactionOptimisticException e){}
+                        return (System.currentTimeMillis() - startTime);
+        }
 //////////////////////////////////////////////////////////////////////
 
 
@@ -396,7 +419,22 @@ public class App
 			}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
-
+        public static long register_course(int iter,long startTime, Ignite ignite){
+                        long timePassed = 0;
+                        try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+                                int cid = ThreadLocalRandom.current().nextInt(0, _COURSE_COUNT);
+                                int sid = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT);
+                                IgniteCache<Integer, Course> cache_course = ignite.cache("course");
+                                IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
+                                String today = "8/1/2018";
+                                Course course = cache_course.get(cid);
+                                if (course.capacity>0 && course.isAlive){
+                                        cache_course.put(cid,new Course(course.title,course.coid,course.iid,course.credit,course.capacity-1,true));
+                                }
+                                tx.commit();
+                        }catch(TransactionOptimisticException e){}
+                        return (System.currentTimeMillis() - startTime);
+        }
 
 //////////////////////////////////////////////////////////////////////
 
@@ -537,16 +575,20 @@ public class App
         double sum=0;
         Ignition.setClientMode(true);
         Ignite ignite = Ignition.start("./test_client.xml");
-        /////////////////////
+        Set<DoubleKey> all_keys;
+				/////////////////////
         // IF MASTER:
-        IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
-        cache_sync.put(1,0);
-        Set<DoubleKey> all_keys = initialize (ignite);
-        System.out.println ("Initial rows inserted");
-        cache_sync.put(1,1);
-
-        // IF CLIENT
-        waitForStart(ignite);
+				if(_MASTER){
+        	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+        	cache_sync.put(1,0);
+        	all_keys = initialize (ignite);
+        	System.out.println ("Initial rows inserted");
+	        cache_sync.put(1,1);
+					try{Thread.sleep(500);}catch(Exception e){}
+				}else{
+        	all_keys = initialize (ignite);
+        	waitForStart(ignite);
+				}
 
 
 	// CLIENTS TASKS
@@ -562,8 +604,11 @@ public class App
 					long estimatedTime = 1010101010;
 					String color=ConsoleColors.RESET;
 					if (txn_type_rand<10){
-						enroll_student1 (_TRIAL,startTime,ignite);
-						enroll_student2 (_TRIAL,startTime,ignite);
+						if(_CHOPPED){
+							enroll_student1 (_TRIAL,startTime,ignite);
+							enroll_student2 (_TRIAL,startTime,ignite);
+						}else
+							enroll_student (_TRIAL,startTime,ignite);
 						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
@@ -584,7 +629,10 @@ public class App
 						System.out.println(color+"Remove_Course     ("+estimatedTime+"ms)");
 					}
 					if (40<=txn_type_rand && txn_type_rand<50){
-						register_course2 (register_course1 (_TRIAL,startTime,ignite),_TRIAL,startTime,ignite);
+						if(_CHOPPED)
+							register_course2 (register_course1 (_TRIAL,startTime,ignite),_TRIAL,startTime,ignite);
+						else
+							register_course (_TRIAL,startTime,ignite);
 						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
