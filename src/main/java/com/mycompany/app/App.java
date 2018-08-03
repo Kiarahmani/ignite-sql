@@ -581,6 +581,8 @@ public class App
   
 	public static void main(String[] args) {
         // CACHE INITIALIZATION
+				College test_college;
+				
         double sum=0;
         Ignition.setClientMode(true);
         Ignite ignite = Ignition.start("./test_client.xml");
@@ -593,7 +595,13 @@ public class App
         	all_keys = initialize (ignite);
         	System.out.println ("Initial rows inserted");
 	        cache_sync.put(1,1);
+					try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+  					IgniteCache<Integer, College> cache_college = ignite.cache("college");
+						test_college = cache_college.get(1);
+					}
+					System.out.println("\n\n\n##########################"+test_college.st_count+"#######################");
 					try{Thread.sleep(500);}catch(Exception e){}
+		
 				}else{
         	all_keys = initialize (ignite);
         	waitForStart(ignite);
@@ -705,7 +713,6 @@ public class App
 		else
 			failed++;
 	}
-	College test_college;
 	try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
   	IgniteCache<Integer, College> cache_college = ignite.cache("college");
 		test_college = cache_college.get(1);
