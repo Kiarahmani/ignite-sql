@@ -141,18 +141,18 @@ class ConsoleColors {
 public class App 
 {
     public static final int _ROUNDS = 1;
-    public static final int _CLIENT_NUMBER = 2000;
-    public static final int _STUDENT_COUNT = 2;
+    public static final int _CLIENT_NUMBER = 680;
+    public static final int _STUDENT_COUNT = 8;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
-    public static final int _COURSE_COUNT = 3;
+    public static final int _COURSE_COUNT = 4;
     public static final int _LAT_THRESHOLD = 2000;
     public static final int _TRANSCRIPT_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _TRIAL = 6;
     //ISOL
 	 public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.READ_COMMITTED;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
     public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
