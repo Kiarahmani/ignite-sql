@@ -169,7 +169,7 @@ public class App
 		Integer i = cache_sync.get(1);
 		do{
 			i = cache_sync.get(1);
-                        try{Thread.sleep(500);}catch(Exception e){}
+                        try{Thread.sleep(1000);}catch(Exception e){}
                 	System.out.println(">");
 		}while (i==null);
                 System.out.println("<<<< Waiting for master's command...");
@@ -293,7 +293,7 @@ public class App
 				IgniteCache<Integer, Student> cache_student = ignite.cache("student");
 				cache_student.put(st_id,new Student(name,age,gender,coid,true));
 				tx.commit();
-			}catch(TransactionOptimisticException e){}
+			}catch(TransactionOteCache<Integer, College> cache_college = ignite.cache("college");ptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
 	public static long enroll_student2(int iter,long startTime, Ignite ignite){
@@ -705,12 +705,16 @@ public class App
 		else
 			failed++;
 	}
+
+  IgniteCache<Integer, College> cache_college = ignite.cache("college");
+	College test_college = cache_college.get(1);
 	System.out.println(ConsoleColors.RESET+"\n\n===============================");
 	System.out.println("AVG TXN TIME: "+ sum_time/(_CLIENT_NUMBER*_ROUNDS-failed)+"ms");
 	System.out.println("Throuput: "+ (_ROUNDS*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
 	System.out.println("TOTAL RUNNING TIME: "+estimatedTime_tp/1000.0+"s");
 	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
 	System.out.println("===============================\n\n\n");
+	System.out.println(test_college.st_count);
     }
 }
 
