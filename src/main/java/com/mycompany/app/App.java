@@ -143,7 +143,7 @@ public class App
     public static final int _ROUNDS = 1;
     public static final boolean _CHOPPED = false;
     public static final boolean _MASTER = true;
-    public static final int _CLIENT_NUMBER = 1250;
+    public static final int _CLIENT_NUMBER = 1500;
     public static final int _STUDENT_COUNT = 12;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
@@ -155,8 +155,8 @@ public class App
     //ISOL
 	 	public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
     //public static final TransactionIsolation _ISOLATION_LEVEL=TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
 		static long[] myArray2 = new long[_CLIENT_NUMBER*_ROUNDS];
