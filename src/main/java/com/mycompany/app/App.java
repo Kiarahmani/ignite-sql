@@ -143,7 +143,7 @@ public class App
     public static final int _ROUNDS = 1;
     public static final boolean _CHOPPED = false;
     public static final boolean _MASTER = true;
-    public static final int _CLIENT_NUMBER = 500;
+    public static final int _CLIENT_NUMBER = 750;
     public static final int _STUDENT_COUNT = 30;
     public static final int _INSTRUCTOR_COUNT = 10;
     public static final int _COLLEGE_COUNT = 5;
@@ -188,7 +188,7 @@ public class App
   public static boolean shouldInit (Ignite ignite){
   	IgniteCache<Integer, Student> cache_student = ignite.cache("student");
 	HashSet<Integer> test_keys = new HashSet<Integer>();
-	try{Thread.sleep(5000);}catch(Exception e){}
+	try{Thread.sleep(1000);}catch(Exception e){}
 	return _MASTER;
   }
 
