@@ -717,7 +717,7 @@ public class App
         for (int i=0; i<_CLIENT_NUMBER*_ROUNDS; i++ ){
 		if(at.get(i)!=1010101010){
 			sum_time += at.get(i);
-			sum_reg ++;
+			sum_reg += at2.get(i);
 		}
 		else
 			failed++;
@@ -733,10 +733,12 @@ public class App
 	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
 	System.out.println("===============================\n");
 	try{Thread.sleep(2000);}catch(Exception e){}
-	System.out.print("SAFETY CHECK: ");
-	System.out.println(init_count);
-	System.out.println(sum_reg);
-	System.out.println(test_college.st_count);
+	System.out.print("SAFETY CHECKS: ");
+	System.out.println("Total registrations: "+sum_reg);
+	if(_MASTER){
+		System.out.println(init_count);
+		System.out.println(test_college.st_count);
+	}
     }
 }
 
