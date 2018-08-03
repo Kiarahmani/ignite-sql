@@ -165,11 +165,20 @@ public class App
 
   public static void waitForStart(Ignite ignite){
         IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
-                System.out.println(">>>> Waiting for global start...");
-                while (cache_sync.get(1)==0){
+                System.out.println(">>>> Waiting for master to start...");
+		Integer i = cache_sync.get(1);
+		do{
+			i = cache_sync.get(1);
                         try{Thread.sleep(500);}catch(Exception e){}
-                }
-                System.out.println(">>>> Starting");
+                	System.out.println(">");
+		}while (i==null);
+                System.out.println("<<<< Waiting for master's command...");
+		do{
+			i = cache_sync.get(1);
+                        try{Thread.sleep(500);}catch(Exception e){}
+                	System.out.println("<");
+		}while (i==0);
+
   }
 
   public static boolean shouldInit (Ignite ignite){
