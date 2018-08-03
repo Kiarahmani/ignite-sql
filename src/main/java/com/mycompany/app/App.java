@@ -155,8 +155,8 @@ public class App
     //ISOL
 	 	public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
     //public static final TransactionIsolation _ISOLATION_LEVEL=TransactionIsolation.READ_COMMITTED;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
 		static long[] myArray2 = new long[_CLIENT_NUMBER*_ROUNDS];
