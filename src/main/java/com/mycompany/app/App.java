@@ -172,7 +172,7 @@ public class App
 		Integer i = cache_sync.get(1);
 		do{
 			i = cache_sync.get(1);
-                        try{Thread.sleep(1000);}catch(Exception e){}
+                        try{Thread.sleep(500);}catch(Exception e){}
                 	System.out.println(">");
 		}while (i==null);
                 System.out.println("<<<< Waiting for master's command...");
@@ -604,7 +604,7 @@ public class App
 							init_count += cache_college.get(i).st_count;
 					}
 					
-					try{Thread.sleep(500);}catch(Exception e){}
+					try{Thread.sleep(1200);}catch(Exception e){}
 		
 				}else{
         	all_keys = initialize (ignite);
@@ -739,8 +739,7 @@ public class App
 	System.out.print("SAFETY CHECKS: ");
 	System.out.println("Total registrations: "+sum_reg);
 	if(_MASTER){
-		System.out.println("initial # of students: "+init_count);
-		System.out.println("final # of students: "+ final_count);
+		System.out.println("Number of new students: "+(final_count-init_count));
 	}
     }
 }
