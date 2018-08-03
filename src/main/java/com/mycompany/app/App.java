@@ -158,6 +158,9 @@ public class App
     public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
+		static long[] myArray2 = new long[_CLIENT_NUMBER*_ROUNDS];
+    private static AtomicLongArray at2 = new AtomicLongArray(myArray2);
+
     public static void print(String s){
     	System.out.print(s);
     }
@@ -582,7 +585,7 @@ public class App
 	public static void main(String[] args) {
         // CACHE INITIALIZATION
 				College test_college;
-				
+				int init_count=0;
         double sum=0;
         Ignition.setClientMode(true);
         Ignite ignite = Ignition.start("./test_client.xml");
@@ -596,10 +599,10 @@ public class App
         	System.out.println ("Initial rows inserted");
 	        cache_sync.put(1,1);
 					try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
-  					IgniteCache<Integer, College> cache_college = ignite.cache("college");
-						test_college = cache_college.get(1);
+			IgniteCache<Integer, College> cache_college = ignite.cache("college");
+						init_count = cache_college.get(1).st_count;
 					}
-					System.out.println("\n\n\n##########################"+test_college.st_count+"#######################");
+					
 					try{Thread.sleep(500);}catch(Exception e){}
 		
 				}else{
@@ -613,6 +616,7 @@ public class App
 		@Override
 		public void run(){
 			try{
+				int did_reg=0;
 				int threadId = (int) (Thread.currentThread().getId()%_CLIENT_NUMBER);
 				//System.out.print (" Client started:"+threadId);
 				for (int i=0;i<_ROUNDS;i++){
@@ -653,6 +657,7 @@ public class App
 						estimatedTime=System.currentTimeMillis() - startTime;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
 						System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
+						did_reg=1;
 					}
 					if (50<=txn_type_rand && txn_type_rand<80){
 						estimatedTime = query_course (_TRIAL,startTime,ignite,all_keys);
@@ -680,6 +685,7 @@ public class App
 
 
 					at.set(threadId*_ROUNDS+i,estimatedTime);
+					at2.set(threadId*_ROUNDS+i,did_reg);
 				}
 			}
 			catch (Exception e){
@@ -706,10 +712,13 @@ public class App
 	// PRINT STATS
 	long estimatedTime_tp = System.currentTimeMillis() - startTime;
 	long sum_time = 0;
+	int sum_reg=0;
 	int failed=0;
         for (int i=0; i<_CLIENT_NUMBER*_ROUNDS; i++ ){
-		if(at.get(i)!=1010101010)
+		if(at.get(i)!=1010101010){
 			sum_time += at.get(i);
+			sum_reg ++;
+		}
 		else
 			failed++;
 	}
@@ -722,7 +731,11 @@ public class App
 	System.out.println("Throuput: "+ (_ROUNDS*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
 	System.out.println("TOTAL RUNNING TIME: "+estimatedTime_tp/1000.0+"s");
 	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
-	System.out.println("===============================\n\n\n");
+	System.out.println("===============================\n");
+	try{Thread.sleep(2000);}catch(Exception e){}
+	System.out.print("SAFETY CHECK: ");
+	System.out.println(init_count);
+	System.out.println(sum_reg);
 	System.out.println(test_college.st_count);
     }
 }
