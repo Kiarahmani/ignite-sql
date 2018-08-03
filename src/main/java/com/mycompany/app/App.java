@@ -722,22 +722,22 @@ public class App
 		else
 			failed++;
 	}
-	try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
-  	IgniteCache<Integer, College> cache_college = ignite.cache("college");
-		test_college = cache_college.get(1);
-	}
-	System.out.println(ConsoleColors.RESET+"\n\n===============================");
+		System.out.println(ConsoleColors.RESET+"\n\n===============================");
 	System.out.println("AVG TXN TIME: "+ sum_time/(_CLIENT_NUMBER*_ROUNDS-failed)+"ms");
 	System.out.println("Throuput: "+ (_ROUNDS*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
 	System.out.println("TOTAL RUNNING TIME: "+estimatedTime_tp/1000.0+"s");
 	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
 	System.out.println("===============================\n");
 	try{Thread.sleep(2000);}catch(Exception e){}
+	try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+  	IgniteCache<Integer, College> cache_college = ignite.cache("college");
+		test_college = cache_college.get(1);
+	}
 	System.out.print("SAFETY CHECKS: ");
 	System.out.println("Total registrations: "+sum_reg);
 	if(_MASTER){
-		System.out.println(init_count);
-		System.out.println(test_college.st_count);
+		System.out.println("initial # of students: "+init_count);
+		System.out.println("final # of students: "+ test_college.st_count);
 	}
     }
 }
