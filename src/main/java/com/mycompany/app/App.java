@@ -293,7 +293,7 @@ public class App
 				IgniteCache<Integer, Student> cache_student = ignite.cache("student");
 				cache_student.put(st_id,new Student(name,age,gender,coid,true));
 				tx.commit();
-			}catch(TransactionOteCache<Integer, College> cache_college = ignite.cache("college");ptimisticException e){}
+			}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
 	public static long enroll_student2(int iter,long startTime, Ignite ignite){
@@ -705,9 +705,11 @@ public class App
 		else
 			failed++;
 	}
-
-  IgniteCache<Integer, College> cache_college = ignite.cache("college");
-	College test_college = cache_college.get(1);
+	College test_college;
+	try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
+  	IgniteCache<Integer, College> cache_college = ignite.cache("college");
+		test_college = cache_college.get(1);
+	}
 	System.out.println(ConsoleColors.RESET+"\n\n===============================");
 	System.out.println("AVG TXN TIME: "+ sum_time/(_CLIENT_NUMBER*_ROUNDS-failed)+"ms");
 	System.out.println("Throuput: "+ (_ROUNDS*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
