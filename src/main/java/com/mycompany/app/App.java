@@ -140,7 +140,7 @@ class ConsoleColors {
 //////////////////////////////////////////////////////////////////////////////////////////////
 public class App 
 {
-    public static final int _ROUNDS = 1;
+    public static final int _ROUNDS = 100;
     public static final boolean _CHOPPED = false;
     public static final boolean _MASTER = true;
     public static final int _CLIENT_NUMBER = 5;
