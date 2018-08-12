@@ -140,11 +140,11 @@ class ConsoleColors {
 //////////////////////////////////////////////////////////////////////////////////////////////
 public class App 
 {
-    public static final int _ROUNDS = 10;
+    public static final int _ROUNDS = 1000;
     public static final boolean _CHOPPED = false;
     public static final boolean _MASTER = false;
-    public static final int _GRACE = _ROUNDS/10;
-    public static final int _CLIENT_NUMBER = 100;
+    public static final int _GRACE = 0;
+    public static final int _CLIENT_NUMBER = 1;
     public static final int _TEMP = 3;
     public static final int _STUDENT_COUNT = _TEMP*4;
     public static final int _INSTRUCTOR_COUNT = _TEMP*2;
