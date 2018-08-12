@@ -140,11 +140,12 @@ class ConsoleColors {
 //////////////////////////////////////////////////////////////////////////////////////////////
 public class App 
 {
-    public static final int _ROUNDS = 40;
+    public static final int _ROUNDS = 10;
     public static final boolean _CHOPPED = false;
-    public static final boolean _MASTER = true;
-    public static final int _CLIENT_NUMBER = 2;
-    public static final int _TEMP = 1;
+    public static final boolean _MASTER = false;
+    public static final int _GRACE = _ROUNDS/10;
+    public static final int _CLIENT_NUMBER = 100;
+    public static final int _TEMP = 3;
     public static final int _STUDENT_COUNT = _TEMP*4;
     public static final int _INSTRUCTOR_COUNT = _TEMP*2;
     public static final int _COLLEGE_COUNT = _TEMP;
@@ -152,12 +153,12 @@ public class App
     public static final int _LAT_THRESHOLD = 4000;
     public static final int _TRANSCRIPT_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
     public static final int _REGISTER_COUNT = _STUDENT_COUNT*_COURSE_COUNT;
-    public static final int _TRIAL = 6;
+    public static final int _TRIAL = 10;
     //ISOL
 	 	public static final TransactionIsolation _ISOLATION_LEVEL = TransactionIsolation.SERIALIZABLE;
     //public static final TransactionIsolation _ISOLATION_LEVEL=TransactionIsolation.READ_COMMITTED;
-    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
-    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
+    public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL=TransactionIsolation.READ_COMMITTED;
+    //public static final TransactionIsolation _ISOLATION_LEVEL_OPTIMAL = TransactionIsolation.SERIALIZABLE;
     static long[] myArray = new long[_CLIENT_NUMBER*_ROUNDS];
     private static AtomicLongArray at = new AtomicLongArray(myArray);
 		static long[] myArray2 = new long[_CLIENT_NUMBER*_ROUNDS];
@@ -633,25 +634,34 @@ public class App
 							enroll_student2 (_TRIAL,startTime,ignite);
 						}else
 							enroll_student (_TRIAL,startTime,ignite);
-						estimatedTime=System.currentTimeMillis() - startTime;
+						if (i>=_GRACE)
+							estimatedTime=System.currentTimeMillis() - startTime;
+						else 
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
+						//System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
 						did_reg=1;
 					}
 					if (10<=txn_type_rand && txn_type_rand<30){
 						estimatedTime = query_student (_TRIAL,startTime,ignite,all_keys);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+ "Query_Student     ("+estimatedTime+"ms)");
+						//System.out.println(color+ "Query_Student     ("+estimatedTime+"ms)");
 					}
 					if (30<=txn_type_rand && txn_type_rand<35){
 						estimatedTime = add_course (_TRIAL,startTime,ignite);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Add_Course        ("+estimatedTime+"ms)");
+						//System.out.println(color+"Add_Course        ("+estimatedTime+"ms)");
 					}
 					if (35<=txn_type_rand && txn_type_rand<40){
 						estimatedTime = remove_course (_TRIAL,startTime,ignite);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Remove_Course     ("+estimatedTime+"ms)");
+						//System.out.println(color+"Remove_Course     ("+estimatedTime+"ms)");
 					}
 					if (40<=txn_type_rand && txn_type_rand<50){
 						if(_CHOPPED)
@@ -659,28 +669,38 @@ public class App
 						else
 							register_course (_TRIAL,startTime,ignite);
 						estimatedTime=System.currentTimeMillis() - startTime;
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
+						//System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
 					}
 					if (50<=txn_type_rand && txn_type_rand<80){
 						estimatedTime = query_course (_TRIAL,startTime,ignite,all_keys);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Query_Course      ("+estimatedTime+"ms)");
+						System.out.println(color+estimatedTime);
 					}
 					if (80<=txn_type_rand && txn_type_rand<88){
 						estimatedTime = increase_capacity (_TRIAL,startTime,ignite);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Increase_Capacity ("+estimatedTime+"ms)");
+						//System.out.println(color+"Increase_Capacity ("+estimatedTime+"ms)");
 					}
 					if (88<=txn_type_rand && txn_type_rand<90){
 						estimatedTime = expel_student (_TRIAL,startTime,ignite,all_keys);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Expel_Student     ("+estimatedTime+"ms)");
+						//System.out.println(color+"Expel_Student     ("+estimatedTime+"ms)");
 					}
 					if (90<=txn_type_rand && txn_type_rand<100){
 						estimatedTime = enter_grade (_TRIAL,startTime,ignite);
+						if (i<_GRACE)
+							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+"Enter_Grade       ("+estimatedTime+"ms)");
+						//System.out.println(color+"Enter_Grade       ("+estimatedTime+"ms)");
 					}
 
 
@@ -726,8 +746,8 @@ public class App
 			failed++;
 	}
 		System.out.println(ConsoleColors.RESET+"\n\n===============================");
-	System.out.println("AVG TXN TIME: "+ sum_time/(_CLIENT_NUMBER*_ROUNDS-failed)+"ms");
-	System.out.println("Throuput: "+ (_ROUNDS*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
+	System.out.println("AVG TXN TIME: "+ sum_time/(_CLIENT_NUMBER*(_ROUNDS-_GRACE)-failed)+"ms");
+	System.out.println("Throuput: "+ ((_ROUNDS-_GRACE)*_CLIENT_NUMBER-failed)*1000/estimatedTime_tp+" rounds/s");
 	System.out.println("TOTAL RUNNING TIME: "+estimatedTime_tp/1000.0+"s");
 	System.out.println("Failed Txns: "+failed*100.0/(_CLIENT_NUMBER*_ROUNDS)+"%");
 	System.out.println("===============================\n");
