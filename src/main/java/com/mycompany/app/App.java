@@ -151,7 +151,7 @@ public class App
     public static final boolean _CHOPPED = true;
     public static final boolean _MASTER = false;
     public static final int _GRACE = 0;
-    public static final int _CLIENT_NUMBER = 256;
+    public static final int _CLIENT_NUMBER = 8;
     public static final int _ROUNDS = 1000/_CLIENT_NUMBER; //FIX THIS! THIS JUST TEMPORARY FOR THE TEST
     public static final int _TEMP = 3;
     public static final int _STUDENT_COUNT = _TEMP*4;
@@ -196,7 +196,7 @@ public class App
 
 
   public static void waitForStart(Ignite ignite){
-        IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+        IgniteCache<Integer, Integer> cache_sync = ignite.getOrCreateCache("sync");
                 System.out.println(">>>> Waiting for master to start...");
 		Integer i = cache_sync.get(1);
 		do{
@@ -237,15 +237,14 @@ public class App
 		cfg.setAddressResolver(addrRes);
 		TcpDiscoverySpi spi = new TcpDiscoverySpi();
 		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
-		ipFinder.setAddresses(Arrays.asList("127.0.0.1:47500..47509"));//Ohio 
+		ipFinder.setAddresses(Arrays.asList("172.31.19.186:47500..47509"));//Ohio 
 		spi.setIpFinder(ipFinder);
 		cfg.setDiscoverySpi(spi);
 		cfg.setPublicThreadPoolSize(256);
 		cfg.setSystemThreadPoolSize(128);
 		Ignite ignite = Ignition.start(cfg);
 		System.out.println("startIgnite: All Available Caches on server : "+ignite.cacheNames());
-		CacheConfiguration sync_ccfg = new CacheConfiguration("sync");
-		ignite.getOrCreateCache("sync");
+		ignite.createCache("sync");
 
 		if (_MASTER){
 			CacheConfiguration student_ccfg = new CacheConfiguration("student");
@@ -379,13 +378,13 @@ public class App
 ////////////// ENROLL STUDENT TRANSACTION
 	public static long enroll_student1(int iter,long startTime, Ignite ignite){
 			long timePassed = 0;
+			IgniteCache<Integer, Student> cache_student = ignite.cache("student");
 			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL_OPTIMAL)) {
 				int coid = ThreadLocalRandom.current().nextInt(0, _COLLEGE_COUNT);
 				int age = ThreadLocalRandom.current().nextInt(17, 60);
 				int st_id = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT);
 				String name = UUID.randomUUID().toString();
 				String gender = UUID.randomUUID().toString();
-				IgniteCache<Integer, Student> cache_student = ignite.cache("student");
 				cache_student.put(st_id,new Student(name,age,gender,coid,true));
 				tx.commit();
 			}catch(TransactionOptimisticException e){}
@@ -432,7 +431,7 @@ public class App
 			IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
 		  IgniteCache<DoubleKey, Transcript> cache_transcript = ignite.cache("transcript");
 			//print ("query student\n");
-			try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL_OPTIMAL)) {
+			//try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL_OPTIMAL)) {
 				int st_id = ThreadLocalRandom.current().nextInt(0, _STUDENT_COUNT);
 				Student student = cache_student.get(st_id);
 				if (student.isAlive){
@@ -457,8 +456,8 @@ public class App
 						hset2.add(k);
 					Map<Integer,Course> courses = cache_course.getAll(hset2);
 				}
-				tx.commit();
-			}catch(TransactionOptimisticException e){}
+				//tx.commit();
+			//}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
 //////////////////////////////////////////////////////////////////////
@@ -694,10 +693,10 @@ public class App
         
 				Ignite ignite = startIgnite();
         Set<DoubleKey> all_keys;
+        IgniteCache<Integer, Integer> cache_sync = ignite.getOrCreateCache("sync");
 				/////////////////////
         // IF MASTER:
 				if(_MASTER){
-        	IgniteCache<Integer, Integer> cache_sync = ignite.getOrCreateCache("sync");
 					System.out.println("$$$$$$$$"+cache_sync);
         	cache_sync.put(1,0);
         	all_keys = initialize (ignite);
@@ -727,8 +726,8 @@ public class App
 				int threadId = (int) (Thread.currentThread().getId()%_CLIENT_NUMBER);
 				//System.out.print (" Client started:"+threadId);
 				for (int i=0;i<_ROUNDS;i++){
-					System.out.print("rd#"+i+"		");
-					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
+					int txn_type_rand = 15; //ThreadLocalRandom.current().nextInt(0, 100);
+					System.out.print("rd#"+i+"		%%"+txn_type_rand);
 					long startTime = System.currentTimeMillis();
 					long estimatedTime = 1010101010;
 					String color=ConsoleColors.RESET;
@@ -751,7 +750,7 @@ public class App
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+ "Query_Student     ("+estimatedTime+"ms)");
+						System.out.println(color+ "Query_Student     ("+estimatedTime+"ms)");
 					}
 					if (30<=txn_type_rand && txn_type_rand<35){
 						estimatedTime = add_course (_TRIAL,startTime,ignite);
