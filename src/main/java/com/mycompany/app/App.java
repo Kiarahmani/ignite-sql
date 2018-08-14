@@ -1,7 +1,3 @@
-// READY for GLOBAL test4
-//
-// CHOPPED
-// CHOPPED
 package com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
@@ -11,15 +7,27 @@ import org.apache.ignite.lang.*;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.IgniteTransactions;
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
+import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinderAdapter;
+import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.transactions.*;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.configuration.*;
+import org.apache.ignite.configuration.BasicAddressResolver;
+import org.apache.ignite.client.*;
+import org.apache.ignite.cache.*;
+import org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction;
 import org.apache.ignite.cache.query.QueryCursor;
+import org.apache.ignite.cluster.*;
+import org.apache.ignite.cache.affinity.*;
 import java.util.stream.Collectors;
 import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.cache.CachePeekMode;
 import java.util.concurrent.ThreadLocalRandom;
+import java.net.UnknownHostException;
 import java.util.UUID;
+
 
 // TABLES
 class DoubleKey implements Comparable<DoubleKey>{
@@ -140,11 +148,11 @@ class ConsoleColors {
 //////////////////////////////////////////////////////////////////////////////////////////////
 public class App 
 {
-    public static final int _ROUNDS = 1000;
-    public static final boolean _CHOPPED = false;
-    public static final boolean _MASTER = false;
+    public static final boolean _CHOPPED = true;
+    public static final boolean _MASTER = true;
     public static final int _GRACE = 0;
     public static final int _CLIENT_NUMBER = 1;
+    public static final int _ROUNDS = 100/_CLIENT_NUMBER; //FIX THIS! THIS JUST TEMPORARY FOR THE TEST
     public static final int _TEMP = 3;
     public static final int _STUDENT_COUNT = _TEMP*4;
     public static final int _INSTRUCTOR_COUNT = _TEMP*2;
@@ -167,6 +175,26 @@ public class App
     public static void print(String s){
     	System.out.print(s);
     }
+
+
+
+	public static void destroyCaches(Ignite ignite){
+		IgniteCache<Integer, Student> cache_student = ignite.cache("student");
+		cache_student.destroy();
+		IgniteCache<Integer, Course> cache_course = ignite.cache("course");
+		cache_course.destroy();
+		IgniteCache<Integer, Instructor> cache_instuctor = ignite.cache("instructor");
+		cache_instuctor.destroy();
+		IgniteCache<DoubleKey, Transcript> cache_transcript = ignite.cache("transcript");
+		cache_transcript.destroy();
+		IgniteCache<Integer, College> cache_college = ignite.cache("college");
+		cache_college.destroy();
+		IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
+		cache_register.destroy();
+		IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+		cache_sync.destroy();
+	}
+
 
 
   public static void waitForStart(Ignite ignite){
@@ -193,6 +221,72 @@ public class App
 	try{Thread.sleep(1000);}catch(Exception e){}
 	return _MASTER;
   }
+
+
+
+
+
+	public static Ignite startIgnite(){
+		IgniteConfiguration cfg = new IgniteConfiguration();
+		cfg.setClientMode(true);
+		Map<String,String> addrMap = new HashMap<String,String>();
+		addrMap.put("172.31.16.74", "34.216.160.83"); //port forwarding
+		BasicAddressResolver addrRes=null;
+		try {
+			addrRes = new BasicAddressResolver(addrMap);
+    }catch(UnknownHostException e){System.out.println(e);}
+		cfg.setAddressResolver(addrRes);
+		TcpDiscoverySpi spi = new TcpDiscoverySpi();
+		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
+		ipFinder.setAddresses(Arrays.asList("18.191.254.248:47500..47509"));//Ohio 
+		spi.setIpFinder(ipFinder);
+		cfg.setDiscoverySpi(spi);
+		cfg.setPublicThreadPoolSize(256);
+		cfg.setSystemThreadPoolSize(128);
+		Ignite ignite = Ignition.start(cfg);
+		System.out.println("startIgnite: All Available Caches on server : "+ignite.cacheNames());
+		
+		if (_MASTER){
+			CacheMode cmode = CacheMode.REPLICATED;
+			CacheConfiguration student_ccfg = new CacheConfiguration("student");
+			student_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			student_ccfg.setCacheMode(cmode);
+			ignite.createCache(student_ccfg);
+		
+			CacheConfiguration instructor_ccfg = new CacheConfiguration("instructor");
+			instructor_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			instructor_ccfg.setCacheMode(cmode);
+			ignite.createCache(instructor_ccfg);
+		
+			CacheConfiguration college_ccfg = new CacheConfiguration("college");
+			college_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			college_ccfg.setCacheMode(cmode);
+			ignite.createCache(college_ccfg);
+		
+			CacheConfiguration course_ccfg = new CacheConfiguration("course");
+			course_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			course_ccfg.setCacheMode(cmode);
+			ignite.createCache(course_ccfg);
+		
+			CacheConfiguration transcript_ccfg = new CacheConfiguration("transcript");
+			transcript_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			transcript_ccfg.setCacheMode(cmode);
+			ignite.createCache(transcript_ccfg);
+		
+			CacheConfiguration sync_ccfg = new CacheConfiguration("sync");
+			sync_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			sync_ccfg.setCacheMode(cmode);
+			ignite.createCache(sync_ccfg);
+		
+			CacheConfiguration register_ccfg = new CacheConfiguration("register");
+			register_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+			register_ccfg.setCacheMode(cmode);
+			ignite.createCache(register_ccfg);
+		}
+		System.out.println("started Ignite -> caches are ready");
+		return ignite;
+	}
+	
 
 
   public static Set<DoubleKey> initialize (Ignite ignite){
@@ -578,31 +672,45 @@ public class App
 			}catch(TransactionOptimisticException e){}
 			return (System.currentTimeMillis() - startTime);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////
-
-
-
-
-
-  
 	public static void main(String[] args) {
         // CACHE INITIALIZATION
 				College test_college;
 				int init_count=0;
         double sum=0;
-        Ignition.setClientMode(true);
-        Ignite ignite = Ignition.start("./test_client.xml");
+        
+				Ignite ignite = startIgnite();
         Set<DoubleKey> all_keys;
 				/////////////////////
         // IF MASTER:
 				if(_MASTER){
         	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+					System.out.println("$$$$$$$$"+cache_sync);
         	cache_sync.put(1,0);
         	all_keys = initialize (ignite);
-        	System.out.println ("Initial rows inserted");
+        	
+					System.out.println ("Initial rows inserted");
 	        cache_sync.put(1,1);
 					try (Transaction tx = ignite.transactions().txStart(TransactionConcurrency.PESSIMISTIC, _ISOLATION_LEVEL)) {
-			IgniteCache<Integer, College> cache_college = ignite.cache("college");
+						IgniteCache<Integer, College> cache_college = ignite.cache("college");
 						for(int i=0;i<_COLLEGE_COUNT;i++)
 							init_count += cache_college.get(i).st_count;
 					}
@@ -624,6 +732,7 @@ public class App
 				int threadId = (int) (Thread.currentThread().getId()%_CLIENT_NUMBER);
 				//System.out.print (" Client started:"+threadId);
 				for (int i=0;i<_ROUNDS;i++){
+					System.out.print("rd#"+i+"		");
 					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
 					long startTime = System.currentTimeMillis();
 					long estimatedTime = 1010101010;
@@ -639,7 +748,7 @@ public class App
 						else 
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
+						System.out.println(color+"Enroll_Student    ("+estimatedTime+"ms)");
 						did_reg=1;
 					}
 					if (10<=txn_type_rand && txn_type_rand<30){
@@ -654,14 +763,14 @@ public class App
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Add_Course        ("+estimatedTime+"ms)");
+						System.out.println(color+"Add_Course        ("+estimatedTime+"ms)");
 					}
 					if (35<=txn_type_rand && txn_type_rand<40){
 						estimatedTime = remove_course (_TRIAL,startTime,ignite);
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Remove_Course     ("+estimatedTime+"ms)");
+						System.out.println(color+"Remove_Course     ("+estimatedTime+"ms)");
 					}
 					if (40<=txn_type_rand && txn_type_rand<50){
 						if(_CHOPPED)
@@ -672,35 +781,35 @@ public class App
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
+						System.out.println(color+"Register_Course   ("+estimatedTime+"ms)");
 					}
 					if (50<=txn_type_rand && txn_type_rand<80){
 						estimatedTime = query_course (_TRIAL,startTime,ignite,all_keys);
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						System.out.println(color+estimatedTime);
+						System.out.println(color+"Query_Course    ("+estimatedTime+"ms)");
 					}
 					if (80<=txn_type_rand && txn_type_rand<88){
 						estimatedTime = increase_capacity (_TRIAL,startTime,ignite);
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Increase_Capacity ("+estimatedTime+"ms)");
+						System.out.println(color+"Increase_Capacity ("+estimatedTime+"ms)");
 					}
 					if (88<=txn_type_rand && txn_type_rand<90){
 						estimatedTime = expel_student (_TRIAL,startTime,ignite,all_keys);
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Expel_Student     ("+estimatedTime+"ms)");
+						System.out.println(color+"Expel_Student     ("+estimatedTime+"ms)");
 					}
 					if (90<=txn_type_rand && txn_type_rand<100){
 						estimatedTime = enter_grade (_TRIAL,startTime,ignite);
 						if (i<_GRACE)
 							estimatedTime=0;
 						color = (estimatedTime>_LAT_THRESHOLD)? ConsoleColors.RED:ConsoleColors.RESET;
-						//System.out.println(color+"Enter_Grade       ("+estimatedTime+"ms)");
+						System.out.println(color+"Enter_Grade       ("+estimatedTime+"ms)");
 					}
 
 
@@ -762,6 +871,7 @@ public class App
 	System.out.println("Total registrations: "+sum_reg);
 	if(_MASTER){
 		System.out.println("Number of new students: "+(final_count-init_count));
+		destroyCaches(ignite);
 	}
     }
 }
