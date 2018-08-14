@@ -151,9 +151,9 @@ public class App
     public static final boolean _CHOPPED = true;
     public static final boolean _MASTER = true;
     public static final int _GRACE = 0;
-    public static final int _CLIENT_NUMBER = 1;
-    public static final int _ROUNDS = 100/_CLIENT_NUMBER; //FIX THIS! THIS JUST TEMPORARY FOR THE TEST
-    public static final int _TEMP = 3;
+    public static final int _CLIENT_NUMBER = 64;
+    public static final int _ROUNDS = 1000/_CLIENT_NUMBER; //FIX THIS! THIS JUST TEMPORARY FOR THE TEST
+    public static final int _TEMP = 10;
     public static final int _STUDENT_COUNT = _TEMP*4;
     public static final int _INSTRUCTOR_COUNT = _TEMP*2;
     public static final int _COLLEGE_COUNT = _TEMP;
@@ -191,8 +191,6 @@ public class App
 		cache_college.destroy();
 		IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
 		cache_register.destroy();
-		IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
-		cache_sync.destroy();
 	}
 
 
@@ -238,7 +236,7 @@ public class App
 		cfg.setAddressResolver(addrRes);
 		TcpDiscoverySpi spi = new TcpDiscoverySpi();
 		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
-		ipFinder.setAddresses(Arrays.asList("18.191.254.248:47500..47509"));//Ohio 
+		ipFinder.setAddresses(Arrays.asList("172.31.19.186:47500..47509"));//Ohio 
 		spi.setIpFinder(ipFinder);
 		cfg.setDiscoverySpi(spi);
 		cfg.setPublicThreadPoolSize(256);
@@ -273,10 +271,6 @@ public class App
 			transcript_ccfg.setCacheMode(cmode);
 			ignite.createCache(transcript_ccfg);
 		
-			CacheConfiguration sync_ccfg = new CacheConfiguration("sync");
-			sync_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-			sync_ccfg.setCacheMode(cmode);
-			ignite.createCache(sync_ccfg);
 		
 			CacheConfiguration register_ccfg = new CacheConfiguration("register");
 			register_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
@@ -702,7 +696,7 @@ public class App
 				/////////////////////
         // IF MASTER:
 				if(_MASTER){
-        	IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
+        	IgniteCache<Integer, Integer> cache_sync = ignite.getOrCreateCache("sync");
 					System.out.println("$$$$$$$$"+cache_sync);
         	cache_sync.put(1,0);
         	all_keys = initialize (ignite);
@@ -871,7 +865,6 @@ public class App
 	System.out.println("Total registrations: "+sum_reg);
 	if(_MASTER){
 		System.out.println("Number of new students: "+(final_count-init_count));
-		destroyCaches(ignite);
 	}
     }
 }
