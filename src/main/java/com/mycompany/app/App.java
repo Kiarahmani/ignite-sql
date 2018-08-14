@@ -149,10 +149,10 @@ class ConsoleColors {
 public class App 
 {
     public static final boolean _CHOPPED = true;
-    public static final boolean _MASTER = true;
+    public static final boolean _MASTER = false;
     public static final int _GRACE = 0;
-    public static final int _CLIENT_NUMBER = 1;
-    public static final int _ROUNDS = 100/_CLIENT_NUMBER; //FIX THIS! THIS JUST TEMPORARY FOR THE TEST
+    public static final int _CLIENT_NUMBER = 256;
+    public static final int _ROUNDS = 1000/_CLIENT_NUMBER; //FIX THIS! THIS JUST TEMPORARY FOR THE TEST
     public static final int _TEMP = 3;
     public static final int _STUDENT_COUNT = _TEMP*4;
     public static final int _INSTRUCTOR_COUNT = _TEMP*2;
@@ -191,8 +191,6 @@ public class App
 		cache_college.destroy();
 		IgniteCache<DoubleKey, Register> cache_register = ignite.cache("register");
 		cache_register.destroy();
-		IgniteCache<Integer, Integer> cache_sync = ignite.cache("sync");
-		cache_sync.destroy();
 	}
 
 
@@ -235,19 +233,22 @@ public class App
 		try {
 			addrRes = new BasicAddressResolver(addrMap);
     }catch(UnknownHostException e){System.out.println(e);}
+		CacheMode cmode = CacheMode.REPLICATED;
 		cfg.setAddressResolver(addrRes);
 		TcpDiscoverySpi spi = new TcpDiscoverySpi();
 		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
-		ipFinder.setAddresses(Arrays.asList("18.191.254.248:47500..47509"));//Ohio 
+		//ipFinder.setAddresses(Arrays.asList("18.191.254.248:47500..47509"));//Ohio 
+		ipFinder.setAddresses(Arrays.asList("127.0.0.1:47500..47509"));//Ohio 
 		spi.setIpFinder(ipFinder);
 		cfg.setDiscoverySpi(spi);
 		cfg.setPublicThreadPoolSize(256);
 		cfg.setSystemThreadPoolSize(128);
 		Ignite ignite = Ignition.start(cfg);
 		System.out.println("startIgnite: All Available Caches on server : "+ignite.cacheNames());
-		
+		CacheConfiguration sync_ccfg = new CacheConfiguration("sync");
+		ignite.getOrCreateCache("sync");
+
 		if (_MASTER){
-			CacheMode cmode = CacheMode.REPLICATED;
 			CacheConfiguration student_ccfg = new CacheConfiguration("student");
 			student_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 			student_ccfg.setCacheMode(cmode);
@@ -273,11 +274,7 @@ public class App
 			transcript_ccfg.setCacheMode(cmode);
 			ignite.createCache(transcript_ccfg);
 		
-			CacheConfiguration sync_ccfg = new CacheConfiguration("sync");
-			sync_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-			sync_ccfg.setCacheMode(cmode);
-			ignite.createCache(sync_ccfg);
-		
+					
 			CacheConfiguration register_ccfg = new CacheConfiguration("register");
 			register_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 			register_ccfg.setCacheMode(cmode);
@@ -871,7 +868,6 @@ public class App
 	System.out.println("Total registrations: "+sum_reg);
 	if(_MASTER){
 		System.out.println("Number of new students: "+(final_count-init_count));
-		destroyCaches(ignite);
 	}
     }
 }
