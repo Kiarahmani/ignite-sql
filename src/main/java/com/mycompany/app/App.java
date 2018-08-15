@@ -14,6 +14,9 @@ import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinderAdapter;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.transactions.*;
+
+import com.mycompany.app.Starter;
+
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.configuration.*;
 import org.apache.ignite.configuration.BasicAddressResolver;
@@ -40,7 +43,7 @@ public class App {
 
 	public static void main(String[] args) {
 		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
+		Starter salam = new Starter(10);
 		IgniteConfiguration cfg = new IgniteConfiguration();
 		cfg.setClientMode(true);
 		// ADDRESS RESOLVER
