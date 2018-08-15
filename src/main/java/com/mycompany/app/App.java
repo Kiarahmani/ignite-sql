@@ -1,6 +1,6 @@
 // things are going smoothely!
 
-package src.main.java.com.mycompany.app;
+package com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.ThreadLocalRandom;
