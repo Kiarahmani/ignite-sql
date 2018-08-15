@@ -1,6 +1,6 @@
-// this is a text from eclipse 
+// things are going smoothely!
 
-package com.mycompany.app;
+package src.main.java.com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.ThreadLocalRandom;
@@ -40,6 +40,7 @@ public class App
 	private static AtomicLongArray at = new AtomicLongArray(myArray);
 	public static void main(String[] args) {
 		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		
                 IgniteConfiguration cfg = new IgniteConfiguration();
 		cfg.setClientMode(true);
 		// ADDRESS RESOLVER
@@ -68,15 +69,15 @@ public class App
 		NearCacheConfiguration<Integer, Integer> nearCfg = 
 			    new NearCacheConfiguration<>();
 
-
+		
 		//INITILIZE A CACHE	
-		CacheConfiguration ccfg = new CacheConfiguration("sync");
+		CacheConfiguration<Integer,Integer> ccfg = new CacheConfiguration<Integer,Integer>("sync");
 		ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 		ccfg.setCacheMode(CacheMode.PARTITIONED);
 		ccfg.setBackups(1);
 		ccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
 		//INITILIZE A CACHE	
-		CacheConfiguration sccfg = new CacheConfiguration("stale_sync");
+		CacheConfiguration<Integer,Integer> sccfg = new CacheConfiguration<Integer,Integer>("stale_sync");
 		sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
 		sccfg.setCacheMode(CacheMode.PARTITIONED);
 		sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
@@ -105,68 +106,9 @@ public class App
 		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		// TESTS
 			
-		Runnable r = new Runnable(){
-		@Override
-		public void run(){
-			long startTimeReadWrite = System.currentTimeMillis();
-			int threadId = (int) (Thread.currentThread().getId()%_CLIENT_NUMBER);
-      System.out.println("client #"+threadId +" started...");
-			for (int i=0; i<_ROUNDS; i++){
-				long txnStartTime = System.currentTimeMillis();
-				int key = ThreadLocalRandom.current().nextInt(0,_OBJECTS);
-				int value = -1000000;
-				Map <Integer,Integer> kvMap  = stale_cache.getAll(all_keys);
-				try (Transaction tx = transactions.txStart(concurrency,ser)) {
-					value = kvMap.get(key);
-					cache.put(key,value+1);
-    			tx.commit();
-					tx.close();
-				}
-				long estimatedTime = System.currentTimeMillis()-txnStartTime;
-				System.out.println(estimatedTime);
-				at.set(threadId*_ROUNDS+i,estimatedTime);
-			}
-		}
-    };
-
-		Runnable syncer = new Runnable(){
-		@Override
-		public void run(){
-						try{
-							while(true){
-								for (int i=0;i<_OBJECTS;i++){
-									 stale_cache.put(i,cache.get(i));
-								}
-								Thread.sleep(1000);
-							}
-
-						}
-						catch(InterruptedException e) {
-							System.out.println("Synchronizer stopped");
-						}
-		}
-
-		
-		long clientStartTime = System.currentTimeMillis();
-		// INITIATE CONCURRENT CLIENTS
-		Thread threads[] = new Thread[_CLIENT_NUMBER];
-		Thread synchronizer = new Thread(syncer);
-		synchronizer.start();
-    for (int i=0; i<_CLIENT_NUMBER; i++){
-    	threads[i] = new Thread(r);
-      threads[i].start();
-    }
-		// WAIT FOR ALL CLEINTS
-    for (int i=0; i<_CLIENT_NUMBER; i++){
-    	try{
-				threads[i].join();
-			}catch(InterruptedException e){
-					System.out.println(e);
-			 }
-    }
-		synchronizer.interrupt();
+	
 	// PRINT STATS
-	long estimatedTime_tp = System.currentTimeMillis() - clientStartTime;
+	
 
 
 		//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -184,7 +126,7 @@ public class App
 		}
     System.out.print("\n\n\n\n===========================================\n");
 		System.out.println("\nSafety:  "+(_ROUNDS*_CLIENT_NUMBER==sum));
-		System.out.println(  "Throuput:"+ ((_ROUNDS)*_CLIENT_NUMBER)*1000/estimatedTime_tp+" rounds/s");
+		//System.out.println(  "Throuput:"+ ((_ROUNDS)*_CLIENT_NUMBER)*1000/estimatedTime_tp+" rounds/s");
 		int sum_time=0;
 		for (int i=0; i<_CLIENT_NUMBER*_ROUNDS; i++ ){
 			sum_time += at.get(i);
