@@ -1,3 +1,5 @@
+// this is a text from eclipse 
+
 package com.mycompany.app;
 import java.util.*;
 import  java.util.concurrent.atomic.AtomicLongArray;
