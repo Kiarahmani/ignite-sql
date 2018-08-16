@@ -102,7 +102,7 @@ public class CacheManager {
 
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n>>districts:");
-			System.out.println("-----------------\nkey     |   value\n-----------------");
+			System.out.println("----------------------------------\nkey     |   value\n----------------------------------");
 			for (DoubleKey key : cons.all_keys_district) {
 				System.out.println("" + key.toString() + "	| " + district_cache.get(key).toString() + "");
 			}
@@ -110,9 +110,9 @@ public class CacheManager {
 
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n\n>>warehouses:");
-			System.out.println("-----------------\nkey     |   value\n-----------------");
+			System.out.println("----------------------------------\nkey     |   value\n----------------------------------");
 			for (int key : cons.all_keys_warehouse) {
-				System.out.println("" + key + "	| " + warehouse_cache.get(key).toString() + "");
+				System.out.println("$(" + key + ")	| " + warehouse_cache.get(key).toString() + "");
 			}
 		}
 	}
