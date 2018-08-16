@@ -17,7 +17,7 @@ public class Warehouse {
 
 	public String toString() {
 		if (isAlive)
-			return "DIST[" + w_name + "," + w_address + "," + w_ytd + "," + w_tax + "]";
+			return "WRHS[" + w_name + "," + w_address + "," + w_ytd + "," + w_tax + "]";
 		else
 			return "---";
 	}
