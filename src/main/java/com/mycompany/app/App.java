@@ -43,7 +43,7 @@ public class App {
 
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
-		// fire ignite
+		// fire
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", "54.251.179.146").start();
 
 		IgniteTransactions transactions = ignite.transactions();
@@ -82,6 +82,68 @@ public class App {
 		TransactionConcurrency concurrency = TransactionConcurrency.PESSIMISTIC;
 		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		// TESTS
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				long startTimeReadWrite = System.currentTimeMillis();
+				int threadId = (int) (Thread.currentThread().getId() % _CLIENT_NUMBER);
+				System.out.println("client #" + threadId + " started...");
+				for (int i = 0; i < _ROUNDS; i++) {
+					long txnStartTime = System.currentTimeMillis();
+					int key = ThreadLocalRandom.current().nextInt(0, _OBJECTS);
+					int value = -1000000;
+					Map<Integer, Integer> kvMap = stale_cache.getAll(all_keys);
+					try (Transaction tx = transactions.txStart(concurrency, ser)) {
+						value = kvMap.get(key);
+						cache.put(key, value + 1);
+						tx.commit();
+						tx.close();
+					}
+					long estimatedTime = System.currentTimeMillis() - txnStartTime;
+					System.out.println(estimatedTime);
+					at.set(threadId * _ROUNDS + i, estimatedTime);
+				}
+			}
+		};
+
+		Runnable syncer = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					while (true) {
+						for (int i = 0; i < _OBJECTS; i++) {
+							stale_cache.put(i, cache.get(i));
+						}
+						Thread.sleep(1000);
+					}
+
+				} catch (InterruptedException e) {
+					System.out.println("Synchronizer stopped");
+				}
+			}
+		};
+
+		long clientStartTime = System.currentTimeMillis();
+
+		// INITIATE CONCURRENT CLIENTS
+		Thread threads[] = new Thread[_CLIENT_NUMBER];
+		Thread synchronizer = new Thread(syncer);
+		// synchronizer.start();
+		for (int i = 0; i < _CLIENT_NUMBER; i++) {
+			threads[i] = new Thread(r);
+			threads[i].start();
+		}
+		// WAIT FOR ALL CLEINTS
+		for (int i = 0; i < _CLIENT_NUMBER; i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e) {
+				System.out.println(e);
+			}
+		}
+		synchronizer.interrupt();
+		// PRINT STATS
+		long estimatedTime_tp = System.currentTimeMillis() - clientStartTime;
 
 		// PRINT STATS
 
@@ -100,7 +162,7 @@ public class App {
 		}
 		System.out.print("\n\n\n\n===========================================\n");
 		System.out.println("\nSafety:  " + (_ROUNDS * _CLIENT_NUMBER == sum));
-		// System.out.println( "Throuput:"+
+		// System.out.println( "Throughput:"+
 		// ((_ROUNDS)*_CLIENT_NUMBER)*1000/estimatedTime_tp+" rounds/s");
 		int sum_time = 0;
 		for (int i = 0; i < _CLIENT_NUMBER * _ROUNDS; i++) {
