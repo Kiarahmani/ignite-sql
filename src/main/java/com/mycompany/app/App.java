@@ -42,30 +42,10 @@ public class App {
 	private static AtomicLongArray at = new AtomicLongArray(myArray);
 
 	public static void main(String[] args) {
-		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		Starter salam = new Starter(10);
-		IgniteConfiguration cfg = new IgniteConfiguration();
-		cfg.setClientMode(true);
-		// ADDRESS RESOLVER
-		Map<String, String> addrMap = new HashMap<String, String>();
-		addrMap.put("172.31.19.186", "52.14.206.156"); // port forwarding
-		BasicAddressResolver addrRes = null;
-		try {
-			addrRes = new BasicAddressResolver(addrMap);
-		} catch (UnknownHostException e) {
-			System.out.println(e);
-		}
-		cfg.setAddressResolver(addrRes);
-		// IP FINDER
-		TcpDiscoverySpi spi = new TcpDiscoverySpi();
-		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
-		ipFinder.setAddresses(Arrays.asList("54.169.147.152:47500..47509"));// Ohio Client
-		spi.setIpFinder(ipFinder);
-		cfg.setDiscoverySpi(spi);
-
-		// FIRE IGNITE
 		long startTime = System.currentTimeMillis();
-		Ignite ignite = Ignition.start(cfg);
+		// fire ignite
+		Ignite ignite = new Starter("172.31.19.186", "52.14.206.156", "54.169.147.152").start();
+		
 		IgniteTransactions transactions = ignite.transactions();
 		System.out.println("All Available Caches on server : " + ignite.cacheNames());
 
