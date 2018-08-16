@@ -24,12 +24,11 @@ public class Client {
 			@Override
 			public void run() {
 				IgniteTransactions transactions = ignite.transactions();
-				IgniteCache<Integer, Integer> cache = ignite.cache("sync");
-				IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
-
+				IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
+				IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
-			
+
 			}
 		};
 	}
