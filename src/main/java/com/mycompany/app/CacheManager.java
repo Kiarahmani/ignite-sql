@@ -11,6 +11,7 @@ import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.configuration.NearCacheConfiguration;
 import org.apache.ignite.transactions.Transaction;
 import org.apache.ignite.transactions.TransactionIsolation;
 
@@ -34,6 +35,7 @@ public class CacheManager {
 		affFunc.setPartitions(1);
 		ccfg.setAffinity(affFunc);
 		// stale config
+		NearCacheConfiguration<Integer, Integer> nearCfg = new NearCacheConfiguration<>();
 		CacheConfiguration<Integer, Integer> sccfg = new CacheConfiguration<Integer, Integer>("stale_sync");
 		sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
 		sccfg.setCacheMode(CacheMode.PARTITIONED);
