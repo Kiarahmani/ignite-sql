@@ -35,8 +35,10 @@ public class Constants {
 		// create all district keys
 		all_keys_district = new TreeSet<DoubleKey>();
 		for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
-			for (int d = 0; d < _DISTRICT_NUMBER; d++)
+			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
 				all_keys_district.add(new DoubleKey(d, w));
+				System.out.println(".");
+			}
 
 		}
 
