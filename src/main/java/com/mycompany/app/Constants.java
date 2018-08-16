@@ -15,6 +15,7 @@ public class Constants {
 	public int _ROUNDS;
 	Set<Integer> all_keys;
 	Set<DoubleKey> all_keys_district;
+	Set<Integer> all_keys_warehouse;
 
 	TransactionIsolation ser;
 	TransactionIsolation rc;
@@ -38,6 +39,11 @@ public class Constants {
 			for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 				all_keys_district.add(new DoubleKey(d, w));
 			}
+		}
+		all_keys_warehouse = new TreeSet<Integer>();
+
+		for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
+			all_keys_warehouse.add(w);
 		}
 
 		ser = TransactionIsolation.SERIALIZABLE;

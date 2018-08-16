@@ -21,6 +21,7 @@ public class CacheManager {
 		System.out.println(">>>> CacheManager: currently available caches: " + ignite.cacheNames());
 	}
 
+	// 2
 	public void createAllCaches(Ignite ignite) {
 		// INITILIZE CACHE: district
 		// ser: main config
@@ -44,15 +45,47 @@ public class CacheManager {
 		ignite.createCache(district_ccfg);
 		ignite.createCache(district_sccfg, district_nearCfg);
 		// ----------------------------------------------------------------------------------------------------
+		// INITILIZE CACHE: warehouse
+		// ser: main config
+		CacheConfiguration<Integer, Warehouse> warehouse_ccfg = new CacheConfiguration<Integer, Warehouse>(
+				"warehouse_ser");
+		warehouse_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		warehouse_ccfg.setCacheMode(CacheMode.REPLICATED);
+		// ser: affinity config
+		RendezvousAffinityFunction warehouse_affFunc = new RendezvousAffinityFunction();
+		warehouse_affFunc.setExcludeNeighbors(true);
+		warehouse_affFunc.setPartitions(1);
+		warehouse_ccfg.setAffinity(warehouse_affFunc);
+		// stale config
+		NearCacheConfiguration<Integer, Warehouse> warehouse_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<Integer, Warehouse> warehouse_sccfg = new CacheConfiguration<Integer, Warehouse>(
+				"warehouse_stale");
+		warehouse_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+		warehouse_sccfg.setCacheMode(CacheMode.REPLICATED);
+		warehouse_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
+		// create both caches:
+		ignite.createCache(warehouse_ccfg);
+		ignite.createCache(warehouse_sccfg, warehouse_nearCfg);
+		// ----------------------------------------------------------------------------------------------------
+
 	}
 
 	public void populateAllCaches(Ignite ignite, Constants cons) {
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
+		// district
 		for (DoubleKey key : cons.all_keys_district) {
 			System.out.println("init(district)" + key.toString());
-			district_cache.put(key, new District("", "", 0, 0, true));
-			district_scache.put(key, new District("", "", 0, 0, true));
+			district_cache.put(key, new District("", "", 0, 0, false));
+			district_scache.put(key, new District("", "", 0, 0, false));
+		}
+		// warehouse
+		for (int key : cons.all_keys_warehouse) {
+			System.out.println("init(warehouse)" + key);
+			warehouse_cache.put(key, new Warehouse("", "", 0, 0, false));
+			warehouse_scache.put(key, new Warehouse("", "", 0, 0, false));
 		}
 
 	}
@@ -60,11 +93,21 @@ public class CacheManager {
 	public void printAll(Ignite ignite, Constants cons) {
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n>>districts:");
 			System.out.println("key     |   value\n-----------------");
 			for (DoubleKey key : cons.all_keys_district) {
 				System.out.println("" + key.toString() + "	| " + district_cache.get(key).toString() + "");
+			}
+		}
+
+		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
+			System.out.println("\n\n>>warehouses:");
+			System.out.println("key     |   value\n-----------------");
+			for (int key : cons.all_keys_warehouse) {
+				System.out.println("" + key + "	| " + warehouse_cache.get(key).toString() + "");
 			}
 		}
 	}
@@ -73,9 +116,12 @@ public class CacheManager {
 		System.out.println(">>> destroying caches...");
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
 		district_cache.destroy();
 		district_scache.destroy();
-		System.out.println("######destroyAll###" + cons.all_keys_district.size());
+		warehouse_cache.destroy();
+		warehouse_scache.destroy();
 	}
 
 }
