@@ -59,7 +59,7 @@ public class Client {
 		System.out.print("\n\n\n\n===========================================\n");
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
 		System.out
-				.println("Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / estimatedTime_tp + " rounds/s");
+				.println("Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp+1) + " rounds/s");
 		int sum_time = 0;
 		for (int i = 0; i < cons._CLIENT_NUMBER * cons._ROUNDS; i++) {
 			sum_time += at.get(i);
