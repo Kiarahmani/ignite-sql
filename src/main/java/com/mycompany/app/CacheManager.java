@@ -42,7 +42,7 @@ public class CacheManager {
 		sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
 		// create both caches:
 		ignite.createCache(ccfg);
-		ignite.createCache(sccfg);
+		ignite.createCache(sccfg,nearCfg);
 
 	}
 
