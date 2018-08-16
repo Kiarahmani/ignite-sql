@@ -23,6 +23,8 @@ public class Constants {
 		this._TOTAL_REPS = totals;
 		this._ROUNDS = _TOTAL_REPS / _CLIENT_NUMBER;
 		all_keys = new TreeSet<Integer>();
+		for (int i = 0; i < _OBJECT_NUMBER; i++)
+			all_keys.add(i);
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;
