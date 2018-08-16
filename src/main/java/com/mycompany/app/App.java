@@ -1,4 +1,4 @@
-// things are going smoothely!
+// aug 16
 
 package com.mycompany.app;
 
@@ -44,8 +44,8 @@ public class App {
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		// fire ignite
-		Ignite ignite = new Starter("172.31.19.186", "52.14.206.156", "54.169.147.152").start();
-		
+		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", "54.251.179.146").start();
+
 		IgniteTransactions transactions = ignite.transactions();
 		System.out.println("All Available Caches on server : " + ignite.cacheNames());
 

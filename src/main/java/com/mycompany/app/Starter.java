@@ -22,7 +22,7 @@ public class Starter {
 		this.publicIp = publicIp;
 		this.localIp = localIp;
 	}
-	
+
 	public Ignite start() {
 		IgniteConfiguration cfg = new IgniteConfiguration();
 		cfg.setClientMode(true);
@@ -40,11 +40,11 @@ public class Starter {
 		// IP FINDER
 		TcpDiscoverySpi spi = new TcpDiscoverySpi();
 		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
-		ipFinder.setAddresses(Arrays.asList(serverIp+":47500..47509"));// Ohio Client
+		ipFinder.setAddresses(Arrays.asList(serverIp + ":47500..47509"));// Ohio Client
 		spi.setIpFinder(ipFinder);
 		cfg.setDiscoverySpi(spi);
 		Ignite ignite = Ignition.start(cfg);
 		return ignite;
 	}
-	
+
 }
