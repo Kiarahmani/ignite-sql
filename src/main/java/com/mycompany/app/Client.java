@@ -35,8 +35,8 @@ public class Client {
 					int value = -1000000;
 					//Map<Integer, Integer> kvMap = stale_cache.getAll(cons.all_keys);
 					try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-						Map<Integer, Integer> kvMap = cache.getAll(cons.all_keys);
-						value = kvMap.get(key);
+						//Map<Integer, Integer> kvMap = cache.getAll(cons.all_keys);
+						value = cache.get(3);
 						cache.put(key, value + 2);
 						tx.commit();
 						tx.close();
