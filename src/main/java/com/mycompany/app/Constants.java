@@ -39,8 +39,8 @@ public class Constants {
 				all_keys_district.add(new DoubleKey(d, w));
 				System.out.println(".");
 			}
-
 		}
+		System.out.println("######"+all_keys_district.size());
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;

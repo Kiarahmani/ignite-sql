@@ -54,6 +54,7 @@ public class CacheManager {
 			district_cache.put(key, 0);
 			district_scache.put(key, 1000000);
 		}
+		System.out.println("######populateAllCaches###"+cons.all_keys_district.size());
 	}
 
 	public void printAll(Ignite ignite, Constants cons) {
@@ -66,6 +67,7 @@ public class CacheManager {
 				System.out.println("" + key.toString() + "	| " + district_cache.get(key) + "");
 			}
 		}
+		System.out.println("######printAll###"+cons.all_keys_district.size());
 	}
 
 	public void destroyAll(Ignite ignite, Constants cons) {
@@ -74,6 +76,7 @@ public class CacheManager {
 		IgniteCache<DoubleKey, Integer> district_scache = ignite.cache("district_stale");
 		district_cache.destroy();
 		district_scache.destroy();
+		System.out.println("######destroyAll###"+cons.all_keys_district.size());
 	}
 
 }

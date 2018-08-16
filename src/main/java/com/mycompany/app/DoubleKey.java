@@ -18,8 +18,7 @@ public class DoubleKey implements Comparable<DoubleKey> {
 	}
 
 	public String toString() {
-
-		return "(" + k1 + "," + k2 +")";
+		return "(" + k1 + "," + k2 + ")";
 	}
 
 	public boolean equals(DoubleKey other) {
