@@ -22,8 +22,8 @@ public class Constants {
 
 	public Constants(int clientNumber, int objectNumber, int totals) {
 		// change these later //TODO
-		this._DISTRICT_NUMBER = 15;
-		this._WAREHOUSE_NUMBER = 10;
+		this._DISTRICT_NUMBER = 2;
+		this._WAREHOUSE_NUMBER = 3;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._OBJECT_NUMBER = objectNumber;
@@ -37,10 +37,8 @@ public class Constants {
 		for (int d = 0; d < _DISTRICT_NUMBER; d++) {
 			for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 				all_keys_district.add(new DoubleKey(d, w));
-				System.out.println("######" + all_keys_district.size());
 			}
 		}
-		System.out.println("######" + all_keys_district.size());
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;
