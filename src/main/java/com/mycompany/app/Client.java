@@ -29,21 +29,7 @@ public class Client {
 
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
-				for (int i = 0; i < cons._ROUNDS; i++) {
-					long txnStartTime = System.currentTimeMillis();
-					int key = ThreadLocalRandom.current().nextInt(0, cons._OBJECT_NUMBER);
-					int value = -1000000;
-					Map<Integer, Integer> kvMap = stale_cache.getAll(cons.all_keys);
-					try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-						value = kvMap.get(key);
-						cache.put(key, value + 2);
-						tx.commit();
-						tx.close();
-					}
-					long estimatedTime = System.currentTimeMillis() - txnStartTime;
-					System.out.println(estimatedTime);
-					at.set(threadId * cons._ROUNDS + i, estimatedTime);
-				}
+			
 			}
 		};
 	}

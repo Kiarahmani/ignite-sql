@@ -61,7 +61,7 @@ public class CacheManager {
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<DoubleKey, Integer> district_cache = ignite.cache("district_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
-			System.out.println("\n>> final districts:");
+			System.out.println("\n>>districts:");
 			System.out.println("key     |   value\n-----------------");
 			for (DoubleKey key : cons.all_keys_district) {
 				System.out.println("" + key.toString() + "	| " + district_cache.get(key) + "");
