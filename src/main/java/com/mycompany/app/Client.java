@@ -36,7 +36,7 @@ public class Client {
 					Map<Integer, Integer> kvMap = stale_cache.getAll(cons.all_keys);
 					try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 						//value = kvMap.get(key);
-						cache.put(key, value + 1);
+						cache.put(key, value + 2);
 						tx.commit();
 						tx.close();
 					}
