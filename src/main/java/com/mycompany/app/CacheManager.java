@@ -79,16 +79,16 @@ public class CacheManager {
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
 			System.out.println("init(district)" + key.toString());
-			String name = UUID.randomUUID().toString();
-			String address = UUID.randomUUID().toString();
+			String name = UUID.randomUUID().toString().substring(0, 5);
+			String address = UUID.randomUUID().toString().substring(0, 5);
 			district_cache.put(key, new District(name, address, 0, 0, true));
 			district_scache.put(key, new District(name, address, 0, 0, true));
 		}
 		// warehouse
 		for (int key : cons.all_keys_warehouse) {
 			System.out.println("init(warehouse)" + key);
-			String name = UUID.randomUUID().toString();
-			String address = UUID.randomUUID().toString();
+			String name = UUID.randomUUID().toString().substring(0, 5);
+			String address = UUID.randomUUID().toString().substring(0, 5);
 			warehouse_cache.put(key, new Warehouse(name, address, 0, 0, true));
 			warehouse_scache.put(key, new Warehouse(name, address, 0, 0, true));
 		}
