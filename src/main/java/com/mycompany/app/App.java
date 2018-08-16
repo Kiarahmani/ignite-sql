@@ -53,6 +53,6 @@ public class App {
 		manager.printAll(ignite, cons);
 		// DESTROYCACHES
 		manager.destroyAll(ignite, cons);
-		
+
 	}
 }

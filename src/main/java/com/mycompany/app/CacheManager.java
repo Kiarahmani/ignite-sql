@@ -71,6 +71,7 @@ public class CacheManager {
 	}
 
 	public void destroyAll(Ignite ignite, Constants cons) {
+		System.out.println(">>> destroying caches...");
 		IgniteCache<Integer, Integer> cache = ignite.cache("sync");
 		IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
 		cache.destroy();
