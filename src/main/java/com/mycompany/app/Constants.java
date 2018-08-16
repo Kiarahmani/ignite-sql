@@ -34,13 +34,13 @@ public class Constants {
 			all_keys.add(i);
 		// create all district keys
 		all_keys_district = new TreeSet<DoubleKey>();
-		for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
-			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
+		for (int d = 0; d < _DISTRICT_NUMBER; d++) {
+			for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 				all_keys_district.add(new DoubleKey(d, w));
-				System.out.println("######"+all_keys_district.size());
+				System.out.println("######" + all_keys_district.size());
 			}
 		}
-		System.out.println("######"+all_keys_district.size());
+		System.out.println("######" + all_keys_district.size());
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;
