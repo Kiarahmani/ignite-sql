@@ -17,20 +17,30 @@ public class Client {
 	long clientsStartTime;
 	long clientsFinishTime;
 
+	public void testTxn(Ignite ignite) {
+		IgniteTransactions transactions = ignite.transactions();
+		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
+		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
+		IgniteCache<DoubleKey, District> warehouse_cache = ignite.cache("district_ser");
+		IgniteCache<DoubleKey, District> warehouse_scache = ignite.cache("district_stale");
+		System.out.println("doing some shitty tasks");
+	}
+
 	public Client(Ignite ignite, Constants cons) {
 		myArray = new long[cons._CLIENT_NUMBER * cons._ROUNDS];
 		at = new AtomicLongArray(myArray);
 		task = new Runnable() {
 			@Override
 			public void run() {
-				IgniteTransactions transactions = ignite.transactions();
-				IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
-				IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
+				for (int rd = 0; rd < cons._ROUNDS; rd++) {
+					testTxn(ignite);
+				}
 
 			}
 		};
+
 	}
 
 	public void startAll(Constants cons) {
@@ -58,8 +68,8 @@ public class Client {
 	public void printStats(Ignite ignite, Constants cons) {
 		System.out.print("\n\n\n\n===========================================\n");
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
-		System.out
-				.println("Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp+1) + " rounds/s");
+		System.out.println(
+				"Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s");
 		int sum_time = 0;
 		for (int i = 0; i < cons._CLIENT_NUMBER * cons._ROUNDS; i++) {
 			sum_time += at.get(i);

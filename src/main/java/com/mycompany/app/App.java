@@ -45,6 +45,7 @@ public class App {
 		manager.createAllCaches(ignite);
 		manager.populateAllCaches(ignite, cons);
 
+		System.out.print("\n\n\n\n===========================================\n");
 		// START CLIENTS
 		clients.startAll(cons);
 		// WAIT FOR ALL CLEINTS

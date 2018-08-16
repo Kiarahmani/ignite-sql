@@ -118,7 +118,7 @@ public class CacheManager {
 	}
 
 	public void destroyAll(Ignite ignite, Constants cons) {
-		System.out.println(">>> destroying caches...");
+		System.out.println("\n>\n>\n>>> destroying caches...");
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
