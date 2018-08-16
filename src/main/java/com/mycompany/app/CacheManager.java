@@ -45,10 +45,10 @@ public class CacheManager {
 	}
 
 	public void populateAllCaches(Ignite ignite, Constants cons) {
+		IgniteCache<Integer, Integer> cache = ignite.cache("sync");
+		IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
 		for (int i = 0; i < cons._OBJECT_NUMBER; i++) {
 			System.out.print(".");
-			IgniteCache<Integer, Integer> cache = ignite.cache("sync");
-			IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
 			cache.put(i, 0);
 			stale_cache.put(i, 1000000);
 		}

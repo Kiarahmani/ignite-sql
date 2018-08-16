@@ -36,7 +36,7 @@ import java.util.UUID;
 
 public class App {
 	public static void main(String[] args) {
-		Constants cons = new Constants(2, 10, 100);
+		Constants cons = new Constants(1, 10, 100);
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", "54.251.179.146").start();
 		CacheManager manager = new CacheManager(ignite);
 		Client clients = new Client(ignite, cons);
