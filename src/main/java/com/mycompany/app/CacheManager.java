@@ -2,6 +2,7 @@ package com.mycompany.app;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -78,14 +79,18 @@ public class CacheManager {
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
 			System.out.println("init(district)" + key.toString());
-			district_cache.put(key, new District("", "", 0, 0, false));
-			district_scache.put(key, new District("", "", 0, 0, false));
+			String name = UUID.randomUUID().toString();
+			String address = UUID.randomUUID().toString();
+			district_cache.put(key, new District(name, address, 0, 0, true));
+			district_scache.put(key, new District(name, address, 0, 0, true));
 		}
 		// warehouse
 		for (int key : cons.all_keys_warehouse) {
 			System.out.println("init(warehouse)" + key);
-			warehouse_cache.put(key, new Warehouse("", "", 0, 0, false));
-			warehouse_scache.put(key, new Warehouse("", "", 0, 0, false));
+			String name = UUID.randomUUID().toString();
+			String address = UUID.randomUUID().toString();
+			warehouse_cache.put(key, new Warehouse(name, address, 0, 0, true));
+			warehouse_scache.put(key, new Warehouse(name, address, 0, 0, true));
 		}
 
 	}

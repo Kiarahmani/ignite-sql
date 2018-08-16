@@ -41,7 +41,6 @@ public class Constants {
 			}
 		}
 		all_keys_warehouse = new TreeSet<Integer>();
-
 		for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 			all_keys_warehouse.add(w);
 		}
