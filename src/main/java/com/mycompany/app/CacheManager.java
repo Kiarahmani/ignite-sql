@@ -22,63 +22,58 @@ public class CacheManager {
 	}
 
 	public void createAllCaches(Ignite ignite) {
-		// INITILIZE CACHE: cache
+		// INITILIZE CACHE: district
 		// ser: main config
-		CacheConfiguration<Integer, Integer> ccfg = new CacheConfiguration<Integer, Integer>("sync");
-		ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-		ccfg.setCacheMode(CacheMode.PARTITIONED);
-		ccfg.setBackups(1);
-		ccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
+		CacheConfiguration<DoubleKey, Integer> district_ccfg = new CacheConfiguration<DoubleKey, Integer>(
+				"district_ser");
+		district_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		district_ccfg.setCacheMode(CacheMode.REPLICATED);
 		// ser: affinity config
 		RendezvousAffinityFunction affFunc = new RendezvousAffinityFunction();
 		affFunc.setExcludeNeighbors(true);
 		affFunc.setPartitions(1);
-		ccfg.setAffinity(affFunc);
+		district_ccfg.setAffinity(affFunc);
 		// stale config
-		NearCacheConfiguration<Integer, Integer> nearCfg = new NearCacheConfiguration<>();
-		CacheConfiguration<Integer, Integer> sccfg = new CacheConfiguration<Integer, Integer>("stale_sync");
-		sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-		sccfg.setCacheMode(CacheMode.PARTITIONED);
-		sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
+		NearCacheConfiguration<DoubleKey, Integer> district_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<DoubleKey, Integer> district_sccfg = new CacheConfiguration<DoubleKey, Integer>(
+				"district_stale");
+		district_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+		district_sccfg.setCacheMode(CacheMode.REPLICATED);
+		district_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
 		// create both caches:
-		ignite.createCache(ccfg);
-		ignite.createCache(sccfg,nearCfg);
-
+		ignite.createCache(district_ccfg);
+		ignite.createCache(district_sccfg, district_nearCfg);
+		// ----------------------------------------------------------------------------------------------------
 	}
 
 	public void populateAllCaches(Ignite ignite, Constants cons) {
-		IgniteCache<Integer, Integer> cache = ignite.cache("sync");
-		IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
-		for (int i = 0; i < cons._OBJECT_NUMBER; i++) {
-			System.out.print(".");
-			cache.put(i, 0);
-			stale_cache.put(i, 1000000);
+		IgniteCache<DoubleKey, Integer> district_cache = ignite.cache("district_ser");
+		IgniteCache<DoubleKey, Integer> district_scache = ignite.cache("district_stale");
+		for (DoubleKey key : cons.all_keys_district) {
+			System.out.println("init#" + key.toString());
+			district_cache.put(key, 0);
+			district_scache.put(key, 1000000);
 		}
-
 	}
 
 	public void printAll(Ignite ignite, Constants cons) {
-		int sum = 0;
 		IgniteTransactions transactions = ignite.transactions();
-		IgniteCache<Integer, Integer> cache = ignite.cache("sync");
+		IgniteCache<DoubleKey, Integer> district_cache = ignite.cache("district_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
-			System.out.println(">> final values:");
-			int currentVal = 0;
+			System.out.println("\n>> final districts:");
 			System.out.println("key     |   value\n-----------------");
-			for (int i = 0; i < cons._OBJECT_NUMBER; i++) {
-				currentVal = cache.get(i);
-				sum += currentVal;
-				System.out.println("" + i + "	| " + currentVal + "");
+			for (DoubleKey key : cons.all_keys_district) {
+				System.out.println("" + key.toString() + "	| " + district_cache.get(key) + "");
 			}
 		}
 	}
 
 	public void destroyAll(Ignite ignite, Constants cons) {
 		System.out.println(">>> destroying caches...");
-		IgniteCache<Integer, Integer> cache = ignite.cache("sync");
-		IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
-		cache.destroy();
-		stale_cache.destroy();
+		IgniteCache<DoubleKey, Integer> district_cache = ignite.cache("district_ser");
+		IgniteCache<DoubleKey, Integer> district_scache = ignite.cache("district_stale");
+		district_cache.destroy();
+		district_scache.destroy();
 	}
 
 }
