@@ -35,7 +35,7 @@ import java.net.UnknownHostException;
 import java.util.UUID;
 
 public class App {
-	public static final int _CLIENT_NUMBER = 8;
+	public static final int _CLIENT_NUMBER = 1;
 	public static final int _OBJECTS = 10;
 	public static final int _ROUNDS = 100 / _CLIENT_NUMBER;
 	static long[] myArray = new long[_CLIENT_NUMBER * _ROUNDS];
