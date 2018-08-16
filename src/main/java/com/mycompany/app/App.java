@@ -51,5 +51,8 @@ public class App {
 		clients.printStats(ignite, cons);
 		// PRINT THE FINAL VALUES
 		manager.printAll(ignite, cons);
+		// DESTROYCACHES
+		manager.destroyAll(ignite, cons);
+		
 	}
 }
