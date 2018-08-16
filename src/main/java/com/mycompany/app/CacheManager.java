@@ -64,11 +64,11 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println(">> final values:");
 			int currentVal = 0;
-			System.out.println("key   |   value\n---------------");
+			System.out.println("key     |   value\n-----------------");
 			for (int i = 0; i < cons._OBJECT_NUMBER; i++) {
 				currentVal = cache.get(i);
 				sum += currentVal;
-				System.out.println("" + i + "	|	" + currentVal + "");
+				System.out.println("" + i + "	| " + currentVal + "");
 			}
 		}
 	}
