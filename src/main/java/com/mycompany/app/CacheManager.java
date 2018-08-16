@@ -51,8 +51,8 @@ public class CacheManager {
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 		for (DoubleKey key : cons.all_keys_district) {
 			System.out.println("init(district)" + key.toString());
-			district_cache.put(key, new District("", "", 0, 0, false));
-			district_scache.put(key, new District("", "", 0, 0, false));
+			district_cache.put(key, new District("", "", 0, 0, true));
+			district_scache.put(key, new District("", "", 0, 0, true));
 		}
 
 	}
