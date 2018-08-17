@@ -35,10 +35,10 @@ public class Constants {
 		// change these later //TODO
 		this._DISTRICT_NUMBER = 10;
 		this._WAREHOUSE_NUMBER = 2;
-		this._CUSTOMER_NUMBER = 200;
-		this._ORDER_NUMBER = 500;
+		this._CUSTOMER_NUMBER = 20;
+		this._ORDER_NUMBER = 10;
 		this._HISTORY_NUMBER = 1000;
-		this._ITEM_NUMBER = 50;
+		this._ITEM_NUMBER = 30;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
