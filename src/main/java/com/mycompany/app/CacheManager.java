@@ -90,7 +90,7 @@ public class CacheManager {
 		customer_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
 		// create both caches:
 		ignite.createCache(customer_ccfg);
-		ignite.createCache(customer_sccfg, warehouse_nearCfg);
+		ignite.createCache(customer_sccfg, customer_nearCfg);
 		// ----------------------------------------------------------------------------------------------------
 
 	}
