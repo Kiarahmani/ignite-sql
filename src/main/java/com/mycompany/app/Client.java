@@ -180,11 +180,17 @@ public class Client {
 			}
 		}
 		System.out.println("Overall Latency:  " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
-		System.out.println("    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms");
-		System.out.println("    |----Pymnt:   " + (sum_time_payment / payment_count) + "ms");
-		System.out.println("    |----StckLvl: " + (sum_time_stockLevel / stockLevel_count) + "ms");
-		System.out.println("    |----OrdrSts: " + (sum_time_orderStatus / orderStatus_count) + "ms");
-		System.out.println("    |----Dlvry:   " + (sum_time_delivery / delivery_count) + "ms");
+		System.out.println("    |");
+		if (newOrder_count != 0)
+			System.out.println("    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms");
+		if (payment_count != 0)
+			System.out.println("    |----Pymnt:   " + (sum_time_payment / payment_count) + "ms");
+		if (stockLevel_count != 0)
+			System.out.println("    |----StckLvl: " + (sum_time_stockLevel / stockLevel_count) + "ms");
+		if (orderStatus_count != 0)
+			System.out.println("    |----OrdrSts: " + (sum_time_orderStatus / orderStatus_count) + "ms");
+		if (delivery_count != 0)
+			System.out.println("    |----Dlvry:   " + (sum_time_delivery / delivery_count) + "ms");
 
 		System.out.print("===========================================\n\n\n\n");
 	}
