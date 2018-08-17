@@ -27,7 +27,8 @@ public class Client {
 		// randomly pick a district and update its (and its warehouse's) ytd
 		int w_id = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int d_id = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
-		Warehouse wh = warehouse_cache.get(w_id);
+		
+		Warehouse wh = warehouse_scache.get(w_id);
 		
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
