@@ -39,7 +39,7 @@ public class App {
 
 	public static void main(String[] args) {
 		Constants cons = new Constants(2, 10);
-		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", "54.251.179.146").start();
+		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", /* server */"18.136.120.183").start();
 		CacheManager manager = new CacheManager(ignite);
 		Client clients = new Client(ignite, cons);
 		manager.createAllCaches(ignite);
