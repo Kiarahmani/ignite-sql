@@ -60,7 +60,7 @@ public class Constants {
 			for (int c = 0; c < _CUSTOMER_NUMBER; c++) {
 				for (int d = 0; d < _DISTRICT_NUMBER; d++) {
 					for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
-						all_keys_customer.add(new TrippleKey(o, c, d, w));
+						all_keys_order.add(new QuadKey(o, c, d, w));
 					}
 				}
 			}
