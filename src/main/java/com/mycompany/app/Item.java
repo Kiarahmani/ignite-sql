@@ -11,7 +11,7 @@ public class Item {
 
 	public String toString() {
 		if (isAlive)
-			return "ORLN[" + info + "]";
+			return "ITEM[" + info + "]";
 		else
 			return "---";
 	}

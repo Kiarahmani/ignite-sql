@@ -32,7 +32,7 @@ public class Constants {
 		this._WAREHOUSE_NUMBER = 3;
 		this._CUSTOMER_NUMBER = 5;
 		this._ORDER_NUMBER = 3;
-		this._ITEM_NUMBER = 10;
+		this._ITEM_NUMBER = 4;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;

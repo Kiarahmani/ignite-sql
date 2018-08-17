@@ -244,7 +244,7 @@ public class CacheManager {
 			System.out.println(
 					"----------------------------------\nkey     |   value\n----------------------------------");
 			for (int key : cons.all_keys_warehouse) {
-				System.out.println("$(" + key + ")	| " + warehouse_cache.get(key).toString() + "");
+				//System.out.println("$(" + key + ")	| " + warehouse_cache.get(key).toString() + "");
 			}
 		}
 		// customer
