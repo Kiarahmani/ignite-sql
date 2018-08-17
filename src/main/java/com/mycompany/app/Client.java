@@ -17,13 +17,16 @@ public class Client {
 	long clientsStartTime;
 	long clientsFinishTime;
 
-	public void testTxn(Ignite ignite) {
+	public long testTxn(Ignite ignite) {
+		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 		IgniteCache<DoubleKey, District> warehouse_cache = ignite.cache("district_ser");
 		IgniteCache<DoubleKey, District> warehouse_scache = ignite.cache("district_stale");
 		System.out.println("doing some shitty tasks");
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
 	}
 
 	public Client(Ignite ignite, Constants cons) {
@@ -32,10 +35,12 @@ public class Client {
 		task = new Runnable() {
 			@Override
 			public void run() {
+				long estimatedTime = -1000000;
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					testTxn(ignite);
+					estimatedTime = testTxn(ignite);
+					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
 				}
 
 			}
