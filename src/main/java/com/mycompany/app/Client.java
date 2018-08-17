@@ -158,38 +158,33 @@ public class Client {
 		int sum_time_payment = 0, payment_count = 0;
 		for (int i = 0; i < cons._CLIENT_NUMBER * cons._ROUNDS; i++) {
 			sum_time += at.get(i).latency;
-			switch (at.get(i).kind) {
-			case "os": {
+			if (at.get(i).kind.equals("os")) {
 				sum_time_orderStatus += at.get(i).latency;
 				orderStatus_count++;
 			}
-			case "no": {
+			if (at.get(i).kind.equals("no")) {
 				sum_time_newOrder += at.get(i).latency;
 				newOrder_count++;
 			}
-			case "p": {
+			if (at.get(i).kind.equals("p")) {
 				sum_time_payment += at.get(i).latency;
 				payment_count++;
 			}
-			case "d": {
+			if (at.get(i).kind.equals("d")) {
 				sum_time_delivery += at.get(i).latency;
 				delivery_count++;
 			}
-			case "sl": {
+			if (at.get(i).kind.equals("sl")) {
 				sum_time_stockLevel += at.get(i).latency;
 				stockLevel_count++;
 			}
-			default:
-				System.err.println("(Client.java->printStats) Unexpected transaction kind");
-				;
-			}
 		}
 		System.out.println("Overall Latency: " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
-		System.out.println(" 	  New-Order: " + (sum_time_newOrder / newOrder_count) + "ms");
-		System.out.println(" 	  Payment: " + (sum_time_payment / payment_count) + "ms");
-		System.out.println(" 	  Stock Level: " + (sum_time_stockLevel / stockLevel_count) + "ms");
-		System.out.println(" 	  Order Status: " + (sum_time_orderStatus / orderStatus_count) + "ms");
-		System.out.println(" 	  Delivery: " + (sum_time_delivery / delivery_count) + "ms");
+		System.out.println("      New-Order: " + (sum_time_newOrder / newOrder_count) + "ms");
+		System.out.println("        Payment: " + (sum_time_payment / payment_count) + "ms");
+		System.out.println("    Stock Level: " + (sum_time_stockLevel / stockLevel_count) + "ms");
+		System.out.println("   Order Status: " + (sum_time_orderStatus / orderStatus_count) + "ms");
+		System.out.println("       Delivery: " + (sum_time_delivery / delivery_count) + "ms");
 
 		System.out.print("===========================================\n\n\n\n");
 	}
