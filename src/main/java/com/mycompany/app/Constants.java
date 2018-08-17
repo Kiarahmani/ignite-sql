@@ -44,6 +44,7 @@ public class Constants {
 			all_keys_warehouse.add(w);
 		}
 		// create all customer keys
+		all_keys_customer = new TreeSet<TrippleKey>();
 		for (int c = 0; c < _CUSTOMER_NUMBER; c++)
 			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
 				for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
