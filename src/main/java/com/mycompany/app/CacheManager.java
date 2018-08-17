@@ -169,8 +169,8 @@ public class CacheManager {
 		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
 		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<TrippleKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
-		IgniteCache<Integer, Item> item_cache = ignite.cache("warehouse_ser");
-		IgniteCache<Integer, Item> item_scache = ignite.cache("warehouse_stale");
+		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
+		IgniteCache<Integer, Item> item_scache = ignite.cache("item_stale");
 		System.out.print("\n\nINITIALIZATION\n===========================================\n");
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
@@ -244,7 +244,7 @@ public class CacheManager {
 			System.out.println(
 					"----------------------------------\nkey     |   value\n----------------------------------");
 			for (int key : cons.all_keys_warehouse) {
-				//System.out.println("$(" + key + ")	| " + warehouse_cache.get(key).toString() + "");
+				System.out.println("$(" + key + ")	| " + warehouse_cache.get(key).toString() + "");
 			}
 		}
 		// customer
