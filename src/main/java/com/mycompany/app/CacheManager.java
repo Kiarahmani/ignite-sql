@@ -138,7 +138,7 @@ public class CacheManager {
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
-		IgniteCache<TrippleKey, Warehouse> customer_cache = ignite.cache("customer_ser");
+		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
 		// distrcit
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<districts>>");
