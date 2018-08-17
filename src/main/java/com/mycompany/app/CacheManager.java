@@ -136,7 +136,26 @@ public class CacheManager {
 		ignite.createCache(orderLine_ccfg);
 		ignite.createCache(orderLine_sccfg, orderLine_nearCfg);
 		// ----------------------------------------------------------------------------------------------------
-
+		// ----------------------------------------------------------------------------------------------------
+		// INITILIZE CACHE: item
+		// ser: main config
+		CacheConfiguration<Integer, Item> item_ccfg = new CacheConfiguration<Integer, Item>("item_ser");
+		item_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		item_ccfg.setCacheMode(CacheMode.REPLICATED);
+		// ser: affinity config
+		RendezvousAffinityFunction item_affFunc = new RendezvousAffinityFunction();
+		item_affFunc.setExcludeNeighbors(true);
+		item_affFunc.setPartitions(1);
+		item_ccfg.setAffinity(item_affFunc);
+		// stale config
+		NearCacheConfiguration<Integer, Item> item_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<Integer, Item> item_sccfg = new CacheConfiguration<Integer, Item>("item_stale");
+		item_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+		item_sccfg.setCacheMode(CacheMode.REPLICATED);
+		item_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
+		// create both caches:
+		ignite.createCache(item_ccfg);
+		ignite.createCache(item_sccfg, item_nearCfg);
 	}
 
 	public void populateAllCaches(Ignite ignite, Constants cons) {
@@ -150,6 +169,8 @@ public class CacheManager {
 		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
 		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<TrippleKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
+		IgniteCache<Integer, Item> item_cache = ignite.cache("warehouse_ser");
+		IgniteCache<Integer, Item> item_scache = ignite.cache("warehouse_stale");
 		System.out.print("\n\nINITIALIZATION\n===========================================\n");
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
@@ -190,6 +211,13 @@ public class CacheManager {
 			orderLine_cache.put(key, new OrderLine(0, 0, "", "", false));
 			orderLine_scache.put(key, new OrderLine(0, 0, "", "", false));
 		}
+		// item
+		for (int key : cons.all_keys_item) {
+			String info = "I" + UUID.randomUUID().toString().substring(0, 5);
+			System.out.println("init(item)" + key);
+			item_cache.put(key, new Item(info, true));
+			item_scache.put(key, new Item(info, true));
+		}
 
 	}
 
@@ -200,6 +228,7 @@ public class CacheManager {
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
+		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		// distrcit
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<districts>>");
@@ -222,7 +251,7 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<customer>>");
 			System.out.println(
-					"----------------------------------\nkey	   	  |   value\n----------------------------------");
+					"----------------------------------\nkey  	  |   value\n----------------------------------");
 			for (TrippleKey key : cons.all_keys_customer) {
 				System.out.println(key.toString() + "	| " + customer_cache.get(key).toString() + "");
 			}
@@ -231,7 +260,7 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<order>>");
 			System.out.println(
-					"----------------------------------\nkey		   |   value\n----------------------------------");
+					"----------------------------------\nkey	   |   value\n----------------------------------");
 			for (QuadKey key : cons.all_keys_order) {
 				System.out.println(key.toString() + "	| " + order_cache.get(key).toString() + "");
 			}
@@ -240,9 +269,18 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<orderLine>>");
 			System.out.println(
-					"----------------------------------\nkey		   |   value\n----------------------------------");
+					"----------------------------------\nkey	   |   value\n----------------------------------");
 			for (TrippleKey key : cons.all_keys_orderLine) {
 				System.out.println(key.toString() + "	| " + orderLine_cache.get(key).toString() + "");
+			}
+		}
+		// item
+		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
+			System.out.println("\n<<item>>");
+			System.out.println(
+					"----------------------------------\nkey	   |   value\n----------------------------------");
+			for (int key : cons.all_keys_item) {
+				System.out.println("$(" + key + ")" + "	| " + item_cache.get(key).toString() + "");
 			}
 		}
 
@@ -260,6 +298,8 @@ public class CacheManager {
 		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
 		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<QuadKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
+		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
+		IgniteCache<Integer, Item> item_scache = ignite.cache("item_stale");
 		district_cache.destroy();
 		district_scache.destroy();
 		warehouse_cache.destroy();
@@ -270,6 +310,8 @@ public class CacheManager {
 		order_scache.destroy();
 		orderLine_cache.destroy();
 		orderLine_scache.destroy();
+		item_cache.destroy();
+		item_scache.destroy();
 	}
 
 }

@@ -11,6 +11,7 @@ public class Constants {
 	public int _DISTRICT_NUMBER;
 	public int _WAREHOUSE_NUMBER;
 	public int _CUSTOMER_NUMBER;
+	public int _ITEM_NUMBER;
 	public int _ORDER_NUMBER;
 	public int _TOTAL_REPS;
 	public int _ROUNDS;
@@ -19,6 +20,7 @@ public class Constants {
 	Set<TrippleKey> all_keys_customer;
 	Set<TrippleKey> all_keys_orderLine;
 	Set<QuadKey> all_keys_order;
+	Set<Integer> all_keys_item;
 
 	TransactionIsolation ser;
 	TransactionIsolation rc;
@@ -30,6 +32,7 @@ public class Constants {
 		this._WAREHOUSE_NUMBER = 3;
 		this._CUSTOMER_NUMBER = 5;
 		this._ORDER_NUMBER = 3;
+		this._ITEM_NUMBER = 10;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
@@ -46,6 +49,11 @@ public class Constants {
 		all_keys_warehouse = new TreeSet<Integer>();
 		for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 			all_keys_warehouse.add(w);
+		}
+		// create all item keys
+		all_keys_item = new TreeSet<Integer>();
+		for (int i = 0; i < _ITEM_NUMBER; i++) {
+			all_keys_item.add(i);
 		}
 		// create all customer keys
 		all_keys_customer = new TreeSet<TrippleKey>();
