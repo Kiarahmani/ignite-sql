@@ -22,7 +22,9 @@ public class Client {
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
@@ -179,7 +181,7 @@ public class Client {
 				stockLevel_count++;
 			}
 		}
-		System.out.println(ConsoleColors.GREEN + "Overall Latency:  "
+		System.out.println(ConsoleColors.YELLOW + "Overall Latency:  "
 				+ sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms" + ConsoleColors.RESET);
 		System.out.println("    |");
 		if (newOrder_count != 0)
