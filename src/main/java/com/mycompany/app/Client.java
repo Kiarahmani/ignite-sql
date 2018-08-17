@@ -67,6 +67,7 @@ public class Client {
 		threads = new Thread[cons._CLIENT_NUMBER];
 
 		for (int i = 0; i < cons._CLIENT_NUMBER; i++) {
+			System.out.println(cons._CLIENT_NUMBER);
 			threads[i] = new Thread(task);
 			threads[i].start();
 		}
