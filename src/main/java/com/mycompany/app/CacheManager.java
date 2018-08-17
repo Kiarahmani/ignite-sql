@@ -190,7 +190,7 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<customer>>");
 			System.out.println(
-					"----------------------------------\nkey		   	  |   value\n----------------------------------");
+					"----------------------------------\nkey	   	  |   value\n----------------------------------");
 			for (TrippleKey key : cons.all_keys_customer) {
 				System.out.println(key.toString() + "	| " + customer_cache.get(key).toString() + "");
 			}
@@ -199,7 +199,7 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<order>>");
 			System.out.println(
-					"----------------------------------\nkey		   	  |   value\n----------------------------------");
+					"----------------------------------\nkey		   |   value\n----------------------------------");
 			for (QuadKey key : cons.all_keys_order) {
 				System.out.println(key.toString() + "	| " + order_cache.get(key).toString() + "");
 			}
