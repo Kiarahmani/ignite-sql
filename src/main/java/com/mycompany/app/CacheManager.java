@@ -457,6 +457,8 @@ public class CacheManager {
 		IgniteCache<TrippleKey, Boolean> newOrder_scache = ignite.cache("newOrder_stale");
 		IgniteCache<Integer, History> history_cache = ignite.cache("history_ser");
 		IgniteCache<Integer, History> history_scache = ignite.cache("history_stale");
+		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
+		coordination_cache.destroy();
 		district_cache.destroy();
 		district_scache.destroy();
 		warehouse_cache.destroy();
