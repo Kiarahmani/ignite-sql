@@ -23,6 +23,11 @@ public class TrippleKey {
 
 	}
 
+	@Override
+	public String toString() {
+		return "$(" + k1 + "," + k2 + "," + k3 + ")";
+	}
+
 	public boolean equals(TrippleKey other) {
 		return (k1 == other.k1 && k2 == other.k2 && k3 == other.k3);
 	}

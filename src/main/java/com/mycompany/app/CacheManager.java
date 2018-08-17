@@ -3,6 +3,7 @@ package com.mycompany.app;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -68,6 +69,29 @@ public class CacheManager {
 		ignite.createCache(warehouse_ccfg);
 		ignite.createCache(warehouse_sccfg, warehouse_nearCfg);
 		// ----------------------------------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------------------------------
+		// INITILIZE CACHE: customer
+		// ser: main config
+		CacheConfiguration<TrippleKey, Customer> customer_ccfg = new CacheConfiguration<TrippleKey, Customer>(
+				"customer_ser");
+		customer_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		customer_ccfg.setCacheMode(CacheMode.REPLICATED);
+		// ser: affinity config
+		RendezvousAffinityFunction customer_affFunc = new RendezvousAffinityFunction();
+		customer_affFunc.setExcludeNeighbors(true);
+		customer_affFunc.setPartitions(1);
+		customer_ccfg.setAffinity(customer_affFunc);
+		// stale config
+		NearCacheConfiguration<TrippleKey, Customer> customer_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<TrippleKey, Customer> customer_sccfg = new CacheConfiguration<TrippleKey, Customer>(
+				"customer_stale");
+		customer_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+		customer_sccfg.setCacheMode(CacheMode.REPLICATED);
+		customer_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
+		// create both caches:
+		ignite.createCache(customer_ccfg);
+		ignite.createCache(customer_sccfg, warehouse_nearCfg);
+		// ----------------------------------------------------------------------------------------------------
 
 	}
 
@@ -76,22 +100,36 @@ public class CacheManager {
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
+		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
+		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
 		System.out.print("\n\nINITIALIZATION\n===========================================\n");
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
 			System.out.println("init(district)" + key.toString());
-			String name = UUID.randomUUID().toString().substring(0, 5);
-			String address = UUID.randomUUID().toString().substring(0, 5);
+			String name = "D" + UUID.randomUUID().toString().substring(0, 5);
+			String address = "D" + UUID.randomUUID().toString().substring(0, 5);
 			district_cache.put(key, new District(name, address, 0, 0, true));
 			district_scache.put(key, new District(name, address, 0, 0, true));
 		}
 		// warehouse
 		for (int key : cons.all_keys_warehouse) {
 			System.out.println("init(warehouse)" + key);
-			String name = UUID.randomUUID().toString().substring(0, 5);
-			String address = UUID.randomUUID().toString().substring(0, 5);
+			String name = "W" + UUID.randomUUID().toString().substring(0, 5);
+			String address = "W" + UUID.randomUUID().toString().substring(0, 5);
 			warehouse_cache.put(key, new Warehouse(name, address, 0, 0, true));
 			warehouse_scache.put(key, new Warehouse(name, address, 0, 0, true));
+		}
+		// customer
+		for (TrippleKey key : cons.all_keys_customer) {
+			System.out.println("init(customer)" + key.toString());
+			String name = "C" + UUID.randomUUID().toString().substring(0, 5);
+			String address = "C" + UUID.randomUUID().toString().substring(0, 5);
+			int balance = ThreadLocalRandom.current().nextInt(100, 100000);
+			int discount = ThreadLocalRandom.current().nextInt(0, 15);
+			int credit = ThreadLocalRandom.current().nextInt(0, 2);
+			customer_cache.put(key, new Customer(name, address, balance, discount, credit, 0, 0, 0, true));
+			customer_scache.put(key, new Customer(name, address, balance, discount, credit, 0, 0, 0, true));
+
 		}
 
 	}
@@ -100,7 +138,8 @@ public class CacheManager {
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
-
+		IgniteCache<TrippleKey, Warehouse> customer_cache = ignite.cache("customer_ser");
+		// distrcit
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<districts>>");
 			System.out.println(
@@ -109,7 +148,7 @@ public class CacheManager {
 				System.out.println("" + key.toString() + "	| " + district_cache.get(key).toString() + "");
 			}
 		}
-
+		// warehouse
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<warehouses>>");
 			System.out.println(
@@ -118,6 +157,16 @@ public class CacheManager {
 				System.out.println("$(" + key + ")	| " + warehouse_cache.get(key).toString() + "");
 			}
 		}
+		// customer
+		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
+			System.out.println("\n<<customer>>");
+			System.out.println(
+					"----------------------------------\nkey     |   value\n----------------------------------");
+			for (TrippleKey key : cons.all_keys_customer) {
+				System.out.println(key.toString() + "	| " + customer_cache.get(key).toString() + "");
+			}
+		}
+
 	}
 
 	public void destroyAll(Ignite ignite, Constants cons) {
@@ -126,10 +175,14 @@ public class CacheManager {
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
+		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
+		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
 		district_cache.destroy();
 		district_scache.destroy();
 		warehouse_cache.destroy();
 		warehouse_scache.destroy();
+		customer_cache.destroy();
+		customer_scache.destroy();
 	}
 
 }

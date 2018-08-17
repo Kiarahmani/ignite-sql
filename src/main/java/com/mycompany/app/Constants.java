@@ -10,10 +10,12 @@ public class Constants {
 	public int _CLIENT_NUMBER;
 	public int _DISTRICT_NUMBER;
 	public int _WAREHOUSE_NUMBER;
+	public int _CUSTOMER_NUMBER;
 	public int _TOTAL_REPS;
 	public int _ROUNDS;
 	Set<DoubleKey> all_keys_district;
 	Set<Integer> all_keys_warehouse;
+	Set<TrippleKey> all_keys_customer;
 
 	TransactionIsolation ser;
 	TransactionIsolation rc;
@@ -23,6 +25,7 @@ public class Constants {
 		// change these later //TODO
 		this._DISTRICT_NUMBER = 2;
 		this._WAREHOUSE_NUMBER = 3;
+		this._CUSTOMER_NUMBER = 5;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
@@ -35,10 +38,18 @@ public class Constants {
 				all_keys_district.add(new DoubleKey(d, w));
 			}
 		}
+		// create all warehouse keys
 		all_keys_warehouse = new TreeSet<Integer>();
 		for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 			all_keys_warehouse.add(w);
 		}
+		// create all customer keys
+		for (int c = 0; c < _CUSTOMER_NUMBER; c++)
+			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
+				for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
+					all_keys_customer.add(new TrippleKey(c, d, w));
+				}
+			}
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;
