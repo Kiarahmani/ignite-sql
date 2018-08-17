@@ -14,6 +14,7 @@ import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.NearCacheConfiguration;
+import org.apache.ignite.internal.util.typedef.internal.S;
 import org.apache.ignite.transactions.Transaction;
 import org.apache.ignite.transactions.TransactionIsolation;
 
@@ -156,6 +157,26 @@ public class CacheManager {
 		// create both caches:
 		ignite.createCache(item_ccfg);
 		ignite.createCache(item_sccfg, item_nearCfg);
+		// INITILIZE CACHE: district
+		// ser: main config
+		CacheConfiguration<DoubleKey, Stock> stock_ccfg = new CacheConfiguration<DoubleKey, Stock>("stock_ser");
+		stock_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		stock_ccfg.setCacheMode(CacheMode.REPLICATED);
+		// ser: affinity config
+		RendezvousAffinityFunction stock_affFunc = new RendezvousAffinityFunction();
+		stock_affFunc.setExcludeNeighbors(true);
+		stock_affFunc.setPartitions(1);
+		stock_ccfg.setAffinity(stock_affFunc);
+		// stale config
+		NearCacheConfiguration<DoubleKey, Stock> stock_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<DoubleKey, Stock> stock_sccfg = new CacheConfiguration<DoubleKey, Stock>("stock_stale");
+		stock_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+		stock_sccfg.setCacheMode(CacheMode.REPLICATED);
+		stock_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
+		// create both caches:
+		ignite.createCache(stock_ccfg);
+		ignite.createCache(stock_sccfg, stock_nearCfg);
+		// ----------------------------------------------------------------------------------------------------
 	}
 
 	public void populateAllCaches(Ignite ignite, Constants cons) {
@@ -171,6 +192,8 @@ public class CacheManager {
 		IgniteCache<TrippleKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<Integer, Item> item_scache = ignite.cache("item_stale");
+		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
+		IgniteCache<DoubleKey, Stock> stock_scache = ignite.cache("stock_stale");
 		System.out.print("\n\nINITIALIZATION\n===========================================\n");
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
@@ -218,6 +241,14 @@ public class CacheManager {
 			item_cache.put(key, new Item(info, true));
 			item_scache.put(key, new Item(info, true));
 		}
+		// stock
+		for (DoubleKey key : cons.all_keys_stock) {
+			System.out.println("init(stock)" + key.toString());
+			int quant = ThreadLocalRandom.current().nextInt(20, 300);
+			String info = "S" + UUID.randomUUID().toString().substring(0, 5);
+			stock_cache.put(key, new Stock(0, quant, 0, info, true));
+			stock_scache.put(key, new Stock(0, quant, 0, info, true));
+		}
 
 	}
 
@@ -229,6 +260,7 @@ public class CacheManager {
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
+		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
 		// distrcit
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<districts>>");
@@ -283,6 +315,15 @@ public class CacheManager {
 				System.out.println("$(" + key + ")" + "	| " + item_cache.get(key).toString() + "");
 			}
 		}
+		// stock
+		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
+			System.out.println("\n<<stock>>");
+			System.out.println(
+					"----------------------------------\nkey	   |   value\n----------------------------------");
+			for (DoubleKey key : cons.all_keys_stock) {
+				System.out.println("$(" + key + ")" + "	| " + stock_cache.get(key).toString() + "");
+			}
+		}
 
 	}
 
@@ -300,6 +341,8 @@ public class CacheManager {
 		IgniteCache<QuadKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<Integer, Item> item_scache = ignite.cache("item_stale");
+		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
+		IgniteCache<DoubleKey, Stock> stock_scache = ignite.cache("stock_stale");
 		district_cache.destroy();
 		district_scache.destroy();
 		warehouse_cache.destroy();
@@ -312,6 +355,8 @@ public class CacheManager {
 		orderLine_scache.destroy();
 		item_cache.destroy();
 		item_scache.destroy();
+		stock_cache.destroy();
+		stock_scache.destroy();
 	}
 
 }
