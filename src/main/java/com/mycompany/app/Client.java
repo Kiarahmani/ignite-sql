@@ -35,9 +35,7 @@ public class Client {
 	public long payment(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
-			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
@@ -50,7 +48,9 @@ public class Client {
 	public long delivery(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
@@ -150,8 +150,9 @@ public class Client {
 	public void printStats(Ignite ignite, Constants cons) {
 		System.out.print("\n\n===========================================\n");
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
-		System.out.println(
-				"Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s");
+		System.out.println(ConsoleColors.YELLOW + "Throughput:"
+				+ (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s"
+				+ ConsoleColors.RESET);
 		int sum_time = 0;
 		int sum_time_delivery = 0, delivery_count = 0;
 		int sum_time_newOrder = 0, newOrder_count = 0;
