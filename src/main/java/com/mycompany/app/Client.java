@@ -80,7 +80,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		System.out.println("doing newOrder");
+		System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -141,7 +141,6 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
