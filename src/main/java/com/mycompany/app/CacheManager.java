@@ -30,6 +30,7 @@ public class CacheManager {
 		coordination_ccfg.setCacheMode(CacheMode.REPLICATED);
 		IgniteCache<String, Integer> coordination_cache = ignite.createCache(coordination_ccfg);
 		coordination_cache.put("ready", 0);
+		coordination_cache.put("finished", 0);
 		coordination_cache.put("initialized", 0);
 	}
 
