@@ -39,7 +39,7 @@ public class App {
 
 	public static void main(String[] args) {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
-		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
+		int _FOLLOWER_COUNT = 1;//Integer.valueOf(args[1]);
 		System.out.println("@@@@@"+args[2]);
 		Constants cons = new Constants(2, 10);
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", /* server */"18.136.120.183").start();
