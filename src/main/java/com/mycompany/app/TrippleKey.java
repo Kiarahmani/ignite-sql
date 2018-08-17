@@ -1,6 +1,6 @@
 package com.mycompany.app;
 
-public class TrippleKey {
+public class TrippleKey implements Comparable<DoubleKey> {
 	public int k1;
 	public int k2;
 	public int k3;
