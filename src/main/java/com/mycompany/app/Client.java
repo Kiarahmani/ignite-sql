@@ -19,9 +19,11 @@ public class Client {
 	long clientsFinishTime;
 
 	public void announceReady(Ignite ignite, Constants cons) {
+		int i = 0;
 		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
 		IgniteTransactions transactions = ignite.transactions();
 		do {
+
 			System.out.println("+++waiting for coordinator to initialize");
 			try {
 				Thread.sleep(300);
@@ -29,7 +31,11 @@ public class Client {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} while (coordination_cache.get("initialized") != 1);
+			if (coordination_cache != null)
+				i = coordination_cache.get("initialized");
+			else
+				coordination_cache = ignite.cache("coordination");
+		} while (i != 1);
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			int v = coordination_cache.get("ready");
 			coordination_cache.put("ready", v + 1);
