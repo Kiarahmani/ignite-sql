@@ -74,9 +74,7 @@ public class Client {
 	public long orderStatus(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
