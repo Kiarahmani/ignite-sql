@@ -179,7 +179,8 @@ public class Client {
 				stockLevel_count++;
 			}
 		}
-		System.out.println("Overall Latency:  " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
+		System.out.println(ConsoleColors.GREEN + "Overall Latency:  "
+				+ sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms" + ConsoleColors.RESET);
 		System.out.println("    |");
 		if (newOrder_count != 0)
 			System.out.println("    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms");
