@@ -22,9 +22,7 @@ public class Client {
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
-			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
@@ -37,7 +35,9 @@ public class Client {
 	public long payment(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
@@ -183,7 +183,7 @@ public class Client {
 		}
 		System.out.println(ConsoleColors.YELLOW + "Overall Latency:  "
 				+ sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms" + ConsoleColors.RESET);
-		System.out.println("    |");
+		// System.out.println(" |");
 		if (newOrder_count != 0)
 			System.out.println("    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms");
 		if (payment_count != 0)
