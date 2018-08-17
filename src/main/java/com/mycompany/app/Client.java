@@ -31,6 +31,7 @@ public class Client {
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
 			Warehouse wh = warehouse_cache.get(w_id);
+			System.out.println("----");
 			warehouse_cache.put(w_id, new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + 1, true));
 			tx.commit();
 			tx.close();
