@@ -76,6 +76,7 @@ public class CacheManager {
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
+		System.out.print("\n\nINITIALIZATION\n===========================================\n");
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
 			System.out.println("init(district)" + key.toString());
