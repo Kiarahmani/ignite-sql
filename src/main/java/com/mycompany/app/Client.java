@@ -3,6 +3,7 @@ package com.mycompany.app;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLongArray;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -12,8 +13,8 @@ import org.apache.ignite.transactions.Transaction;
 public class Client {
 	Runnable task;
 	Thread threads[];
-	static long[] myArray;
-	private static AtomicLongArray at;
+	static Stat[] myArray;
+	private static AtomicReferenceArray<Stat> at;
 	long clientsStartTime;
 	long clientsFinishTime;
 
@@ -83,27 +84,38 @@ public class Client {
 	}
 
 	public Client(Ignite ignite, Constants cons) {
-		myArray = new long[cons._CLIENT_NUMBER * cons._ROUNDS];
-		at = new AtomicLongArray(myArray);
+		myArray = new Stat[cons._CLIENT_NUMBER * cons._ROUNDS];
+		at = new AtomicReferenceArray<Stat>(myArray);
 		task = new Runnable() {
 			@Override
 			public void run() {
 				long estimatedTime = -1000000;
+				String kind = "";
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
 					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
-					if (txn_type_rand < 6)
+					if (txn_type_rand < 6) {
+						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
-					if (txn_type_rand >= 6 && txn_type_rand < 12)
+					}
+					if (txn_type_rand >= 6 && txn_type_rand < 12) {
+						kind = "d";
 						estimatedTime = delivery(ignite, cons);
-					if (txn_type_rand >= 12 && txn_type_rand < 18)
+					}
+					if (txn_type_rand >= 12 && txn_type_rand < 18) {
+						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
-					if (txn_type_rand >= 18 && txn_type_rand < 59)
+					}
+					if (txn_type_rand >= 18 && txn_type_rand < 59) {
+						kind = "p";
 						estimatedTime = payment(ignite, cons);
-					if (txn_type_rand >= 59 && txn_type_rand < 100)
+					}
+					if (txn_type_rand >= 59 && txn_type_rand < 100) {
+						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
-					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
+					}
+					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 					System.out.println("#" + threadId + "(" + rd + "):" + estimatedTime + "ms");
 				}
 
@@ -139,10 +151,46 @@ public class Client {
 		System.out.println(
 				"Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s");
 		int sum_time = 0;
+		int sum_time_delivery = 0, delivery_count = 0;
+		int sum_time_newOrder = 0, newOrder_count = 0;
+		int sum_time_stockLevel = 0, stockLevel_count = 0;
+		int sum_time_orderStatus = 0, orderStatus_count = 0;
+		int sum_time_payment = 0, payment_count = 0;
 		for (int i = 0; i < cons._CLIENT_NUMBER * cons._ROUNDS; i++) {
-			sum_time += at.get(i);
+			sum_time += at.get(i).latency;
+			switch (at.get(i).kind) {
+			case "os": {
+				sum_time_orderStatus += at.get(i).latency;
+				orderStatus_count++;
+			}
+			case "no": {
+				sum_time_newOrder += at.get(i).latency;
+				newOrder_count++;
+			}
+			case "p": {
+				sum_time_payment += at.get(i).latency;
+				payment_count++;
+			}
+			case "d": {
+				sum_time_delivery += at.get(i).latency;
+				delivery_count++;
+			}
+			case "sl": {
+				sum_time_stockLevel += at.get(i).latency;
+				stockLevel_count++;
+			}
+			default:
+				System.err.println("(Client.java->printStats) Unexpected transaction kind");
+				;
+			}
 		}
-		System.out.println("Latency: " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
+		System.out.println("Overall Latency: " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
+		System.out.println(" 	  New-Order: " + (sum_time_newOrder / newOrder_count) + "ms");
+		System.out.println(" 	  Payment: " + (sum_time_payment / payment_count) + "ms");
+		System.out.println(" 	  Stock Level: " + (sum_time_stockLevel / stockLevel_count) + "ms");
+		System.out.println(" 	  Order Status: " + (sum_time_orderStatus / orderStatus_count) + "ms");
+		System.out.println(" 	  Delivery: " + (sum_time_delivery / delivery_count) + "ms");
+
 		System.out.print("===========================================\n\n\n\n");
 	}
 
