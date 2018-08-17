@@ -48,9 +48,7 @@ public class Client {
 	public long delivery(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
-			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
@@ -63,7 +61,9 @@ public class Client {
 	public long stockLevel(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
 		}
