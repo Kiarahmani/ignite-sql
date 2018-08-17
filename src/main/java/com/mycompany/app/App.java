@@ -36,7 +36,6 @@ import java.util.UUID;
 
 public class App {
 
-
 	public static void main(String[] args) {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
