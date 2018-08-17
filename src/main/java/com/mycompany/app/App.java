@@ -39,7 +39,7 @@ public class App {
 	public static final int _FOLLOWER_COUNT = 1;
 
 	public static void main(String[] args) {
-		System.out.println("@@@@@"+args[0]);
+		System.out.println("@@@@@"+args[2]);
 		Constants cons = new Constants(2, 10);
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", /* server */"18.136.120.183").start();
 		CacheManager manager = new CacheManager(ignite);
