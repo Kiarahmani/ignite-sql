@@ -51,7 +51,7 @@ public class Client {
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
 					estimatedTime = testTxn(ignite, cons);
 					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
-					System.out.println("#" + threadId + "(" + rd + ")");
+					System.out.println("#" + threadId + "(" + rd + "):"+estimatedTime+"ms");
 				}
 
 			}
@@ -82,7 +82,7 @@ public class Client {
 	}
 
 	public void printStats(Ignite ignite, Constants cons) {
-		System.out.print("\n\n\n\n===========================================\n");
+		System.out.print("\n\n===========================================\n");
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
 		System.out.println(
 				"Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s");
