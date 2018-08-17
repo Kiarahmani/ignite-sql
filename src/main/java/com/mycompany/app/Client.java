@@ -17,14 +17,24 @@ public class Client {
 	long clientsStartTime;
 	long clientsFinishTime;
 
-	public long testTxn(Ignite ignite) {
+	public long testTxn(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
-		IgniteCache<DoubleKey, District> warehouse_cache = ignite.cache("district_ser");
-		IgniteCache<DoubleKey, District> warehouse_scache = ignite.cache("district_stale");
-		System.out.println("doing some shitty tasks");
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("district_ser");
+		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("district_stale");
+		// randomly pick a district and update its (and its warehouse's) ytd
+		int w_id = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		int d_id = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			// update w_ytd
+			Warehouse wh = warehouse_cache.get(w_id);
+			warehouse_cache.put(w_id, new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + 1, true));
+			tx.commit();
+			tx.close();
+		}
+
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -39,7 +49,7 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					estimatedTime = testTxn(ignite);
+					estimatedTime = testTxn(ignite, cons);
 					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
 					System.out.println("#" + threadId + "(" + rd + ")");
 				}
