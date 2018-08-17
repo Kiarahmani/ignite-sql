@@ -277,16 +277,18 @@ public class CacheManager {
 			System.out.println("init(district)" + key.toString());
 			String name = "D" + UUID.randomUUID().toString().substring(0, 5);
 			String address = "D" + UUID.randomUUID().toString().substring(0, 5);
-			district_cache.put(key, new District(name, address, 0, 0, true));
-			district_scache.put(key, new District(name, address, 0, 0, true));
+			int tax = ThreadLocalRandom.current().nextInt(10, 15);
+			district_cache.put(key, new District(name, address, tax, 0, 0, true));
+			district_scache.put(key, new District(name, address, tax, 0, 0, true));
 		}
 		// warehouse
 		for (int key : cons.all_keys_warehouse) {
 			System.out.println("init(warehouse)" + key);
 			String name = "W" + UUID.randomUUID().toString().substring(0, 5);
 			String address = "W" + UUID.randomUUID().toString().substring(0, 5);
-			warehouse_cache.put(key, new Warehouse(name, address, 0, 0, true));
-			warehouse_scache.put(key, new Warehouse(name, address, 0, 0, true));
+			int tax = ThreadLocalRandom.current().nextInt(10, 15);
+			warehouse_cache.put(key, new Warehouse(name, address, tax, 0, true));
+			warehouse_scache.put(key, new Warehouse(name, address, tax, 0, true));
 		}
 		// customer
 		for (TrippleKey key : cons.all_keys_customer) {

@@ -33,12 +33,12 @@ public class Constants {
 
 	public Constants(int clientNumber, int totals) {
 		// change these later //TODO
-		this._DISTRICT_NUMBER = 10;
-		this._WAREHOUSE_NUMBER = 2;
-		this._CUSTOMER_NUMBER = 20;
-		this._ORDER_NUMBER = 10;
-		this._HISTORY_NUMBER = 1000;
-		this._ITEM_NUMBER = 30;
+		this._DISTRICT_NUMBER = 2;
+		this._WAREHOUSE_NUMBER = 1;
+		this._CUSTOMER_NUMBER = 2;
+		this._ORDER_NUMBER = 5;
+		this._HISTORY_NUMBER = 10;
+		this._ITEM_NUMBER = 3;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
@@ -87,13 +87,14 @@ public class Constants {
 					all_keys_orderLine.add(new TrippleKey(o, d, w));
 				}
 			}
+		// create all stock keys
 		all_keys_stock = new TreeSet<DoubleKey>();
 		for (int i = 0; i < _ITEM_NUMBER; i++) {
 			for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 				all_keys_stock.add(new DoubleKey(i, w));
 			}
 		}
-		// create all orderline keys
+		// create all neworder keys
 		all_keys_newOrder = new TreeSet<TrippleKey>();
 		for (int o = 0; o < _ORDER_NUMBER; o++)
 			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
