@@ -161,7 +161,7 @@ public class CacheManager {
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<customer>>");
 			System.out.println(
-					"----------------------------------\nkey     |   value\n----------------------------------");
+					"----------------------------------\nkey   	  |   value\n----------------------------------");
 			for (TrippleKey key : cons.all_keys_customer) {
 				System.out.println(key.toString() + "	| " + customer_cache.get(key).toString() + "");
 			}
