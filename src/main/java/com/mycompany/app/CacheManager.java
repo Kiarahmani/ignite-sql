@@ -324,7 +324,7 @@ public class CacheManager {
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
 		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
-		IgniteCache<Integer, Item> history_cache = ignite.cache("history_ser");
+		IgniteCache<Integer, History> history_cache = ignite.cache("history_ser");
 		// distrcit
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<districts>>");
