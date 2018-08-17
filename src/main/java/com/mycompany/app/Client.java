@@ -28,11 +28,10 @@ public class Client {
 		int w_id = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int d_id = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		Warehouse wh = warehouse_cache.get(w_id);
-		warehouse_cache.put(w_id, new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + 1, true));
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+		
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
-			
-			
+			warehouse_cache.put(w_id, new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + 1, true));
 			tx.commit();
 			tx.close();
 		}
