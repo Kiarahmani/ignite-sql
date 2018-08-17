@@ -179,12 +179,12 @@ public class Client {
 				stockLevel_count++;
 			}
 		}
-		System.out.println("Overall Latency: " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
-		System.out.println("      New-Order: " + (sum_time_newOrder / newOrder_count) + "ms");
-		System.out.println("        Payment: " + (sum_time_payment / payment_count) + "ms");
-		System.out.println("    Stock Level: " + (sum_time_stockLevel / stockLevel_count) + "ms");
-		System.out.println("   Order Status: " + (sum_time_orderStatus / orderStatus_count) + "ms");
-		System.out.println("       Delivery: " + (sum_time_delivery / delivery_count) + "ms");
+		System.out.println("Overall Latency:  " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms");
+		System.out.println("    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms");
+		System.out.println("    |----Pymnt:   " + (sum_time_payment / payment_count) + "ms");
+		System.out.println("    |----StckLvl: " + (sum_time_stockLevel / stockLevel_count) + "ms");
+		System.out.println("    |----OrdrSts: " + (sum_time_orderStatus / orderStatus_count) + "ms");
+		System.out.println("    |----Dlvry:   " + (sum_time_delivery / delivery_count) + "ms");
 
 		System.out.print("===========================================\n\n\n\n");
 	}
