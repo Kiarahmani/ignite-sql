@@ -94,7 +94,7 @@ public class Client {
 		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
 
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 			int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 			int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
