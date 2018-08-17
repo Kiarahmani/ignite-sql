@@ -17,26 +17,67 @@ public class Client {
 	long clientsStartTime;
 	long clientsFinishTime;
 
-	public long testTxn(Ignite ignite, Constants cons) {
+	// NEW ORDER (41%)
+	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
-		IgniteCache<DoubleKey, District> district_scache = ignite.cache("district_stale");
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
-		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
-		// randomly pick a district and update its (and its warehouse's) ytd
-		int w_id = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
-		int d_id = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
-
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-			// update w_ytd
-			//District dt = district_cache.get(new DoubleKey(d_id, w_id));
-			Warehouse wh = warehouse_scache.get(w_id);
-			warehouse_cache.put(w_id, new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + 1, true));
 			tx.commit();
 			tx.close();
 		}
+		System.out.println("doing newOrder");
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
+	}
 
+	// PAYMENT (41%)
+	public long payment(Ignite ignite, Constants cons) {
+		long startTime = System.currentTimeMillis();
+		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			tx.commit();
+			tx.close();
+		}
+		System.out.println("doing payment");
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
+	}
+
+	// DELIVERY (6%)
+	public long delivery(Ignite ignite, Constants cons) {
+		long startTime = System.currentTimeMillis();
+		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			tx.commit();
+			tx.close();
+		}
+		System.out.println("doing delivery");
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
+	}
+
+	// STOCK_LEVEL (6%)
+	public long stockLevel(Ignite ignite, Constants cons) {
+		long startTime = System.currentTimeMillis();
+		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			tx.commit();
+			tx.close();
+		}
+		System.out.println("doing stock level");
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
+	}
+
+	// ORDER_STATUS (6%)
+	public long orderStatus(Ignite ignite, Constants cons) {
+		long startTime = System.currentTimeMillis();
+		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			tx.commit();
+			tx.close();
+		}
+		System.out.println("doing order status");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -51,7 +92,17 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					estimatedTime = testTxn(ignite, cons);
+					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
+					if (txn_type_rand < 6)
+						estimatedTime = orderStatus(ignite, cons);
+					if (txn_type_rand >= 6 && txn_type_rand < 12)
+						estimatedTime = delivery(ignite, cons);
+					if (txn_type_rand >= 12 && txn_type_rand < 18)
+						estimatedTime = stockLevel(ignite, cons);
+					if (txn_type_rand >= 18 && txn_type_rand < 59)
+						estimatedTime = payment(ignite, cons);
+					if (txn_type_rand >= 59 && txn_type_rand < 100)
+						estimatedTime = newOrder(ignite, cons);
 					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
 					System.out.println("#" + threadId + "(" + rd + "):" + estimatedTime + "ms");
 				}
