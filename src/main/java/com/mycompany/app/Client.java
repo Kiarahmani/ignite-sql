@@ -51,7 +51,6 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					System.out.println(cons._ROUNDS);
 					estimatedTime = testTxn(ignite, cons);
 					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
 					System.out.println("#" + threadId + "(" + rd + "):" + estimatedTime + "ms");
