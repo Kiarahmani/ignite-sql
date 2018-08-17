@@ -15,6 +15,8 @@ public class Constants {
 	public int _ORDER_NUMBER;
 	public int _TOTAL_REPS;
 	public int _ROUNDS;
+	public int _HISTORY_NUMBER;
+
 	Set<DoubleKey> all_keys_district;
 	Set<Integer> all_keys_warehouse;
 	Set<TrippleKey> all_keys_customer;
@@ -22,6 +24,7 @@ public class Constants {
 	Set<TrippleKey> all_keys_newOrder;
 	Set<QuadKey> all_keys_order;
 	Set<Integer> all_keys_item;
+	Set<Integer> all_keys_history;
 	Set<DoubleKey> all_keys_stock;
 
 	TransactionIsolation ser;
@@ -34,6 +37,7 @@ public class Constants {
 		this._WAREHOUSE_NUMBER = 1;
 		this._CUSTOMER_NUMBER = 3;
 		this._ORDER_NUMBER = 2;
+		this._HISTORY_NUMBER = 5;
 		this._ITEM_NUMBER = 2;
 
 		this._CLIENT_NUMBER = clientNumber;
@@ -97,6 +101,11 @@ public class Constants {
 					all_keys_newOrder.add(new TrippleKey(o, d, w));
 				}
 			}
+		// create all history keys
+		all_keys_history = new TreeSet<Integer>();
+		for (int h = 0; h < _HISTORY_NUMBER; h++) {
+			all_keys_history.add(h);
+		}
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;
