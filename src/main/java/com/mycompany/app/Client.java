@@ -41,6 +41,7 @@ public class Client {
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
 					estimatedTime = testTxn(ignite);
 					at.set(threadId * cons._ROUNDS + rd, estimatedTime);
+					System.out.println("#" + threadId + "(" + rd + ")");
 				}
 
 			}
