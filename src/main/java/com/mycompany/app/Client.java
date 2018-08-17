@@ -93,30 +93,30 @@ public class Client {
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
 
-		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
-		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
-		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
-		DoubleKey d_key = new DoubleKey(did, wid);
-		TrippleKey c_key = new TrippleKey(cid, did, wid);
-		// read district and warehouse tax rate
-		int w_tax = warehouse_cache.get(wid).w_tax;
-		District dist = district_cache.get(d_key);
-		int d_tax = dist.d_tax;
-		// update district's next order id
-		district_cache.put(d_key,
-				new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
-		// read the customer
-		Customer cust = customer_cache.get(c_key);
-		// insret a new order
-		int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
-		Order order = new Order(carrier_id, "08/18/2018", true);
-		QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
-		TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
-		order_cache.put(order_key, order);
-		newOrder_cache.put(newOrder_key, true);
-
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+			int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+			int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
+			DoubleKey d_key = new DoubleKey(did, wid);
+			TrippleKey c_key = new TrippleKey(cid, did, wid);
+			// read district and warehouse tax rate
+			int w_tax = warehouse_cache.get(wid).w_tax;
+			District dist = district_cache.get(d_key);
+			int d_tax = dist.d_tax;
+			// update district's next order id
+			district_cache.put(d_key,
+					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
+			// read the customer
+			Customer cust = customer_cache.get(c_key);
+			// insret a new order
+			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
+			Order order = new Order(carrier_id, "08/18/2018", true);
+			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
+			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
+			order_cache.put(order_key, order);
+			newOrder_cache.put(newOrder_key, true);
+
 			tx.commit();
 			tx.close();
 		}
