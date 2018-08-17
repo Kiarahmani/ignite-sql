@@ -14,9 +14,9 @@ public class Synchronizer {
 				IgniteCache<Integer, Integer> stale_cache = ignite.cache("stale_sync");
 				try {
 					while (true) {
-						for (int i = 0; i < cons._OBJECT_NUMBER; i++) {
-							stale_cache.put(i, cache.get(i));
-						}
+						//for (int i = 0; i < cons._OBJECT_NUMBER; i++) {
+							//stale_cache.put(i, cache.get(i));
+						//}
 						Thread.sleep(1000);
 					}
 
