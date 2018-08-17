@@ -24,6 +24,33 @@ public class CacheManager {
 		System.out.println(">>>> CacheManager: currently available caches: " + ignite.cacheNames());
 	}
 
+	public void createCoordinationCaches(Ignite ignite, int followerCount) {
+		CacheConfiguration<String, Integer> coordination_ccfg = new CacheConfiguration<String, Integer>("coordination");
+		coordination_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		coordination_ccfg.setCacheMode(CacheMode.REPLICATED);
+		IgniteCache<String, Integer> coordination_cache = ignite.createCache(coordination_ccfg);
+		coordination_cache.put("ready", 0);
+		coordination_cache.put("initialized", 0);
+	}
+
+	public void dispatchFollowers(Ignite ignite) {
+		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
+		coordination_cache.put("initialized", 1);
+
+	}
+
+	public void waitForFollowers(Ignite ignite, int followerCount) {
+		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
+		do {
+			System.out.println("+++manager waiting for followers to finish");
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while (coordination_cache.get("finished") < followerCount);
+	}
+
 	// 2
 	public void createAllCaches(Ignite ignite) {
 		// INITILIZE CACHE: district

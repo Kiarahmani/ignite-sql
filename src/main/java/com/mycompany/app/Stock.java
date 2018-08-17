@@ -18,7 +18,7 @@ public class Stock {
 	@Override
 	public String toString() {
 		if (isAlive)
-			return "ITEM[" + s_ytd + "," + s_quant + "," + s_ordercnt + "," + s_info + "]";
+			return "STCK" + s_ytd + "," + s_quant + "," + s_ordercnt + "," + s_info + "]";
 		else
 			return "---";
 	}

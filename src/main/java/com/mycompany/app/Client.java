@@ -18,6 +18,53 @@ public class Client {
 	long clientsStartTime;
 	long clientsFinishTime;
 
+	public void announceReady(Ignite ignite, Constants cons) {
+		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
+		IgniteTransactions transactions = ignite.transactions();
+		do {
+			System.out.println("+++waiting for coordinator to initialize");
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} while (coordination_cache.get("initialized") != 1);
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			int v = coordination_cache.get("ready");
+			coordination_cache.put("ready", v + 1);
+			tx.commit();
+			tx.close();
+		}
+		System.out.println("+++announced ready");
+
+	}
+
+	public void waitForAll(Ignite ignite, int followerCount) {
+		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
+		do {
+			System.out.println("+++waiting for other followers to get ready");
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} while (coordination_cache.get("ready") < followerCount);
+	}
+
+	public void announceFinished(Ignite ignite, Constants cons) {
+		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
+		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			int v = coordination_cache.get("finished");
+			coordination_cache.put("finished", v + 1);
+			tx.commit();
+			tx.close();
+		}
+		System.out.println("+++announced finished");
+	}
+
 	// NEW ORDER (41%)
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();

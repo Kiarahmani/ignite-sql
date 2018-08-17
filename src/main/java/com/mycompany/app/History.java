@@ -12,7 +12,7 @@ public class History {
 	@Override
 	public String toString() {
 		if (isAlive)
-			return "ITEM[" + h_info + "]";
+			return "HSTY[" + h_info + "]";
 		else
 			return "---";
 	}

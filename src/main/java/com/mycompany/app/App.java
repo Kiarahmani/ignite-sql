@@ -36,26 +36,31 @@ import java.util.UUID;
 
 public class App {
 	public static final boolean _COORDINATOR = false;
+	public static final int _FOLLOWER_COUNT = 1;
 
 	public static void main(String[] args) {
 		Constants cons = new Constants(2, 10);
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", /* server */"18.136.120.183").start();
 		CacheManager manager = new CacheManager(ignite);
 		Client clients = new Client(ignite, cons);
-		manager.createAllCaches(ignite);
-		manager.populateAllCaches(ignite, cons);
+		if (_COORDINATOR) {
+			manager.createCoordinationCaches(ignite, _FOLLOWER_COUNT);
+			manager.createAllCaches(ignite);
+			manager.populateAllCaches(ignite, cons);
+			manager.dispatchFollowers(ignite);
+			manager.waitForFollowers(ignite, _FOLLOWER_COUNT);
+			manager.printAll(ignite, cons);
+			manager.destroyAll(ignite, cons);
+		} else {
 
-		System.out.print("\n\n\n\nTXN EXECUTION\n===========================================\n");
-		// START CLIENTS
-		clients.startAll(cons);
-		// WAIT FOR ALL CLEINTS
-		clients.joinAll(cons);
-		// PRINT STATS
-		clients.printStats(ignite, cons);
-		// PRINT THE FINAL VALUES
-		manager.printAll(ignite, cons);
-		// DESTROYCACHES
-		manager.destroyAll(ignite, cons);
+			System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
+			clients.announceReady(ignite, cons);
+			clients.waitForAll(ignite, _FOLLOWER_COUNT);
+			clients.startAll(cons);
+			clients.joinAll(cons);
+			clients.printStats(ignite, cons);
+			clients.announceFinished(ignite, cons);
+		}
 
 	}
 }
