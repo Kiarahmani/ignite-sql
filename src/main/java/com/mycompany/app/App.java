@@ -38,7 +38,7 @@ public class App {
 	public static final boolean _COORDINATOR = false;
 
 	public static void main(String[] args) {
-		Constants cons = new Constants(5, 10);
+		Constants cons = new Constants(10, 10);
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", "54.251.179.146").start();
 		CacheManager manager = new CacheManager(ignite);
 		Client clients = new Client(ignite, cons);
