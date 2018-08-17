@@ -19,6 +19,7 @@ public class Constants {
 	Set<Integer> all_keys_warehouse;
 	Set<TrippleKey> all_keys_customer;
 	Set<TrippleKey> all_keys_orderLine;
+	Set<TrippleKey> all_keys_newOrder;
 	Set<QuadKey> all_keys_order;
 	Set<Integer> all_keys_item;
 	Set<DoubleKey> all_keys_stock;
@@ -88,6 +89,14 @@ public class Constants {
 				all_keys_stock.add(new DoubleKey(i, w));
 			}
 		}
+		// create all orderline keys
+		all_keys_newOrder = new TreeSet<TrippleKey>();
+		for (int o = 0; o < _ORDER_NUMBER; o++)
+			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
+				for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
+					all_keys_newOrder.add(new TrippleKey(o, d, w));
+				}
+			}
 
 		ser = TransactionIsolation.SERIALIZABLE;
 		rc = TransactionIsolation.READ_COMMITTED;
