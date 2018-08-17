@@ -23,7 +23,7 @@ public class Client {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			warehouse_cache.get(1);
 			tx.commit();
 			tx.close();
