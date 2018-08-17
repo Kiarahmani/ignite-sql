@@ -1,6 +1,6 @@
 package com.mycompany.app;
 
-public class QuadKey implements Comparable<QuadKey>{
+public class QuadKey implements Comparable<QuadKey> {
 	public int k1;
 	public int k2;
 	public int k3;
@@ -28,6 +28,11 @@ public class QuadKey implements Comparable<QuadKey>{
 			return (k1 > other.k1) ? 1 : 0;
 		}
 
+	}
+
+	@Override
+	public String toString() {
+		return "$(" + k1 + "," + k2 + "," + k3 + "," + k4 + ")";
 	}
 
 	public boolean equals(QuadKey other) {
