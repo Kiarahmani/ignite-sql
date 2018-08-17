@@ -113,6 +113,29 @@ public class CacheManager {
 		ignite.createCache(order_ccfg);
 		ignite.createCache(order_sccfg, order_nearCfg);
 		// ----------------------------------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------------------------------
+		// INITILIZE CACHE: ordersLine
+		// ser: main config
+		CacheConfiguration<TrippleKey, OrderLine> orderLine_ccfg = new CacheConfiguration<TrippleKey, OrderLine>(
+				"orderLine_ser");
+		orderLine_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+		orderLine_ccfg.setCacheMode(CacheMode.REPLICATED);
+		// ser: affinity config
+		RendezvousAffinityFunction orderLine_affFunc = new RendezvousAffinityFunction();
+		orderLine_affFunc.setExcludeNeighbors(true);
+		orderLine_affFunc.setPartitions(1);
+		orderLine_ccfg.setAffinity(orderLine_affFunc);
+		// stale config
+		NearCacheConfiguration<TrippleKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<TrippleKey, OrderLine> orderLine_sccfg = new CacheConfiguration<TrippleKey, OrderLine>(
+				"orderLine_stale");
+		orderLine_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+		orderLine_sccfg.setCacheMode(CacheMode.REPLICATED);
+		orderLine_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
+		// create both caches:
+		ignite.createCache(orderLine_ccfg);
+		ignite.createCache(orderLine_sccfg, orderLine_nearCfg);
+		// ----------------------------------------------------------------------------------------------------
 
 	}
 
@@ -125,6 +148,8 @@ public class CacheManager {
 		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
+		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
+		IgniteCache<TrippleKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		System.out.print("\n\nINITIALIZATION\n===========================================\n");
 		// district
 		for (DoubleKey key : cons.all_keys_district) {
@@ -159,6 +184,12 @@ public class CacheManager {
 			order_cache.put(key, new Order(0, "", false));
 			order_scache.put(key, new Order(0, "", false));
 		}
+		// orderLine
+		for (TrippleKey key : cons.all_keys_orderLine) {
+			System.out.println("init(orderLine)" + key.toString());
+			orderLine_cache.put(key, new OrderLine(0, 0, "", "", false));
+			orderLine_scache.put(key, new OrderLine(0, 0, "", "", false));
+		}
 
 	}
 
@@ -168,6 +199,7 @@ public class CacheManager {
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
+		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		// distrcit
 		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
 			System.out.println("\n<<districts>>");
@@ -204,6 +236,15 @@ public class CacheManager {
 				System.out.println(key.toString() + "	| " + order_cache.get(key).toString() + "");
 			}
 		}
+		// orderLine
+		try (Transaction tx = transactions.txStart(cons.concurrency, TransactionIsolation.SERIALIZABLE)) {
+			System.out.println("\n<<orderLine>>");
+			System.out.println(
+					"----------------------------------\nkey		   |   value\n----------------------------------");
+			for (TrippleKey key : cons.all_keys_orderLine) {
+				System.out.println(key.toString() + "	| " + orderLine_cache.get(key).toString() + "");
+			}
+		}
 
 	}
 
@@ -217,6 +258,8 @@ public class CacheManager {
 		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
+		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
+		IgniteCache<QuadKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		district_cache.destroy();
 		district_scache.destroy();
 		warehouse_cache.destroy();
@@ -225,6 +268,8 @@ public class CacheManager {
 		customer_scache.destroy();
 		order_cache.destroy();
 		order_scache.destroy();
+		orderLine_cache.destroy();
+		orderLine_scache.destroy();
 	}
 
 }

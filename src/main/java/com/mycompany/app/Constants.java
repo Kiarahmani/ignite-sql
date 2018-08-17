@@ -17,6 +17,7 @@ public class Constants {
 	Set<DoubleKey> all_keys_district;
 	Set<Integer> all_keys_warehouse;
 	Set<TrippleKey> all_keys_customer;
+	Set<TrippleKey> all_keys_orderLine;
 	Set<QuadKey> all_keys_order;
 
 	TransactionIsolation ser;
@@ -62,6 +63,14 @@ public class Constants {
 					for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
 						all_keys_order.add(new QuadKey(o, c, d, w));
 					}
+				}
+			}
+		// create all orderline keys
+		all_keys_orderLine = new TreeSet<TrippleKey>();
+		for (int o = 0; o < _ORDER_NUMBER; o++)
+			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
+				for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
+					all_keys_orderLine.add(new TrippleKey(o, d, w));
 				}
 			}
 
