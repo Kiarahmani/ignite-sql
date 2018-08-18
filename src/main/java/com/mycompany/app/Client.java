@@ -103,7 +103,7 @@ public class Client {
 		Set<Integer> item_keys = new TreeSet<Integer>();
 		for (int i = 0; i < item_count; i++)
 			item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
-
+/*
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
@@ -142,6 +142,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
+		*/
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}

@@ -338,8 +338,8 @@ public class CacheManager {
 		for (int key : cons.all_keys_history) {
 			String info = "H" + UUID.randomUUID().toString().substring(0, 5);
 			System.out.println("init(history)" + key);
-			history_cache.put(key, new History(info, true));
-			history_scache.put(key, new History(info, true));
+			history_cache.put(key, new History(info, false));
+			history_scache.put(key, new History(info, false));
 		}
 
 	}

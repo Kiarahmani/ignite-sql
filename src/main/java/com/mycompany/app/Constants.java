@@ -37,7 +37,7 @@ public class Constants {
 		this._WAREHOUSE_NUMBER = 1;
 		this._CUSTOMER_NUMBER = 2;
 		this._ORDER_NUMBER = 5;
-		this._HISTORY_NUMBER = 10;
+		this._HISTORY_NUMBER = 20;
 		this._ITEM_NUMBER = 3;
 
 		this._CLIENT_NUMBER = clientNumber;
