@@ -2,6 +2,7 @@ package com.mycompany.app;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -99,7 +100,7 @@ public class Client {
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
 		int item_count = ThreadLocalRandom.current().nextInt(5, 15);
-		Set<Integer> item_keys = null;
+		Set<Integer> item_keys = new TreeSet<Integer>();
 		for (int i = 0; i < item_count; i++)
 			item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
 
@@ -116,7 +117,7 @@ public class Client {
 			district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
 			// read the customer
-			/*Customer cust = customer_cache.get(c_key);
+			Customer cust = customer_cache.get(c_key);
 			// insret a new order
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
 			Order order = new Order(carrier_id, "08/18/2018", true);
@@ -137,7 +138,7 @@ public class Client {
 				else
 					stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
-			}*/
+			}
 			tx.commit();
 			tx.close();
 		}
