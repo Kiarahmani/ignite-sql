@@ -131,8 +131,18 @@ public class Client {
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
-			System.out.println(item_keys.size()+"===D"+all_stocks.size());
+			System.out.println("####################");
+			System.out.println("item keys:");
+			for (int i : item_keys)
+				System.out.println("	" + i);
+			System.out.println("stock keys:");
+			for (DoubleKey k : stock_keys)
+				System.out.println("	" + k);
+			System.out.println("stocks");
+			for (Stock s : all_stocks.values())
+				System.out.println("	" + s);
 
+			System.out.println("####################");
 			for (DoubleKey st_key : stock_keys) {
 				// read the corresponding stock
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
