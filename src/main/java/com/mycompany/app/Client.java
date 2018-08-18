@@ -102,8 +102,10 @@ public class Client {
 		Set<DoubleKey> stock_keys = new TreeSet<DoubleKey>();
 		for (int i = 0; i < item_count; i++) {
 			int iRand = ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER);
+			DoubleKey skey = new DoubleKey(iRand, wid);
 			item_keys.add(iRand);
-			stock_keys.add(new DoubleKey(iRand, wid));
+			stock_keys.add(skey);
+			System.out.print(" ---->" + skey);
 		}
 		// for (DoubleKey x : stock_keys)
 		// System.out.print(" ---->" + x);
@@ -134,13 +136,13 @@ public class Client {
 			System.out.println("####################");
 			System.out.println("item keys:");
 			for (int i : item_keys)
-				System.out.println("	" + i);
+				System.out.println("  " + i);
 			System.out.println("stock keys:");
 			for (DoubleKey k : stock_keys)
-				System.out.println("	" + k);
+				System.out.println("  " + k);
 			System.out.println("stocks");
 			for (Stock s : all_stocks.values())
-				System.out.println("	" + s);
+				System.out.println("  " + s);
 
 			System.out.println("####################");
 			for (DoubleKey st_key : stock_keys) {
