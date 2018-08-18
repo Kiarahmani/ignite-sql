@@ -101,21 +101,21 @@ public class Client {
 		Set<Integer> item_keys = new TreeSet<Integer>();
 		for (int i = 0; i < item_count; i++)
 			item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
-		int w_tax = caches.warehouse_scache.get(wid).w_tax;
+
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
 			DoubleKey d_key = new DoubleKey(did, wid);
 			TrippleKey c_key = new TrippleKey(cid, did, wid);
 			// read district and warehouse tax rate
-			
+			int w_tax = caches.warehouse_scache.get(wid).w_tax;
 			District dist = caches.district_cache.get(d_key);
-			/*int d_tax = dist.d_tax;
+			int d_tax = dist.d_tax;
 			// update district's next order id
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
 			// read the customer
-			Customer cust = caches.customer_cache.get(c_key);
+			/*Customer cust = caches.customer_cache.get(c_key);
 			// insret a new order
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
 			Order order = new Order(carrier_id, "08/18/2018", true);
