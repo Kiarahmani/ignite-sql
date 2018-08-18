@@ -82,7 +82,7 @@ public class Client {
 			tx.close();
 		}
 		//
-		System.out.println("doing payment");
+		//System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -97,13 +97,13 @@ public class Client {
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
 		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
-		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
-		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
-		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
-		int item_count = ThreadLocalRandom.current().nextInt(5, 15);
-		Set<Integer> item_keys = new TreeSet<Integer>();
-		for (int i = 0; i < item_count; i++)
-			item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
+		//int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		//int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		//int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
+		//int item_count = ThreadLocalRandom.current().nextInt(5, 15);
+		//Set<Integer> item_keys = new TreeSet<Integer>();
+		//for (int i = 0; i < item_count; i++)
+		//	item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
 /*
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
@@ -202,27 +202,27 @@ public class Client {
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
-						System.out.println("tid-" + threadId + " (" + rd + "):	Order Status(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")++++Order Status(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
-						System.out.println("tid-" + threadId + " (" + rd + "):	Delivery(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")++++Delivery(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
-						System.out.println("tid-" + threadId + " (" + rd + "):	Stock Level(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")++++Stock Level(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
-						System.out.println("tid-" + threadId + " (" + rd + "):	Payment(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")++++Payment(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
-						System.out.println("tid-" + threadId + " (" + rd + "):	New Order(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")++++New Order(" + estimatedTime + "ms)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 					
