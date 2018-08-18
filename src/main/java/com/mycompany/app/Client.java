@@ -137,12 +137,12 @@ public class Client {
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
 				Stock stck = all_stocks.get(st_key);
 				// update the stock
-				if (stck.s_quant - ol_quant > 10)
-					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
-							stck.s_ordercnt + 1, stck.s_info, true));
-				else
-					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
-							stck.s_ordercnt + 1, stck.s_info, true));
+				//if (stck.s_quant - ol_quant > 10)
+			//		all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
+			//				stck.s_ordercnt + 1, stck.s_info, true));
+			//	else
+			//		all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
+			//				stck.s_ordercnt + 1, stck.s_info, true));
 			}
 			caches.stock_cache.putAll(all_stocks);
 			tx.commit();
