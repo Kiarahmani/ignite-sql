@@ -91,12 +91,12 @@ public class Client {
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
-		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
-		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
-		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
-		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
-		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
-		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
+		//IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
+		//IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
+		//IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
+		//IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
+		//IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
+		//IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
 		//int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		//int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		//int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
@@ -202,27 +202,27 @@ public class Client {
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")++++Order Status(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")++++Delivery(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")++++Stock Level(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")++++Payment(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")++++New Order(" + estimatedTime + "ms)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime + "ms)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 					
