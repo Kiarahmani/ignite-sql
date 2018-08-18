@@ -93,6 +93,7 @@ public class Client {
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
+		IgniteTransactions transactions = ignite.transactions();
 		//IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		//IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		//IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
