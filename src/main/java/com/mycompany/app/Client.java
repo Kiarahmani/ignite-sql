@@ -77,7 +77,7 @@ public class Client {
 		System.out.println("+++announced finished");
 	}
 
-	// NEW ORDER (41%)
+	// NEW ORDER (41%) 
 	public long payment(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
