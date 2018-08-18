@@ -122,8 +122,8 @@ public class Client {
 			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
-			/*caches.newOrder_cache.put(newOrder_key, true);
-			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
+			caches.newOrder_cache.put(newOrder_key, true);
+			/*Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			for (int i : item_keys) {
 				// read the corresponding stock
 				DoubleKey st_key = new DoubleKey(i, wid);
