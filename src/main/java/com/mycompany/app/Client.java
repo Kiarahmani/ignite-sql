@@ -109,8 +109,8 @@ public class Client {
 			TrippleKey c_key = new TrippleKey(cid, did, wid);
 			// read district and warehouse tax rate
 			int w_tax = caches.warehouse_cache.get(wid).w_tax;
-			/*District dist = caches.district_cache.get(d_key);
-			int d_tax = dist.d_tax;
+			District dist = caches.district_cache.get(d_key);
+			/*int d_tax = dist.d_tax;
 			// update district's next order id
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
@@ -199,27 +199,27 @@ public class Client {
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime/200 + "RTT)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime/200 + " rtt)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime/200 + "RTT)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime/200 + " rtt)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime/200 + "RTT)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime/200 + " rtt)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime/200 + "RTT)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime/200 + " rtt)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime/200 + "RTT)");
+						System.out.println("tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime/200 + " rtt)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 
