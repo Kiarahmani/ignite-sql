@@ -54,9 +54,9 @@ public class App {
 		} else {
 			Client clients = new Client(ignite, cons);
 			System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
-			clients.announceReady(ignite, cons);
+			Caches caches = clients.announceReady(ignite, cons);
 			clients.waitForAll(ignite, _FOLLOWER_COUNT);
-			clients.startAll(cons);
+			clients.startAll(caches, cons);
 			clients.joinAll(cons);
 			clients.printStats(ignite, cons);
 			clients.announceFinished(ignite, cons);

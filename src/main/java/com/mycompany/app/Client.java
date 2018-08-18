@@ -19,13 +19,14 @@ public class Client {
 	private static AtomicReferenceArray<Stat> at;
 	long clientsStartTime;
 	long clientsFinishTime;
+	Caches caches;
 
-	public void announceReady(Ignite ignite, Constants cons) {
+	public Caches announceReady(Ignite ignite, Constants cons) {
 		int i = 0;
 		IgniteCache<String, Integer> coordination_cache = ignite.cache("coordination");
 		IgniteTransactions transactions = ignite.transactions();
-		do {
 
+		do {
 			System.out.println("+++waiting for coordinator to initialize");
 			try {
 				Thread.sleep(300);
@@ -38,6 +39,8 @@ public class Client {
 			else
 				coordination_cache = ignite.cache("coordination");
 		} while (i != 1);
+		// getting all the caches (it's better to do it once here)
+		Caches caches = new Caches(ignite);
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			int v = coordination_cache.get("ready");
 			coordination_cache.put("ready", v + 1);
@@ -45,6 +48,7 @@ public class Client {
 			tx.close();
 		}
 		System.out.println("+++announced ready");
+		return caches;
 
 	}
 
@@ -82,7 +86,7 @@ public class Client {
 			tx.close();
 		}
 		//
-		//System.out.println("doing payment");
+		// System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -143,7 +147,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		
+
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -233,7 +237,8 @@ public class Client {
 
 	}
 
-	public void startAll(Constants cons) {
+	public void startAll(Caches caches, Constants cons) {
+		this.caches = caches;
 		// INITIATE CONCURRENT CLIENTS
 		clientsStartTime = System.currentTimeMillis();
 		threads = new Thread[cons._CLIENT_NUMBER];
