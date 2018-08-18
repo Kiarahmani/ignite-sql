@@ -94,7 +94,8 @@ public class Client {
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.getOrCreateCache("warehouse_ser");
 		//IgniteCache<DoubleKey, District> district_cache = ignite.getOrCreateCache("district_ser");
-		//IgniteCache<TrippleKey, Customer> customer_cache = ignite.getOrCreateCache("customer_ser");}
+		//IgniteCache<TrippleKey, Customer> customer_cache = ignite.getOrCreateCache("customer_ser");
+		}
 		
 		//IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		//IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
