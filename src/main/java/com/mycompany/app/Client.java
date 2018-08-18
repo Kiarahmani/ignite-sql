@@ -81,6 +81,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
+		//
 		System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
@@ -155,7 +156,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		System.out.println("doing delivery");
+		//System.out.println("doing delivery");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -168,7 +169,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		System.out.println("doing stock level");
+		//System.out.println("doing stock level");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -181,7 +182,7 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		System.out.println("doing order status");
+		//System.out.println("doing order status");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -201,25 +202,30 @@ public class Client {
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
+						System.out.println("tid-" + threadId + " (" + rd + "):	Order Status(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
+						System.out.println("tid-" + threadId + " (" + rd + "):	Delivery(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
+						System.out.println("tid-" + threadId + " (" + rd + "):	Stock Level(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
+						System.out.println("tid-" + threadId + " (" + rd + "):	Payment(" + estimatedTime + "ms)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
+						System.out.println("tid-" + threadId + " (" + rd + "):	New Order(" + estimatedTime + "ms)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
-					System.out.println("#" + threadId + "(" + rd + "):" + estimatedTime + "ms");
+					
 				}
 
 			}
