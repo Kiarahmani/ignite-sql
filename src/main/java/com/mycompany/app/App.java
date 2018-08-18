@@ -41,9 +41,9 @@ public class App {
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
 		Constants cons = new Constants(2, 10);
 		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", /* server */"18.136.120.183").start();
-		CacheManager manager = new CacheManager(ignite);
-		Client clients = new Client(ignite, cons);
+
 		if (_COORDINATOR) {
+			CacheManager manager = new CacheManager(ignite);
 			manager.createCoordinationCaches(ignite, _FOLLOWER_COUNT);
 			manager.createAllCaches(ignite);
 			manager.populateAllCaches(ignite, cons);
@@ -52,7 +52,7 @@ public class App {
 			manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
 		} else {
-
+			Client clients = new Client(ignite, cons);
 			System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
 			clients.announceReady(ignite, cons);
 			clients.waitForAll(ignite, _FOLLOWER_COUNT);
