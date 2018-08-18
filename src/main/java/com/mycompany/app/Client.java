@@ -109,7 +109,7 @@ public class Client {
 			TrippleKey c_key = new TrippleKey(cid, did, wid);
 			// read district and warehouse tax rate
 			int w_tax = caches.warehouse_cache.get(wid).w_tax;
-			District dist = caches.district_cache.get(d_key);
+			/*District dist = caches.district_cache.get(d_key);
 			int d_tax = dist.d_tax;
 			// update district's next order id
 			caches.district_cache.put(d_key,
@@ -136,7 +136,7 @@ public class Client {
 				else
 					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
-			}
+			}*/
 			tx.commit();
 			tx.close();
 		}
