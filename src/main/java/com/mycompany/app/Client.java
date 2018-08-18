@@ -123,12 +123,12 @@ public class Client {
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
-			/*Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
-			for (int i : item_keys) {
+			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
+			/*for (int i : item_keys) {
 				// read the corresponding stock
 				DoubleKey st_key = new DoubleKey(i, wid);
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
-				Stock stck = caches.stock_cache.get(st_key);
+				Stock stck = caches.stock_cache.get(st_key); 
 				// update the stock
 				if (stck.s_quant - ol_quant > 10)
 					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
