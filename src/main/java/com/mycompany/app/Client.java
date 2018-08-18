@@ -105,6 +105,8 @@ public class Client {
 			item_keys.add(iRand);
 			stock_keys.add(new DoubleKey(iRand, wid));
 		}
+		//for (DoubleKey x : stock_keys)
+		//	System.out.print(" ---->" + x);
 
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
@@ -129,10 +131,9 @@ public class Client {
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
-
-			for (int i : item_keys) {
+			
+			for (DoubleKey st_key : stock_keys) {
 				// read the corresponding stock
-				DoubleKey st_key = new DoubleKey(i, wid);
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
 				Stock stck = all_stocks.get(st_key);
 				// update the stock
