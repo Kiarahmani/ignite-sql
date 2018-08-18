@@ -38,7 +38,7 @@ public class Constants {
 		this._CUSTOMER_NUMBER = 2;
 		this._ORDER_NUMBER = 5;
 		this._HISTORY_NUMBER = 20;
-		this._ITEM_NUMBER = 3;
+		this._ITEM_NUMBER = 7;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
