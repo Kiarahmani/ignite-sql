@@ -82,6 +82,7 @@ public class CacheManager {
 		// ser: main config
 		CacheConfiguration<Integer, Warehouse> warehouse_ccfg = new CacheConfiguration<Integer, Warehouse>(
 				"warehouse_ser");
+			  
 		warehouse_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 		warehouse_ccfg.setCacheMode(CacheMode.REPLICATED);
 		// ser: affinity config

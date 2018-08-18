@@ -92,7 +92,8 @@ public class Client {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.getOrCreateCache("warehouse_ser");
+		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
+		System.out.println(warehouse_cache);
 		//IgniteCache<DoubleKey, District> district_cache = ignite.getOrCreateCache("district_ser");
 		//IgniteCache<TrippleKey, Customer> customer_cache = ignite.getOrCreateCache("customer_ser");
 		}
