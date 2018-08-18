@@ -105,10 +105,9 @@ public class Client {
 			DoubleKey skey = new DoubleKey(iRand, wid);
 			item_keys.add(iRand);
 			stock_keys.add(skey);
-			System.out.print(" ---->" + skey);
+			System.out.println(" ---->" + skey);
 		}
-		// for (DoubleKey x : stock_keys)
-		// System.out.print(" ---->" + x);
+
 
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
