@@ -107,7 +107,8 @@ public class Client {
 			stock_keys.add(skey);
 			System.out.println(" ---->" + skey);
 		}
-
+		for (DoubleKey s : stock_keys)
+			System.out.println("%%" + s);
 
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
