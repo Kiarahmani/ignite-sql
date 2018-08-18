@@ -90,7 +90,6 @@ public class Client {
 	// PAYMENT (41%)
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
-		IgniteTransactions transactions = ignite.transactions();
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
@@ -106,7 +105,7 @@ public class Client {
 		//for (int i = 0; i < item_count; i++)
 		//	item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
 /*
-		
+		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
 			DoubleKey d_key = new DoubleKey(did, wid);
