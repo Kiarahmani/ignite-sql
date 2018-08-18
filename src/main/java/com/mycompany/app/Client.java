@@ -116,28 +116,33 @@ public class Client {
 			district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
 			// read the customer
-			/*
-			 * Customer cust = customer_cache.get(c_key); // insret a new order int
-			 * carrier_id = ThreadLocalRandom.current().nextInt(0, 100); Order order = new
-			 * Order(carrier_id, "08/18/2018", true); QuadKey order_key = new
-			 * QuadKey(dist.d_nextoid + 1, cid, did, wid); TrippleKey newOrder_key = new
-			 * TrippleKey(dist.d_nextoid + 1, did, wid); order_cache.put(order_key, order);
-			 * newOrder_cache.put(newOrder_key, true); Map<Integer, Item> all_items =
-			 * item_cache.getAll(item_keys); for (int i : item_keys) { // read the
-			 * corresponding stock DoubleKey st_key = new DoubleKey(i, wid); int ol_quant =
-			 * ThreadLocalRandom.current().nextInt(1, 11); Stock stck =
-			 * stock_cache.get(st_key); // update the stock if (stck.s_quant - ol_quant >
-			 * 10) stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant -
-			 * ol_quant, stck.s_ordercnt + 1, stck.s_info, true)); else
-			 * stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant -
-			 * ol_quant + 91, stck.s_ordercnt + 1, stck.s_info, true));
-			 */
+			/*Customer cust = customer_cache.get(c_key);
+			// insret a new order
+			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
+			Order order = new Order(carrier_id, "08/18/2018", true);
+			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
+			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
+			order_cache.put(order_key, order);
+			newOrder_cache.put(newOrder_key, true);
+			Map<Integer, Item> all_items = item_cache.getAll(item_keys);
+			for (int i : item_keys) {
+				// read the corresponding stock
+				DoubleKey st_key = new DoubleKey(i, wid);
+				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
+				Stock stck = stock_cache.get(st_key);
+				// update the stock
+				if (stck.s_quant - ol_quant > 10)
+					stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
+							stck.s_ordercnt + 1, stck.s_info, true));
+				else
+					stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
+							stck.s_ordercnt + 1, stck.s_info, true));
+			}*/
+			tx.commit();
+			tx.close();
 		}
-		tx.commit();
-		tx.close();
-	}
-
-	long estimatedTime = System.currentTimeMillis() - startTime;return estimatedTime;
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
 	}
 
 	// DELIVERY (6%)
