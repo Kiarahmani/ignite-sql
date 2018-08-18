@@ -94,13 +94,6 @@ public class Client {
 	// PAYMENT (41%)
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
-		IgniteCache<DoubleKey, District> district_cache = ignite.getOrCreateCache("district_ser");
-		IgniteCache<TrippleKey, Customer> customer_cache = ignite.getOrCreateCache("customer_ser");
-		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
-		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
-		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
-		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
-		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
@@ -115,33 +108,33 @@ public class Client {
 			DoubleKey d_key = new DoubleKey(did, wid);
 			TrippleKey c_key = new TrippleKey(cid, did, wid);
 			// read district and warehouse tax rate
-			int w_tax = warehouse_cache.get(wid).w_tax;
-			District dist = district_cache.get(d_key);
+			int w_tax = caches.warehouse_cache.get(wid).w_tax;
+			District dist = caches.district_cache.get(d_key);
 			int d_tax = dist.d_tax;
 			// update district's next order id
-			district_cache.put(d_key,
+			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
 			// read the customer
-			Customer cust = customer_cache.get(c_key);
+			Customer cust = caches.customer_cache.get(c_key);
 			// insret a new order
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
 			Order order = new Order(carrier_id, "08/18/2018", true);
 			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
-			order_cache.put(order_key, order);
-			newOrder_cache.put(newOrder_key, true);
-			Map<Integer, Item> all_items = item_cache.getAll(item_keys);
+			caches.order_cache.put(order_key, order);
+			caches.newOrder_cache.put(newOrder_key, true);
+			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			for (int i : item_keys) {
 				// read the corresponding stock
 				DoubleKey st_key = new DoubleKey(i, wid);
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
-				Stock stck = stock_cache.get(st_key);
+				Stock stck = caches.stock_cache.get(st_key);
 				// update the stock
 				if (stck.s_quant - ol_quant > 10)
-					stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
+					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
 							stck.s_ordercnt + 1, stck.s_info, true));
 				else
-					stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
+					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
 			}
 			tx.commit();
