@@ -21,7 +21,9 @@ import org.apache.ignite.transactions.TransactionIsolation;
 public class CacheManager {
 
 	public CacheManager(Ignite ignite) {
-		System.out.println(">>>> CacheManager: currently available caches: " + ignite.cacheNames());
+		//System.out.println(">>>> CacheManager: currently available caches: " + ignite.cacheNames());
+		for (String s:ignite.cacheNames())
+			ignite.cache(s).destroy();
 	}
 
 	public void createCoordinationCaches(Ignite ignite, int followerCount) {
