@@ -97,7 +97,7 @@ public class Client {
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
-		int item_count = ThreadLocalRandom.current().nextInt(5, 35);
+		int item_count = 30; //ThreadLocalRandom.current().nextInt(5, 15);
 		Set<Integer> item_keys = new TreeSet<Integer>();
 		for (int i = 0; i < item_count; i++)
 			item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
