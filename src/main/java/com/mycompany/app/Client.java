@@ -90,11 +90,6 @@ public class Client {
 	// PAYMENT (41%)
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
-	
-		for (String s:ignite.cacheNames())
-			System.out.println("!!!!"+s);
-		
-
 		IgniteCache<DoubleKey, District> district_cache = ignite.getOrCreateCache("district_ser");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.getOrCreateCache("customer_ser");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
