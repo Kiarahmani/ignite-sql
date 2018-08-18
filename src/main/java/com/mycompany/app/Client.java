@@ -115,14 +115,14 @@ public class Client {
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
 			// read the customer
-			/*Customer cust = caches.customer_cache.get(c_key);
+			Customer cust = caches.customer_cache.get(c_key);
 			// insret a new order
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
 			Order order = new Order(carrier_id, "08/18/2018", true);
 			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
-			caches.newOrder_cache.put(newOrder_key, true);
+			/*caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			for (int i : item_keys) {
 				// read the corresponding stock
