@@ -77,7 +77,7 @@ public class Client {
 		System.out.println("+++announced finished");
 	}
 
-	// NEW ORDER (41%) 
+	// NEW ORDER (41%)
 	public long payment(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
@@ -97,10 +97,14 @@ public class Client {
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
-		int item_count = 30; //ThreadLocalRandom.current().nextInt(5, 15);
+		int item_count = 30; // ThreadLocalRandom.current().nextInt(5, 15);
 		Set<Integer> item_keys = new TreeSet<Integer>();
-		for (int i = 0; i < item_count; i++)
-			item_keys.add(ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER));
+		Set<DoubleKey> stock_keys = new TreeSet<DoubleKey>();
+		for (int i = 0; i < item_count; i++) {
+			int iRand = ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER);
+			item_keys.add(iRand);
+			stock_keys.add(new DoubleKey(iRand, wid));
+		}
 
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
@@ -124,19 +128,22 @@ public class Client {
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
+			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
+
 			for (int i : item_keys) {
 				// read the corresponding stock
 				DoubleKey st_key = new DoubleKey(i, wid);
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
-				Stock stck = caches.stock_cache.get(st_key); 
+				Stock stck = all_stocks.get(st_key);
 				// update the stock
 				if (stck.s_quant - ol_quant > 10)
-					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
+					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
 							stck.s_ordercnt + 1, stck.s_info, true));
 				else
-					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
+					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
 			}
+			caches.stock_cache.putAll(all_stocks);
 			tx.commit();
 			tx.close();
 		}
@@ -199,27 +206,32 @@ public class Client {
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime/200 + " rtt)");
+						System.out.println(
+								"tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime/200 + " rtt)");
+						System.out.println(
+								"tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime/200 + " rtt)");
+						System.out.println(
+								"tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime/200 + " rtt)");
+						System.out.println(
+								"tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
-						System.out.println("tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime/200 + " rtt)");
+						System.out.println(
+								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 
