@@ -124,7 +124,7 @@ public class Client {
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
-			/*for (int i : item_keys) {
+			for (int i : item_keys) {
 				// read the corresponding stock
 				DoubleKey st_key = new DoubleKey(i, wid);
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
@@ -136,7 +136,7 @@ public class Client {
 				else
 					caches.stock_cache.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
-			}*/
+			}
 			tx.commit();
 			tx.close();
 		}
