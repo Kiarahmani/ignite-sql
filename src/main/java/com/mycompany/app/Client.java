@@ -77,7 +77,7 @@ public class Client {
 		System.out.println("+++announced finished");
 	}
 
-	// NEW ORDER (41%)
+	// PAYMENT (41%)
 	public long payment(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
@@ -91,7 +91,7 @@ public class Client {
 		return estimatedTime;
 	}
 
-	// PAYMENT (41%)
+	// NEW ORDER (41%)
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
@@ -130,19 +130,23 @@ public class Client {
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
+			for (DoubleKey k : stock_keys)
+				System.out.println(k);
 			System.err.println(all_items.size());
 			for (DoubleKey st_key : stock_keys) {
 				// read the corresponding stock
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
 				Stock stck = all_stocks.get(st_key);
-				System.out.println(stck);
+				// System.out.println(stck);
 				// update the stock
-				//if (stck.s_quant - ol_quant > 10)
-				//	all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant,
-				//			stck.s_ordercnt + 1, stck.s_info, true));
-				//else
-				//	all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
-				//			stck.s_ordercnt + 1, stck.s_info, true)); 
+				// if (stck.s_quant - ol_quant > 10)
+				// all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant -
+				// ol_quant,
+				// stck.s_ordercnt + 1, stck.s_info, true));
+				// else
+				// all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant -
+				// ol_quant + 91,
+				// stck.s_ordercnt + 1, stck.s_info, true));
 			}
 			caches.stock_cache.putAll(all_stocks);
 			tx.commit();
