@@ -251,7 +251,7 @@ public class Client {
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
-						estimatedTime = newOrder(ignite, cons);
+						//estimatedTime = newOrder(ignite, cons);
 						System.out.println(
 								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
 					}
