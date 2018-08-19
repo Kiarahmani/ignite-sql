@@ -14,11 +14,11 @@ public class TrippleKey implements Comparable<TrippleKey> {
 	public int compareTo(TrippleKey other) {
 		if (k1 == other.k1) {
 			if (k2 == other.k2)
-				return (k3 > other.k3) ? 1 : 0;
+				return (k3 - other.k3);
 			else
-				return (k2 > other.k2) ? 1 : 0;
+				return (k2 - other.k2);
 		} else {
-			return (k1 > other.k1) ? 1 : 0;
+			return (k1 - other.k1);
 		}
 
 	}
