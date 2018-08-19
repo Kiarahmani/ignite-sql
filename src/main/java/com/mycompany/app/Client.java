@@ -266,7 +266,6 @@ public class Client {
 			tx.commit();
 			tx.close();
 		}
-		// System.out.println("doing stock level");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -295,7 +294,7 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					int txn_type_rand = 3; // ThreadLocalRandom.current().nextInt(0, 100);
+					int txn_type_rand = 15; // ThreadLocalRandom.current().nextInt(0, 100);
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
