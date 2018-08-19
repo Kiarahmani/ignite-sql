@@ -2,6 +2,7 @@ package com.mycompany.app;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.configuration.NearCacheConfiguration;
 
 public class Caches {
 	IgniteCache<Integer, Warehouse> warehouse_cache;
@@ -32,8 +33,9 @@ public class Caches {
 	IgniteCache<TrippleKey, OrderLine> orderLine_scache;
 
 	public Caches(Ignite ignite) {
+		NearCacheConfiguration<Integer, Warehouse> warehouse_nearCfg = new NearCacheConfiguration<Integer, Warehouse>();
 		this.warehouse_cache = ignite.cache("warehouse_ser");
-		this.warehouse_scache = ignite.cache("warehouse_stale");
+		this.warehouse_scache = ignite.getOrCreateNearCache("warehouse_stale",warehouse_nearCfg);
 
 		this.district_cache = ignite.cache("district_ser");
 		this.district_scache = ignite.cache("district_stale");
