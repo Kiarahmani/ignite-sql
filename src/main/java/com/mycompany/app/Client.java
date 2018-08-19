@@ -249,7 +249,7 @@ public class Client {
 			for (QuadKey k : cons.all_keys_order)
 				if (k.k2 == chosen_key.k1 && k.k3 == did && k.k4 == wid)
 					partial_order_keys.add(k);
-			Map<QuadKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
+			/*Map<QuadKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
 			// pick the order with the largest o_id
 			Order chosen_ord;
 			QuadKey chosen_oid;
@@ -259,7 +259,7 @@ public class Client {
 					max_key = k.k1;
 					chosen_oid = k;
 					chosen_ord = filtered_ords.get(k);
-				}
+				}*/
 			tx.commit();
 			tx.close();
 		}
