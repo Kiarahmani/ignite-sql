@@ -39,7 +39,7 @@ public class App {
 	public static void main(String[] args) {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
-		Constants cons = new Constants(10, 10);
+		Constants cons = new Constants(1, 10);
 		Ignite ignite = new Starter("18.222.27.55", "18.222.69.139", /* server */"54.169.14.179").start();
 
 		if (_COORDINATOR) {
@@ -49,7 +49,7 @@ public class App {
 			manager.populateAllCaches(ignite, cons);
 			manager.dispatchFollowers(ignite);
 			manager.waitForFollowers(ignite, _FOLLOWER_COUNT);
-			manager.printAll(ignite, cons);
+			//manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
 		} else {
 			Client clients = new Client(ignite, cons);
