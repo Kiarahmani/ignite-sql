@@ -236,9 +236,10 @@ public class Client {
 				// filter them based on the current last name
 				Customer chosen_cust;
 				for (TrippleKey k : filtered_custs.keySet())
-					if (filtered_custs.get(k).c_name.startsWith(givenLastName)) {
+					if (true) {
 						chosen_key = k;
 						chosen_cust = filtered_custs.get(k);
+						break;
 					}
 			} else {
 				chosen_key = new TrippleKey(ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER), did, wid);
