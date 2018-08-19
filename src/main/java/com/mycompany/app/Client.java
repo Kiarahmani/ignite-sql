@@ -284,7 +284,7 @@ public class Client {
 			Set<TrippleKey> partial_orderLine_keys = new TreeSet<TrippleKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
 			for (TrippleKey k : cons.all_keys_orderLine) {
-				if (k.k2 == did && k.k3 == wid && k.k1 < dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
+				if (k.k2 == did && k.k3 == wid && k.k1 <= dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
 				System.out.println("->"+dist.d_nextoid);
 			}
@@ -318,7 +318,7 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					int txn_type_rand = 15; // ThreadLocalRandom.current().nextInt(0, 100);
+					int txn_type_rand =ThreadLocalRandom.current().nextInt(0, 100);
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
