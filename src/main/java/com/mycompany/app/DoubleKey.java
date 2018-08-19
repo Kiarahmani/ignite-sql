@@ -11,7 +11,7 @@ public class DoubleKey implements Comparable<DoubleKey> {
 
 	public int compareTo(DoubleKey other) {
 		if (k1 == other.k1)
-			return (k2 > other.k2) ? 1 : 0;
+			return (k2 >= other.k2) ? 1 : 0;
 		else
 			return (k1 > other.k1) ? 1 : 0;
 
