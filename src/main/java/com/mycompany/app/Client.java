@@ -222,7 +222,7 @@ public class Client {
 		TrippleKey chosen_key = null;
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
-		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// pick the customer either by last name or the id
 			if (byLastName) {
 				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
@@ -232,7 +232,7 @@ public class Client {
 					if (k.k2 == did && k.k3 == wid)
 						partial_cust_keys.add(k);
 				// fetch all such custemrs
-				Map<TrippleKey, Customer> filtered_custs = caches.customer_scache.getAll(partial_cust_keys);
+				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
 				// filter them based on the current last name
 				Customer chosen_cust;
 				for (TrippleKey k : filtered_custs.keySet())
@@ -243,7 +243,7 @@ public class Client {
 					}
 			} else {
 				chosen_key = new TrippleKey(ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER), did, wid);
-				Customer chosen_cust = caches.customer_scache.get(chosen_key);
+				Customer chosen_cust = caches.customer_cache.get(chosen_key);
 			}
 			// query orders based on the chosen customer (if exists)
 			if (chosen_key != null) {
@@ -251,7 +251,7 @@ public class Client {
 				for (QuadKey k : cons.all_keys_order)
 					if (k.k2 == chosen_key.k1 && k.k3 == did && k.k4 == wid)
 						partial_order_keys.add(k);
-				Map<QuadKey, Order> filtered_ords = caches.order_scache.getAll(partial_order_keys);
+				Map<QuadKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
 				// pick the order with the largest o_id
 				Order chosen_ord;
 				QuadKey chosen_oid;
@@ -263,9 +263,9 @@ public class Client {
 						chosen_ord = filtered_ords.get(k);
 					}
 			}
-			//tx.commit();
-		//	tx.close();
-		//}
+			tx.commit();
+			tx.close();
+		}
 		// System.out.println("doing stock level");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
