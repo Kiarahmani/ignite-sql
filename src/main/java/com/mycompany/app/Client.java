@@ -91,7 +91,7 @@ public class Client {
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			Warehouse wh = caches.warehouse_cache.get(wid);
 			System.out.println(wh);
 			Warehouse wh1 = caches.warehouse_cache.get(wid);
