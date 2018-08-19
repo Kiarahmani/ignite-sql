@@ -1,5 +1,6 @@
 package com.mycompany.app;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -99,7 +100,7 @@ public class Client {
 		int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
 		int item_count = 30; // ThreadLocalRandom.current().nextInt(5, 15);
 		Set<Integer> item_keys = new TreeSet<Integer>();
-		Set<DoubleKey> stock_keys = new TreeSet<DoubleKey>();
+		Set<DoubleKey> stock_keys = new HashSet<DoubleKey>();
 		for (int i = 0; i < item_count; i++) {
 			int iRand = ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER);
 			DoubleKey skey = new DoubleKey(iRand, wid);
