@@ -214,8 +214,8 @@ public class Client {
 	}
 
 	//////////////////
-	// STOCK_LEVEL (6%)
-	public long stockLevel(Ignite ignite, Constants cons) {
+	// ORDER_STATUS (6%)
+	public long orderStatus(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
@@ -268,8 +268,8 @@ public class Client {
 		return estimatedTime;
 	}
 
-	// ORDER_STATUS (6%)
-	public long orderStatus(Ignite ignite, Constants cons) {
+	// STOCK_LEVEL (6%)
+	public long stockLevel(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
