@@ -131,7 +131,7 @@ public class Client {
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
 
-			for (DoubleKey st_key : stock_keys) {
+			for (DoubleKey st_key : all_stocks.keySet()) {
 				// read the corresponding stock
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
 				Stock stck = all_stocks.get(st_key);
