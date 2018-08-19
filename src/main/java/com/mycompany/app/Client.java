@@ -128,7 +128,7 @@ public class Client {
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
-			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
+			//Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			// Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
 
 			// for (DoubleKey st_key : all_stocks.keySet()) {
