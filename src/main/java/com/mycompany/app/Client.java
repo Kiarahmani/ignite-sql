@@ -92,9 +92,9 @@ public class Client {
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
-			//Warehouse wh = caches.warehouse_cache.get(wid);
-			//caches.warehouse_cache.put(wid,
-			//		new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + h_amount, true));
+			Warehouse wh = caches.warehouse_cache.get(wid);
+			caches.warehouse_cache.put(wid,
+					new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + h_amount, true));
 			// update d_ytd
 			District dist = caches.district_cache.get(d_key);
 			caches.district_cache.put(d_key,
@@ -251,7 +251,7 @@ public class Client {
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
-						//estimatedTime = newOrder(ignite, cons);
+						// estimatedTime = newOrder(ignite, cons);
 						System.out.println(
 								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
 					}
