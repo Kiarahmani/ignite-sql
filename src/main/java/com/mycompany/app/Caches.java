@@ -35,7 +35,7 @@ public class Caches {
 	public Caches(Ignite ignite) {
 		NearCacheConfiguration<Integer, Warehouse> warehouse_nearCfg = new NearCacheConfiguration<Integer, Warehouse>();
 		this.warehouse_cache = ignite.cache("warehouse_ser");
-		this.warehouse_scache = ignite.getOrCreateNearCache("warehouse_staless",warehouse_nearCfg);
+		this.warehouse_scache = ignite.getOrCreateNearCache("warehouse_stale",warehouse_nearCfg);
 
 		this.district_cache = ignite.cache("district_ser");
 		this.district_scache = ignite.cache("district_stale");
