@@ -286,7 +286,7 @@ public class Client {
 			for (TrippleKey k : cons.all_keys_orderLine) {
 				if (k.k2 == did && k.k3 == wid && k.k1 < dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
-				System.out.println("->"+k);
+				System.out.println("->"+dist.d_nextoid);
 			}
 			System.out.println("1%%%"+partial_orderLine_keys.size());
 			Map<TrippleKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
