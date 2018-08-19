@@ -244,8 +244,8 @@ public class Client {
 				chosen_key = new TrippleKey(ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER), did, wid);
 				Customer chosen_cust = caches.customer_cache.get(chosen_key);
 			}
-		/*	// query orders based on the chosen customer
-			Set<QuadKey> partial_order_keys = null;
+			// query orders based on the chosen customer
+			Set<QuadKey> partial_order_keys = new TreeSet<QuadKey>();
 			for (QuadKey k : cons.all_keys_order)
 				if (k.k2 == chosen_key.k1 && k.k3 == did && k.k4 == wid)
 					partial_order_keys.add(k);
@@ -259,7 +259,7 @@ public class Client {
 					max_key = k.k1;
 					chosen_oid = k;
 					chosen_ord = filtered_ords.get(k);
-				}*/
+				}
 			tx.commit();
 			tx.close();
 		}
