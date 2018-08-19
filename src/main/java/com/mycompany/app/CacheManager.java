@@ -21,8 +21,9 @@ import org.apache.ignite.transactions.TransactionIsolation;
 public class CacheManager {
 
 	public CacheManager(Ignite ignite) {
-		//System.out.println(">>>> CacheManager: currently available caches: " + ignite.cacheNames());
-		for (String s:ignite.cacheNames())
+		// System.out.println(">>>> CacheManager: currently available caches: " +
+		// ignite.cacheNames());
+		for (String s : ignite.cacheNames())
 			ignite.cache(s).destroy();
 	}
 
@@ -82,7 +83,7 @@ public class CacheManager {
 		// ser: main config
 		CacheConfiguration<Integer, Warehouse> warehouse_ccfg = new CacheConfiguration<Integer, Warehouse>(
 				"warehouse_ser");
-			  
+
 		warehouse_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 		warehouse_ccfg.setCacheMode(CacheMode.REPLICATED);
 		// ser: affinity config
@@ -91,7 +92,7 @@ public class CacheManager {
 		warehouse_affFunc.setPartitions(1);
 		warehouse_ccfg.setAffinity(warehouse_affFunc);
 		// stale config
-		NearCacheConfiguration<Integer, Warehouse> warehouse_nearCfg = new NearCacheConfiguration<>();
+		NearCacheConfiguration<Integer, Warehouse> warehouse_nearCfg = new NearCacheConfiguration<Integer, Warehouse>();
 		CacheConfiguration<Integer, Warehouse> warehouse_sccfg = new CacheConfiguration<Integer, Warehouse>(
 				"warehouse_stale");
 		warehouse_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
