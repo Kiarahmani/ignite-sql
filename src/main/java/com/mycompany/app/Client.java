@@ -143,7 +143,7 @@ public class Client {
 					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
 			}
-			// caches.stock_cache.putAll(all_stocks);
+			caches.stock_cache.putAll(all_stocks);
 			tx.commit();
 			tx.close();
 		}
