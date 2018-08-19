@@ -3,6 +3,7 @@ package com.mycompany.app;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -77,11 +78,32 @@ public class Client {
 		System.out.println("+++announced finished");
 	}
 
+	//////////////////
 	// PAYMENT (41%)
 	public long payment(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
+		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		DoubleKey d_key = new DoubleKey(did, wid);
+		int h_amount = ThreadLocalRandom.current().nextInt(1, 5001);
+		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
+		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
+
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			// update w_ytd
+			Warehouse wh = caches.warehouse_cache.get(wid);
+			caches.warehouse_cache.put(wid,
+					new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + h_amount, true));
+			// update d_ytd
+			District dist = caches.district_cache.get(d_key);
+			caches.district_cache.put(d_key,
+					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
+			if (byLastName) {
+
+			} else {
+
+			}
 			tx.commit();
 			tx.close();
 		}
@@ -91,6 +113,7 @@ public class Client {
 		return estimatedTime;
 	}
 
+	//////////////////
 	// NEW ORDER (41%)
 	public long newOrder(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
