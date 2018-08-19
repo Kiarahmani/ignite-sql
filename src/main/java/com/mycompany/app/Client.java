@@ -228,7 +228,7 @@ public class Client {
 				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
 				// create a local set of keys for the current w_id and d_id
 				Set<TrippleKey> partial_cust_keys = new TreeSet<TrippleKey>();
-				for (TrippleKey k : cons.all_keys_scustomer)
+				for (TrippleKey k : cons.all_keys_customer)
 					if (k.k2 == did && k.k3 == wid)
 						partial_cust_keys.add(k);
 				// fetch all such custemrs
