@@ -88,27 +88,27 @@ public class Client {
 		int h_amount = ThreadLocalRandom.current().nextInt(1, 5001);
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
-		Warehouse wh = caches.warehouse_cache.get(wid);
-		Warehouse wh1 = caches.warehouse_cache.get(wid);
-		//Warehouse wh2 = caches.warehouse_cache.get(wid);
-		//IgniteTransactions transactions = ignite.transactions();
-		/*try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-			// update w_ytd
-			
-			caches.warehouse_cache.put(wid,
-					new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + h_amount, true));
-			// update d_ytd
-			District dist = caches.district_cache.get(d_key);
-			caches.district_cache.put(d_key,
-					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
-			if (byLastName) {
-
-			} else {
-
-			}
-			tx.commit();
-			tx.close();
-		}*/
+		IgniteTransactions transactions = ignite.transactions();
+		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			Warehouse wh = caches.warehouse_scache.get(wid);
+			Warehouse wh1 = caches.warehouse_scache.get(wid);
+		//}
+		// Warehouse wh2 = caches.warehouse_cache.get(wid);
+		//
+		/*
+		 * try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) { //
+		 * update w_ytd
+		 * 
+		 * caches.warehouse_cache.put(wid, new Warehouse(wh.w_name, wh.w_address,
+		 * wh.w_tax, wh.w_ytd + h_amount, true)); // update d_ytd District dist =
+		 * caches.district_cache.get(d_key); caches.district_cache.put(d_key, new
+		 * District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount,
+		 * dist.d_nextoid, true)); if (byLastName) {
+		 * 
+		 * } else {
+		 * 
+		 * } tx.commit(); tx.close(); }
+		 */
 		//
 		// System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
