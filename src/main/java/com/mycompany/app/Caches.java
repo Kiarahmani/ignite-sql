@@ -34,7 +34,6 @@ public class Caches {
 	public Caches(Ignite ignite) {
 		this.warehouse_cache = ignite.cache("warehouse_ser");
 		this.warehouse_scache = ignite.cache("warehouse_stale");
-		System.out.println("$%^&*(&^%$^&*(&^%$^&*()*&^%$#%^&*(&^%$#@%^& JUST DID SOME NONESENCE"+warehouse_scache);
 
 		this.district_cache = ignite.cache("district_ser");
 		this.district_scache = ignite.cache("district_stale");
