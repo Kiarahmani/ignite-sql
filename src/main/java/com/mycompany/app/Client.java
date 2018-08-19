@@ -92,8 +92,7 @@ public class Client {
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 		Warehouse wh = caches.warehouse_cache.get(wid);
 		Warehouse wh1 = caches.warehouse_cache.get(wid);
-		
-		//Warehouse wh2 = caches.warehouse_cache.get(wid);
+		Warehouse wh2 = caches.warehouse_cache.get(wid);
 		//
 		/*try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
