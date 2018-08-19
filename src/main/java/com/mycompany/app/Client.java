@@ -88,8 +88,8 @@ public class Client {
 		int h_amount = ThreadLocalRandom.current().nextInt(1, 5001);
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
-		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		//IgniteTransactions transactions = ignite.transactions();
+		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 		Warehouse wh = caches.warehouse_cache.get(wid);
 		Warehouse wh1 = caches.warehouse_cache.get(wid);
 		Warehouse wh2 = caches.warehouse_cache.get(wid);
