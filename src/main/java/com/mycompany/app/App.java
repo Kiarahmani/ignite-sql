@@ -40,7 +40,7 @@ public class App {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
 		Constants cons = new Constants(2, 10);
-		Ignite ignite = new Starter("172.31.19.186", "18.222.69.139", /* server */"18.136.120.183").start();
+		Ignite ignite = new Starter("18.222.27.55", "18.222.69.139", /* server */"54.169.14.179").start();
 
 		if (_COORDINATOR) {
 			CacheManager manager = new CacheManager(ignite);
