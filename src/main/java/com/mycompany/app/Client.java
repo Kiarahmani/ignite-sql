@@ -93,8 +93,11 @@ public class Client {
 		// IgniteTransactions transactions = ignite.transactions();
 		// try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 		Warehouse wh = warehouse_scache.get(2);
+		System.out.println(wh);
 		Warehouse wh1 = warehouse_scache.get(2);
+		System.out.println(wh1);
 		Warehouse wh2 = warehouse_scache.get(2);
+		System.out.println(wh2);
 		// }
 		/*
 		 * try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) { //
