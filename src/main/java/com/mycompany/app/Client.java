@@ -81,8 +81,8 @@ public class Client {
 	//////////////////
 	// PAYMENT (41%)
 	public long payment(Ignite ignite, Constants cons) {
-		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
-		;
+		
+		
 		long startTime = System.currentTimeMillis();
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
@@ -92,11 +92,11 @@ public class Client {
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-			Warehouse wh = warehouse_scache.get(wid);
+			Warehouse wh = caches.warehouse_scache.get(wid);
 			System.out.println(wh);
-			Warehouse wh1 = warehouse_scache.get(wid);
+			Warehouse wh1 = caches.warehouse_scache.get(wid);
 			System.out.println(wh1);
-			Warehouse wh2 = warehouse_scache.get(wid);
+			Warehouse wh2 = caches.warehouse_scache.get(wid);
 			System.out.println(wh2);
 		}
 		/*
