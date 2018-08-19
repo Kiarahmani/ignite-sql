@@ -1,5 +1,6 @@
 package com.mycompany.app;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -270,11 +271,30 @@ public class Client {
 		return estimatedTime;
 	}
 
+	//////////////////
 	// STOCK_LEVEL (6%)
 	public long stockLevel(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
+		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		int threshold = ThreadLocalRandom.current().nextInt(10, 21);
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			District dist = caches.district_cache.get(new DoubleKey(did, wid));
+			Set<TrippleKey> partial_orderLine_keys = new TreeSet<TrippleKey>();
+			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
+			for (TrippleKey k : cons.all_keys_orderLine)
+				if (k.k2 == did && k.k3 == wid && k.k1 < dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
+					partial_orderLine_keys.add(k);
+			Map<TrippleKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
+			// get stocks and filter them according to the threshold
+			for (OrderLine o : filtered_orderLines.values())
+				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
+			Map<DoubleKey, Stock> filtered_stocks = caches.stock_cache.getAll(filtered_stock_keys);
+			Set<Stock> final_stocks = new HashSet<Stock>();
+			for (Stock s : filtered_stocks.values())
+				if (s.s_quant < threshold)
+					final_stocks.add(s);
 			tx.commit();
 			tx.close();
 		}
