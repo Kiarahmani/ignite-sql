@@ -283,9 +283,11 @@ public class Client {
 			District dist = caches.district_cache.get(new DoubleKey(did, wid));
 			Set<TrippleKey> partial_orderLine_keys = new TreeSet<TrippleKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
-			for (TrippleKey k : cons.all_keys_orderLine)
+			for (TrippleKey k : cons.all_keys_orderLine) {
 				if (k.k2 == did && k.k3 == wid && k.k1 < dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
+				System.out.println("->"+k);
+			}
 			System.out.println("1%%%"+partial_orderLine_keys.size());
 			Map<TrippleKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
 			// get stocks and filter them according to the threshold
