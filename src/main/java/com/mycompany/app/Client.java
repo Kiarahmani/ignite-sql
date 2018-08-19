@@ -101,7 +101,7 @@ public class Client {
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
 			// update custmer 40%(60%) of the time by id (last name)
-		/*	if (byLastName) {
+			if (byLastName) {
 				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
 				// create a local set of keys for the current w_id and d_id
 				Set<TrippleKey> partial_cust_keys = new TreeSet<TrippleKey>();
@@ -110,6 +110,7 @@ public class Client {
 						partial_cust_keys.add(k);
 				// fetch all such custemrs
 				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
+				System.out.println("=>"+filtered_custs.size());
 				// filter them based on the current last name
 				TrippleKey chosen_key = null;
 				Customer chosen_cust = null;
@@ -119,10 +120,10 @@ public class Client {
 						chosen_cust = filtered_custs.get(k);
 					}
 				// update the chosen customer
-				caches.customer_cache.put(chosen_key,
-						new Customer(chosen_cust.c_name, chosen_cust.c_address, chosen_cust.c_balance - h_amount,
-								chosen_cust.c_discount, chosen_cust.c_credit, chosen_cust.c_payment_count + 1,
-								chosen_cust.c_ytd + h_amount, chosen_cust.c_deliverycnt, true));
+				//caches.customer_cache.put(chosen_key,
+				//		new Customer(chosen_cust.c_name, chosen_cust.c_address, chosen_cust.c_balance - h_amount,
+				//				chosen_cust.c_discount, chosen_cust.c_credit, chosen_cust.c_payment_count + 1,
+					//			chosen_cust.c_ytd + h_amount, chosen_cust.c_deliverycnt, true));
 
 			} else {
 				int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
@@ -130,7 +131,7 @@ public class Client {
 				Customer c = caches.customer_cache.get(c_key);
 				caches.customer_cache.put(c_key, new Customer(c.c_name, c.c_address, c.c_balance - h_amount,
 						c.c_discount, c.c_credit, c.c_payment_count + 1, c.c_ytd + h_amount, c.c_deliverycnt, true));
-			}*/
+			}
 			tx.commit();
 			tx.close();
 		}
