@@ -107,7 +107,7 @@ public class Client {
 				for (TrippleKey k : cons.all_keys_customer)
 					if (k.k2 == did && k.k3 == wid)
 						partial_cust_keys.add(k);
-				// fetch all such custemrs
+				// fetch all such custemrs 
 				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
 				// filter them based on the current last name
 				TrippleKey chosen_key;
