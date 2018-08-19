@@ -88,11 +88,11 @@ public class Client {
 		int h_amount = ThreadLocalRandom.current().nextInt(1, 5001);
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
-		
+		Warehouse wh = caches.warehouse_cache.get(wid);
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		/*try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
-			Warehouse wh = caches.warehouse_cache.get(wid);
+			
 			caches.warehouse_cache.put(wid,
 					new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + h_amount, true));
 			// update d_ytd
@@ -106,7 +106,7 @@ public class Client {
 			}
 			tx.commit();
 			tx.close();
-		}
+		}*/
 		//
 		// System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
