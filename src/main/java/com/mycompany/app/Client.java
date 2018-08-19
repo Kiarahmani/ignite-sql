@@ -110,20 +110,20 @@ public class Client {
 						partial_cust_keys.add(k);
 				// fetch all such custemrs
 				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
-				System.out.println("=>"+filtered_custs.size());
 				// filter them based on the current last name
 				TrippleKey chosen_key = null;
 				Customer chosen_cust = null;
 				for (TrippleKey k : filtered_custs.keySet())
-					if (filtered_custs.get(k).c_name.startsWith(givenLastName)) {
+					if (filtered_custs.get(k).c_name.contains(givenLastName)) {
 						chosen_key = k;
 						chosen_cust = filtered_custs.get(k);
 					}
 				// update the chosen customer
-				//caches.customer_cache.put(chosen_key,
-				//		new Customer(chosen_cust.c_name, chosen_cust.c_address, chosen_cust.c_balance - h_amount,
-				//				chosen_cust.c_discount, chosen_cust.c_credit, chosen_cust.c_payment_count + 1,
-					//			chosen_cust.c_ytd + h_amount, chosen_cust.c_deliverycnt, true));
+				if (chosen_cust != null)
+					caches.customer_cache.put(chosen_key,
+							new Customer(chosen_cust.c_name, chosen_cust.c_address, chosen_cust.c_balance - h_amount,
+									chosen_cust.c_discount, chosen_cust.c_credit, chosen_cust.c_payment_count + 1,
+									chosen_cust.c_ytd + h_amount, chosen_cust.c_deliverycnt, true));
 
 			} else {
 				int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
@@ -316,7 +316,7 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					int txn_type_rand =  ThreadLocalRandom.current().nextInt(0, 100);
+					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
