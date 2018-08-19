@@ -107,16 +107,21 @@ public class Client {
 				for (TrippleKey k : cons.all_keys_customer)
 					if (k.k2 == did && k.k3 == wid)
 						partial_cust_keys.add(k);
-				// fetch all such custemrs 
+				// fetch all such custemrs
 				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
 				// filter them based on the current last name
-				TrippleKey chosen_key;
-				Customer chosen_cust;
+				TrippleKey chosen_key = null;
+				Customer chosen_cust = null;
 				for (TrippleKey k : filtered_custs.keySet())
 					if (filtered_custs.get(k).c_name.startsWith(givenLastName)) {
 						chosen_key = k;
 						chosen_cust = filtered_custs.get(k);
 					}
+				// update the chosen customer
+				caches.customer_cache.put(chosen_key,
+						new Customer(chosen_cust.c_name, chosen_cust.c_address, chosen_cust.c_balance - h_amount,
+								chosen_cust.c_discount, chosen_cust.c_credit, chosen_cust.c_payment_count + 1,
+								chosen_cust.c_ytd + h_amount, chosen_cust.c_deliverycnt, true));
 
 			} else {
 				int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
@@ -151,7 +156,6 @@ public class Client {
 			item_keys.add(iRand);
 			stock_keys.add(skey);
 		}
-
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
@@ -209,11 +213,53 @@ public class Client {
 		return estimatedTime;
 	}
 
+	//////////////////
 	// STOCK_LEVEL (6%)
 	public long stockLevel(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
+		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		TrippleKey chosen_key = null;
+		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			// pick the customer either by last name or the id
+			if (byLastName) {
+				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
+				// create a local set of keys for the current w_id and d_id
+				Set<TrippleKey> partial_cust_keys = new TreeSet<TrippleKey>();
+				for (TrippleKey k : cons.all_keys_customer)
+					if (k.k2 == did && k.k3 == wid)
+						partial_cust_keys.add(k);
+				// fetch all such custemrs
+				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
+				// filter them based on the current last name
+				Customer chosen_cust;
+				for (TrippleKey k : filtered_custs.keySet())
+					if (filtered_custs.get(k).c_name.startsWith(givenLastName)) {
+						chosen_key = k;
+						chosen_cust = filtered_custs.get(k);
+					}
+			} else {
+				chosen_key = new TrippleKey(ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER), did, wid);
+				Customer chosen_cust = caches.customer_cache.get(chosen_key);
+			}
+			// query orders based on the chosen customer
+			Set<QuadKey> partial_order_keys = null;
+			for (QuadKey k : cons.all_keys_order)
+				if (k.k2 == chosen_key.k1 && k.k3 == did && k.k4 == wid)
+					partial_order_keys.add(k);
+			Map<QuadKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
+			// pick the order with the largest o_id
+			Order chosen_ord;
+			QuadKey chosen_oid;
+			int max_key = 0;
+			for (QuadKey k : filtered_ords.keySet())
+				if (filtered_ords.get(k).isAlive && k.k1 > max_key) {
+					max_key = k.k1;
+					chosen_oid = k;
+					chosen_ord = filtered_ords.get(k);
+				}
 			tx.commit();
 			tx.close();
 		}
@@ -246,7 +292,7 @@ public class Client {
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
-					int txn_type_rand = 3; //ThreadLocalRandom.current().nextInt(0, 100);
+					int txn_type_rand = 3; // ThreadLocalRandom.current().nextInt(0, 100);
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
