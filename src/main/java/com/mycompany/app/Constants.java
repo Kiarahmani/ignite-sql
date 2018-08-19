@@ -33,12 +33,12 @@ public class Constants {
 
 	public Constants(int clientNumber, int totals) {
 		// change these later //TODO
-		this._DISTRICT_NUMBER = 5;
-		this._WAREHOUSE_NUMBER = 3;
-		this._CUSTOMER_NUMBER = 10;
-		this._ORDER_NUMBER = 30;
-		this._HISTORY_NUMBER = 100;
-		this._ITEM_NUMBER = 40;
+		this._DISTRICT_NUMBER = 15;
+		this._WAREHOUSE_NUMBER = 13;
+		this._CUSTOMER_NUMBER = 50;
+		this._ORDER_NUMBER = 50;
+		this._HISTORY_NUMBER = 120;
+		this._ITEM_NUMBER = 70;
 
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
