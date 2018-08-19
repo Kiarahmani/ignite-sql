@@ -90,7 +90,7 @@ public class Client {
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
 			//Warehouse wh = caches.warehouse_cache.get(wid);
 			//caches.warehouse_cache.put(wid,
