@@ -101,7 +101,7 @@ public class Client {
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
 			// update custmer 40%(60%) of the time by id (last name)
-			if (byLastName) {
+		/*	if (byLastName) {
 				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
 				// create a local set of keys for the current w_id and d_id
 				Set<TrippleKey> partial_cust_keys = new TreeSet<TrippleKey>();
@@ -130,7 +130,7 @@ public class Client {
 				Customer c = caches.customer_cache.get(c_key);
 				caches.customer_cache.put(c_key, new Customer(c.c_name, c.c_address, c.c_balance - h_amount,
 						c.c_discount, c.c_credit, c.c_payment_count + 1, c.c_ytd + h_amount, c.c_deliverycnt, true));
-			}
+			}*/
 			tx.commit();
 			tx.close();
 		}
