@@ -130,7 +130,7 @@ public class Client {
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
-			for (DoubleKey k : stock_keys)
+			for (DoubleKey k : all_stocks.keySet())
 				System.out.println(k);
 			System.err.println(all_items.size());
 			for (DoubleKey st_key : stock_keys) {
