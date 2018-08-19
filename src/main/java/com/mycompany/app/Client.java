@@ -90,28 +90,29 @@ public class Client {
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			// update w_ytd
 			Warehouse wh = caches.warehouse_scache.get(wid);
-			System.out.println(wh);
-			Warehouse wh1 = caches.warehouse_scache.get(wid);
-			System.out.println(wh1);
-			Warehouse wh2 = caches.warehouse_scache.get(wid);
-			System.out.println(wh2);
+			caches.warehouse_cache.put(wid,
+					new Warehouse(wh.w_name, wh.w_address, wh.w_tax, wh.w_ytd + h_amount, true));
+			// update d_ytd
+			District dist = caches.district_cache.get(d_key);
+			caches.district_cache.put(d_key,
+					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
+			// update custmer 40%(60%) of the time by id (last name)
+			if (byLastName) {
+
+			} else {
+				int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
+				TrippleKey c_key = new TrippleKey(cid, did, wid);
+				Customer c = caches.customer_cache.get(c_key);
+				caches.customer_cache.put(c_key, new Customer(c.c_name, c.c_address, c.c_balance - h_amount,
+						c.c_discount, c.c_credit, c.c_payment_count + 1, c.c_ytd + h_amount, c.c_deliverycnt, true));
+			}
+			tx.commit();
+			tx.close();
 		}
-		/*
-		 * try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) { //
-		 * update w_ytd
-		 * 
-		 * caches.warehouse_cache.put(wid, new Warehouse(wh.w_name, wh.w_address,
-		 * wh.w_tax, wh.w_ytd + h_amount, true)); // update d_ytd District dist =
-		 * caches.district_cache.get(d_key); caches.district_cache.put(d_key, new
-		 * District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount,
-		 * dist.d_nextoid, true)); if (byLastName) {
-		 * 
-		 * } else {
-		 * 
-		 * } tx.commit(); tx.close(); }
-		 */
+
 		//
 		// System.out.println("doing payment");
 		long estimatedTime = System.currentTimeMillis() - startTime;
