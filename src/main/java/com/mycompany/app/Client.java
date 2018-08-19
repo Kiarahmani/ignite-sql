@@ -286,10 +286,12 @@ public class Client {
 			for (TrippleKey k : cons.all_keys_orderLine)
 				if (k.k2 == did && k.k3 == wid && k.k1 < dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
+			System.out.println("1%%%"+partial_orderLine_keys.size());
 			Map<TrippleKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
 			// get stocks and filter them according to the threshold
 			for (OrderLine o : filtered_orderLines.values())
 				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
+			System.out.println("2%%%"+filtered_stock_keys.size());
 			Map<DoubleKey, Stock> filtered_stocks = caches.stock_cache.getAll(filtered_stock_keys);
 			Set<Stock> final_stocks = new HashSet<Stock>();
 			for (Stock s : filtered_stocks.values())
