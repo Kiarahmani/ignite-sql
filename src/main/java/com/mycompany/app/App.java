@@ -49,13 +49,16 @@ public class App {
 			manager.populateAllCaches(ignite, cons);
 			manager.dispatchFollowers(ignite);
 			manager.waitForFollowers(ignite, _FOLLOWER_COUNT);
-			//manager.printAll(ignite, cons);
+			// manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
 		} else {
 			Client clients = new Client(ignite, cons);
 			System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
 			Caches caches = clients.announceReady(ignite, cons);
 			clients.waitForAll(ignite, _FOLLOWER_COUNT);
+			System.out.println("\n\n\n*************");
+			System.out.println(ignite.cacheNames());
+			System.out.println("*************\n\n\n");
 			clients.startAll(caches, cons);
 			clients.joinAll(cons);
 			clients.printStats(ignite, cons);
