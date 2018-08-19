@@ -96,8 +96,8 @@ public class CacheManager {
 		CacheConfiguration<Integer, Warehouse> warehouse_sccfg = new CacheConfiguration<Integer, Warehouse>(
 				"warehouse_stale");
 		warehouse_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-		warehouse_sccfg.setCacheMode(CacheMode.REPLICATED);
-		warehouse_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
+		warehouse_sccfg.setCacheMode(CacheMode.PARTITIONED);
+		warehouse_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
 		// create both caches:
 		ignite.createCache(warehouse_ccfg);
 		ignite.createCache(warehouse_sccfg, warehouse_nearCfg);
