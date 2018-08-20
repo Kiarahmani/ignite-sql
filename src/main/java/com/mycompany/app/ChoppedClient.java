@@ -92,6 +92,24 @@ public class ChoppedClient {
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
+		// ** extracted operations
+		String givenLastName = UUID.randomUUID().toString().substring(0, 1);
+		// create a local set of keys for the current w_id and d_id
+		Set<TrippleKey> partial_cust_keys = new TreeSet<TrippleKey>();
+		for (TrippleKey k : cons.all_keys_customer)
+			if (k.k2 == did && k.k3 == wid)
+				partial_cust_keys.add(k);
+		// fetch all such custemrs
+		Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
+		// filter them based on the current last name
+		TrippleKey chosen_key = null;
+		Customer chosen_cust = null;
+		for (TrippleKey k : filtered_custs.keySet())
+			if (filtered_custs.get(k).c_name.contains(givenLastName)) {
+				chosen_key = k;
+				chosen_cust = filtered_custs.get(k);
+			}
+		// **
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
 			Warehouse wh = caches.warehouse_scache.get(wid);
@@ -103,22 +121,7 @@ public class ChoppedClient {
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
 			// update custmer 40%(60%) of the time by id (last name)
 			if (byLastName) {
-				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
-				// create a local set of keys for the current w_id and d_id
-				Set<TrippleKey> partial_cust_keys = new TreeSet<TrippleKey>();
-				for (TrippleKey k : cons.all_keys_customer)
-					if (k.k2 == did && k.k3 == wid)
-						partial_cust_keys.add(k);
-				// fetch all such custemrs
-				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
-				// filter them based on the current last name
-				TrippleKey chosen_key = null;
-				Customer chosen_cust = null;
-				for (TrippleKey k : filtered_custs.keySet())
-					if (filtered_custs.get(k).c_name.contains(givenLastName)) {
-						chosen_key = k;
-						chosen_cust = filtered_custs.get(k);
-					}
+
 				// update the chosen customer
 				if (chosen_cust != null) {
 					caches.customer_cache.put(chosen_key,
