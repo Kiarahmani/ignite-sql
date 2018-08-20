@@ -65,7 +65,7 @@ public class Caches {
 		this.history_cache = ignite.cache("history_ser");
 		this.history_scache = ignite.getOrCreateNearCache("history_stale", history_nearCfg);
 
-		NearCacheConfiguration<QuadKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<QuadKeyw, OrderLine>();
+		NearCacheConfiguration<QuadKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<QuadKey, OrderLine>();
 		this.orderLine_cache = ignite.cache("orderLine_ser");
 		this.orderLine_scache = ignite.getOrCreateNearCache("orderLine_stale", orderLine_nearCfg);
 
