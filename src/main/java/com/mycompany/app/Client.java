@@ -206,7 +206,7 @@ public class Client {
 	public long delivery(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			tx.commit();
 			tx.close();
 		}

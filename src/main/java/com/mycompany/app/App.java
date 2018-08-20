@@ -49,7 +49,7 @@ public class App {
 			manager.populateAllCaches(ignite, cons);
 			manager.dispatchFollowers(ignite);
 			manager.waitForFollowers(ignite, _FOLLOWER_COUNT);
-			// manager.printAll(ignite, cons);
+			manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
 		} else {
 			Client clients = new Client(ignite, cons);
