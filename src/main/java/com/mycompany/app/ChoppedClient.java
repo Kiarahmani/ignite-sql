@@ -292,7 +292,7 @@ public class ChoppedClient {
 		TrippleKey chosen_key = null;
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			// pick the customer either by last name or the id
 			if (byLastName) {
 				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
@@ -302,7 +302,7 @@ public class ChoppedClient {
 					if (k.k2 == did && k.k3 == wid)
 						partial_cust_keys.add(k);
 				// fetch all such custemrs
-				Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
+				Map<TrippleKey, Customer> filtered_custs = caches.customer_scache.getAll(partial_cust_keys);
 				// filter them based on the current last name
 				Customer chosen_cust;
 				for (TrippleKey k : filtered_custs.keySet())
@@ -313,7 +313,7 @@ public class ChoppedClient {
 					}
 			} else {
 				chosen_key = new TrippleKey(ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER), did, wid);
-				Customer chosen_cust = caches.customer_cache.get(chosen_key);
+				Customer chosen_cust = caches.customer_scache.get(chosen_key);
 			}
 			// query orders based on the chosen customer (if exists)
 			if (chosen_key != null) {
@@ -322,7 +322,7 @@ public class ChoppedClient {
 					if (k.k2 == did && k.k3 == wid)
 						partial_order_keys.add(k);
 
-				Map<TrippleKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
+				Map<TrippleKey, Order> filtered_ords = caches.order_scache.getAll(partial_order_keys);
 				// pick the order with the largest o_id
 				Order chosen_ord;
 				TrippleKey chosen_oid;
@@ -406,7 +406,7 @@ public class ChoppedClient {
 						System.out.println(
 								"tid-" + threadId + "(" + rd + ")" + line + "DELIVRY(" + estimatedTime / 200 + " rtt)");
 					}
-					if (txn_type_rand >= 0 && txn_type_rand < 18) {
+					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
 						System.out.println(
