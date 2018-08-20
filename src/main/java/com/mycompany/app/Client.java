@@ -228,43 +228,47 @@ public class Client {
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			Map<TrippleKey, Boolean> partial_newOrders = caches.newOrder_cache.getAll(partial_newOrder_keys);
-			System.out.println(partial_newOrders);
 			// pick the oldest order
 			int oldest_oid = cons._ORDER_NUMBER;
 			TrippleKey selected_no_key = null;
 			for (TrippleKey k : partial_newOrders.keySet())
 				if (k.k1 < oldest_oid && partial_newOrders.get(k)) {
-					System.out.println(">>>>>>" + k);
 					oldest_oid = k.k1;
 					selected_no_key = k;
 				}
 			// delete the selected new_order
-			if (selected_no_key != null)
+			if (selected_no_key != null) {
 				caches.newOrder_cache.put(selected_no_key, false);
-			// select the matching order
+				// select the matching order
 
-			/*
-			 * Order selected_order = caches.order_cache.get(selected_no_key);
-			 * 
-			 * int cid = selected_order.o_cid; // update the carrier_id of the selected
-			 * order int car_id = ThreadLocalRandom.current().nextInt(0, 5);
-			 * caches.order_cache.put(selected_no_key, new Order(cid, car_id,
-			 * selected_order.o_entry_date, true)); // select all matching orderline rows
-			 * Set<QuadKey> partial_orderLine_keys = new TreeSet<>(); for (QuadKey k :
-			 * cons.all_keys_orderLine) if (k.k2 == selected_no_key.k1 && k.k3 == did &&
-			 * k.k4 == cid) partial_orderLine_keys.add(k); Map<QuadKey, OrderLine>
-			 * partial_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
-			 * // sum of ol_amount is retrieved and delivery_date is updated int
-			 * sum_ol_amount = 0; for (QuadKey k : partial_orderLines.keySet()) {
-			 * sum_ol_amount += 1; OrderLine ol = partial_orderLines.get(k);
-			 * partial_orderLines.put(k, new OrderLine(ol.ol_iid, "08/20/2018", ol.ol_info,
-			 * true)); } caches.orderLine_cache.putAll(partial_orderLines); // update the
-			 * matching customer TrippleKey c_key = new TrippleKey(cid, did, wid); Customer
-			 * cust = caches.customer_cache.get(c_key); caches.customer_cache.put(c_key, new
-			 * Customer(cust.c_name, cust.c_address, cust.c_balance - sum_ol_amount,
-			 * cust.c_discount, cust.c_credit, cust.c_payment_count, cust.c_ytd,
-			 * cust.c_deliverycnt + 1, true));
-			 */
+				Order selected_order = caches.order_cache.get(selected_no_key);
+
+				int cid = selected_order.o_cid; // update the carrier_id of the selected order
+				int car_id = ThreadLocalRandom.current().nextInt(0, 5);
+				caches.order_cache.put(selected_no_key, new Order(cid, car_id, selected_order.o_entry_date, true));
+				// sleect all matching orderLine rows
+				Set<QuadKey> partial_orderLine_keys = new TreeSet<>();
+				for (QuadKey k : cons.all_keys_orderLine)
+					if (k.k2 == selected_no_key.k1 && k.k3 == did && k.k4 == cid)
+						partial_orderLine_keys.add(k);
+				Map<QuadKey, OrderLine> partial_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
+				// sum of ol_amount is retrieved and delivery_date is updated
+				int sum_ol_amount = 0;
+				for (QuadKey k : partial_orderLines.keySet()) {
+					sum_ol_amount += 1;
+					OrderLine ol = partial_orderLines.get(k);
+					partial_orderLines.put(k, new OrderLine(ol.ol_iid, "08/20/2018", ol.ol_info, true));
+				}
+				caches.orderLine_cache.putAll(partial_orderLines);
+				// update the matching customer
+				TrippleKey c_key = new TrippleKey(cid, did, wid);
+				Customer cust = caches.customer_cache.get(c_key);
+				caches.customer_cache.put(c_key,
+						new Customer(cust.c_name, cust.c_address, cust.c_balance - sum_ol_amount, cust.c_discount,
+								cust.c_credit, cust.c_payment_count, cust.c_ytd, cust.c_deliverycnt + 1, true));
+			} else {
+				System.err.println("There is no order to be delivered");
+			}
 			tx.commit();
 			tx.close();
 		}
