@@ -251,7 +251,7 @@ public class Client {
 					partial_orderLine_keys.add(k);
 			Map<QuadKey, OrderLine> partial_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
 			// sum of ol_amount is retrieved and delivery_date is updated
-			int sum_ol_amount = 0;
+		/*	int sum_ol_amount = 0;
 			for (QuadKey k : partial_orderLines.keySet()) {
 				sum_ol_amount += 1;
 				OrderLine ol = partial_orderLines.get(k);
@@ -262,7 +262,7 @@ public class Client {
 			TrippleKey c_key = new TrippleKey(cid, did, wid);
 			Customer cust = caches.customer_cache.get(c_key);
 			caches.customer_cache.put(c_key, new Customer(cust.c_name, cust.c_address, cust.c_balance - sum_ol_amount,
-					cust.c_discount, cust.c_credit, cust.c_payment_count, cust.c_ytd, cust.c_deliverycnt + 1, true));
+					cust.c_discount, cust.c_credit, cust.c_payment_count, cust.c_ytd, cust.c_deliverycnt + 1, true));*/
 			tx.commit();
 			tx.close();
 		}
