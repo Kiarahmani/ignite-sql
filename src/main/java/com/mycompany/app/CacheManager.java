@@ -149,7 +149,7 @@ public class CacheManager {
 		// ----------------------------------------------------------------------------------------------------
 		// INITILIZE CACHE: ordersLine
 		// ser: main config
-		CacheConfiguration<TrippleKey, OrderLine> orderLine_ccfg = new CacheConfiguration<TrippleKey, OrderLine>(
+		CacheConfiguration<QuadKey, OrderLine> orderLine_ccfg = new CacheConfiguration<QuadKey, OrderLine>(
 				"orderLine_ser");
 		orderLine_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 		orderLine_ccfg.setCacheMode(CacheMode.REPLICATED);
@@ -159,8 +159,8 @@ public class CacheManager {
 		orderLine_affFunc.setPartitions(1);
 		orderLine_ccfg.setAffinity(orderLine_affFunc);
 		// stale config
-		NearCacheConfiguration<TrippleKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<>();
-		CacheConfiguration<TrippleKey, OrderLine> orderLine_sccfg = new CacheConfiguration<TrippleKey, OrderLine>(
+		NearCacheConfiguration<QuadKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<QuadKey, OrderLine> orderLine_sccfg = new CacheConfiguration<QuadKey, OrderLine>(
 				"orderLine_stale");
 		orderLine_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
 		orderLine_sccfg.setCacheMode(CacheMode.REPLICATED);
