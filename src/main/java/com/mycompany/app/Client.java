@@ -202,7 +202,7 @@ public class Client {
 		return estimatedTime;
 	}
 
-	// DELIVERY (6%) 
+	// DELIVERY (6%)
 	public long delivery(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
