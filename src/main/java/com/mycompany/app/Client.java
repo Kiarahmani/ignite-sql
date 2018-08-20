@@ -152,12 +152,14 @@ public class Client {
 		int item_count = ThreadLocalRandom.current().nextInt(5, 15);
 		Set<Integer> item_keys = new TreeSet<Integer>();
 		Set<DoubleKey> stock_keys = new TreeSet<DoubleKey>();
+		Set<QuadKey> orderLine_keys = new TreeSet<QuadKey>();
 		for (int i = 0; i < item_count; i++) {
 			int iRand = ThreadLocalRandom.current().nextInt(0, cons._ITEM_NUMBER);
 			DoubleKey skey = new DoubleKey(iRand, wid);
 			item_keys.add(iRand);
 			stock_keys.add(skey);
 		}
+
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
@@ -176,15 +178,19 @@ public class Client {
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
 			Order order = new Order(carrier_id, "08/18/2018", true);
 			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
+			// create all partial orderLine keys for this order
+			for (int i = 0; i < cons._ORDERLINE_NUMBER; i++)
+				orderLine_keys.add(new QuadKey(i, order_key.k1, did, wid));
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
+			Map<QuadKey, OrderLine> all_orderLines = caches.orderLine_cache.getAll(orderLine_keys);
 			int ol_number = 0;
 			for (DoubleKey st_key : all_stocks.keySet()) {
 				// insert a new orderLine
-				caches.orderLine_cache.put(new QuadKey(ol_number, order_key.k1, did, wid),
+				all_orderLines.put(new QuadKey(ol_number, order_key.k1, did, wid),
 						new OrderLine(st_key.k1, "", "S_DIST_" + String.valueOf(did), true));
 				ol_number++;
 				// read the corresponding stock
@@ -198,6 +204,7 @@ public class Client {
 					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
 			}
+			caches.orderLine_cache.putAll(all_orderLines);
 			caches.stock_cache.putAll(all_stocks);
 			tx.commit();
 			tx.close();
