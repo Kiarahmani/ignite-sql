@@ -374,6 +374,7 @@ public class Client {
 	}
 
 	public Client(Ignite ignite, Constants cons) {
+		System.out.println("\n\n\n<<<<<<<NORMAL CLIENT STARTED>>>>>>>>\n\n\n");
 		myArray = new Stat[cons._CLIENT_NUMBER * cons._ROUNDS];
 		at = new AtomicReferenceArray<Stat>(myArray);
 		task = new Runnable() {

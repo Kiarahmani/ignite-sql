@@ -349,7 +349,7 @@ public class ChoppedClient {
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		int threshold = ThreadLocalRandom.current().nextInt(10, 21);
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			District dist = caches.district_cache.get(new DoubleKey(did, wid));
 			Set<QuadKey> partial_orderLine_keys = new TreeSet<QuadKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
@@ -366,15 +366,16 @@ public class ChoppedClient {
 			for (Stock s : filtered_stocks.values())
 				if (s.s_quant < threshold)
 					final_stocks.add(s);
-			tx.commit();
-			tx.close();
-		}
+		//	tx.commit();
+		//	tx.close();
+		//}
 		// System.out.println("doing order status");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
 
 	public ChoppedClient(Ignite ignite, Constants cons) {
+		System.out.println("\n\n\n<<<<<<<CHOPPED CLIENT STARTED>>>>>>>>\n\n\n");
 		myArray = new Stat[cons._CLIENT_NUMBER * cons._ROUNDS];
 		at = new AtomicReferenceArray<Stat>(myArray);
 		task = new Runnable() {
