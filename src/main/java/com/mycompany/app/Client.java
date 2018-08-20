@@ -119,18 +119,23 @@ public class Client {
 						chosen_cust = filtered_custs.get(k);
 					}
 				// update the chosen customer
-				if (chosen_cust != null)
+				if (chosen_cust != null) {
 					caches.customer_cache.put(chosen_key,
 							new Customer(chosen_cust.c_name, chosen_cust.c_address, chosen_cust.c_balance - h_amount,
 									chosen_cust.c_discount, chosen_cust.c_credit, chosen_cust.c_payment_count + 1,
 									chosen_cust.c_ytd + h_amount, chosen_cust.c_deliverycnt, true));
-
+					int h_key = ThreadLocalRandom.current().nextInt(0, cons._HISTORY_NUMBER);
+					caches.history_cache.put(h_key, new History("payment by: " + String.valueOf(chosen_key), true));
+				}
 			} else {
 				int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
 				TrippleKey c_key = new TrippleKey(cid, did, wid);
 				Customer c = caches.customer_cache.get(c_key);
 				caches.customer_cache.put(c_key, new Customer(c.c_name, c.c_address, c.c_balance - h_amount,
 						c.c_discount, c.c_credit, c.c_payment_count + 1, c.c_ytd + h_amount, c.c_deliverycnt, true));
+				// insert a row into the history
+				int h_key = ThreadLocalRandom.current().nextInt(0, cons._HISTORY_NUMBER);
+				caches.history_cache.put(h_key, new History("payment by: " + String.valueOf(cid), true));
 			}
 			tx.commit();
 			tx.close();
