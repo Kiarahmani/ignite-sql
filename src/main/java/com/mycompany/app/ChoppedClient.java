@@ -165,21 +165,23 @@ public class ChoppedClient {
 			item_keys.add(iRand);
 			stock_keys.add(skey);
 		}
+		// Extracted operations
+		Map<Integer, Item> all_items = caches.item_scache.getAll(item_keys);
 		int w_tax = caches.warehouse_scache.get(wid).w_tax;
+		TrippleKey c_key = new TrippleKey(cid, did, wid);
+		Customer cust = caches.customer_cache.get(c_key);
+
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
 			DoubleKey d_key = new DoubleKey(did, wid);
-			TrippleKey c_key = new TrippleKey(cid, did, wid);
-			// read district and warehouse tax rate
-			
+
+			// read district's tax rate
 			District dist = caches.district_cache.get(d_key);
 			int d_tax = dist.d_tax;
 			// update district's next order id
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd, dist.d_nextoid + 1, true));
-			// read the customer
-			Customer cust = caches.customer_cache.get(c_key);
 			// insret a new order
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
 			Order order = new Order(cid, carrier_id, "08/18/2018", true);
@@ -190,7 +192,7 @@ public class ChoppedClient {
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
-			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
+
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
 			Map<QuadKey, OrderLine> all_orderLines = caches.orderLine_cache.getAll(orderLine_keys);
 			int ol_number = 0;
@@ -350,7 +352,7 @@ public class ChoppedClient {
 		int threshold = ThreadLocalRandom.current().nextInt(10, 21);
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
-			
+
 			District dist = caches.district_scache.get(new DoubleKey(did, wid));
 			Set<QuadKey> partial_orderLine_keys = new TreeSet<QuadKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
