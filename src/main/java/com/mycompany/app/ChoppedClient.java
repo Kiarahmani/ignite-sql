@@ -165,13 +165,17 @@ public class ChoppedClient {
 			item_keys.add(iRand);
 			stock_keys.add(skey);
 		}
-		// Extracted operations
-		Map<Integer, Item> all_items = caches.item_scache.getAll(item_keys);
-		int w_tax = caches.warehouse_scache.get(wid).w_tax;
-		TrippleKey c_key = new TrippleKey(cid, did, wid);
-		Customer cust = caches.customer_scache.get(c_key);
-
 		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			// Extracted operations
+			Map<Integer, Item> all_items = caches.item_scache.getAll(item_keys);
+			int w_tax = caches.warehouse_scache.get(wid).w_tax;
+			TrippleKey c_key = new TrippleKey(cid, did, wid);
+			Customer cust = caches.customer_scache.get(c_key);
+			tx.commit();
+			tx.close();
+		}
+
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
 			DoubleKey d_key = new DoubleKey(did, wid);
