@@ -181,7 +181,6 @@ public class Client {
 			// create all partial orderLine keys for this order
 			for (int i = 0; i < cons._ORDERLINE_NUMBER; i++)
 				orderLine_keys.add(new QuadKey(i, order_key.k1, did, wid));
-			System.out.println(orderLine_keys);
 			TrippleKey newOrder_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			caches.order_cache.put(order_key, order);
 			caches.newOrder_cache.put(newOrder_key, true);
