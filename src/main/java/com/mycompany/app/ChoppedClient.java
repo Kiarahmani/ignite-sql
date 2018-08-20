@@ -394,7 +394,7 @@ public class ChoppedClient {
 					if (rd >= 10)
 						line = "---";
 					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
-					if (txn_type_rand < 6) {
+					if (txn_type_rand < 26) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
 						System.out.println(
