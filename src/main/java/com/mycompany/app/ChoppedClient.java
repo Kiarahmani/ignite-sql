@@ -360,11 +360,11 @@ public class ChoppedClient {
 					partial_orderLine_keys.add(k);
 			}
 			
-			//2
+		/*	//2
 			Map<QuadKey, OrderLine> filtered_orderLines = caches.orderLine_scache.getAll(partial_orderLine_keys);
 			
 			//3
-		/*	// get stocks and filter them according to the threshold
+			// get stocks and filter them according to the threshold
 			for (OrderLine o : filtered_orderLines.values())
 				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
 			Map<DoubleKey, Stock> filtered_stocks = caches.stock_scache.getAll(filtered_stock_keys);
