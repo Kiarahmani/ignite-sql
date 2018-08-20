@@ -37,7 +37,7 @@ public class Constants {
 	public Constants(int clientNumber, int totals) {
 		// change these later //TODO
 		this._DISTRICT_NUMBER = 5;
-		this._CHOPPED = false;
+		this._CHOPPED = true;
 		this._WAREHOUSE_NUMBER = 1;
 		this._CUSTOMER_NUMBER = 20;
 		this._ORDER_NUMBER = 30;
