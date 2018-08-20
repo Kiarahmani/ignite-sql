@@ -10,6 +10,7 @@ public class Constants {
 	public int _CLIENT_NUMBER;
 	public int _DISTRICT_NUMBER;
 	public int _WAREHOUSE_NUMBER;
+	public int _ORDERLINE_NUMBER;
 	public int _CUSTOMER_NUMBER;
 	public int _ITEM_NUMBER;
 	public int _ORDER_NUMBER;
@@ -84,7 +85,8 @@ public class Constants {
 		for (int o = 0; o < _ORDER_NUMBER; o++)
 			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
 				for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
-					all_keys_orderLine.add(new QuadKey(1, o, d, w));
+					for (int ol = 0; ol < _ORDERLINE_NUMBER; ol++)
+						all_keys_orderLine.add(new QuadKey(ol, o, d, w));
 				}
 			}
 		// create all stock keys
