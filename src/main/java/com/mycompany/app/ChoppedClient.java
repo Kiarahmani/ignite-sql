@@ -368,11 +368,11 @@ public class ChoppedClient {
 			for (OrderLine o : filtered_orderLines.values())
 				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
 		
-			/*Map<DoubleKey, Stock> filtered_stocks = caches.stock_scache.getAll(filtered_stock_keys);
+			Map<DoubleKey, Stock> filtered_stocks = caches.stock_scache.getAll(filtered_stock_keys);
 			Set<Stock> final_stocks = new HashSet<Stock>();
 			for (Stock s : filtered_stocks.values())
 				if (s.s_quant < threshold)
-					final_stocks.add(s);*/
+					final_stocks.add(s);
 			tx.commit();
 			tx.close();
 		}
