@@ -408,7 +408,7 @@ public class ChoppedClient {
 						System.out.println(
 								"tid-" + threadId + "(" + rd + ")"+line+"DELIVRY(" + estimatedTime / 200 + " rtt)");
 					}
-					if (txn_type_rand >= 12 && txn_type_rand < 18) {
+					if (txn_type_rand >= 0 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
 						System.out.println(
