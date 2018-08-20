@@ -350,6 +350,8 @@ public class ChoppedClient {
 		int threshold = ThreadLocalRandom.current().nextInt(10, 21);
 		IgniteTransactions transactions = ignite.transactions();
 		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			
+			//1
 			District dist = caches.district_scache.get(new DoubleKey(did, wid));
 			Set<QuadKey> partial_orderLine_keys = new TreeSet<QuadKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
@@ -357,15 +359,19 @@ public class ChoppedClient {
 				if (k.k2 == did && k.k3 == wid && k.k1 <= dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
 			}
+			
+			//2
 			Map<QuadKey, OrderLine> filtered_orderLines = caches.orderLine_scache.getAll(partial_orderLine_keys);
-			// get stocks and filter them according to the threshold
+			
+			//3
+		/*	// get stocks and filter them according to the threshold
 			for (OrderLine o : filtered_orderLines.values())
 				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
 			Map<DoubleKey, Stock> filtered_stocks = caches.stock_scache.getAll(filtered_stock_keys);
 			Set<Stock> final_stocks = new HashSet<Stock>();
 			for (Stock s : filtered_stocks.values())
 				if (s.s_quant < threshold)
-					final_stocks.add(s);
+					final_stocks.add(s);*/
 		//	tx.commit();
 		//	tx.close();
 		//}
