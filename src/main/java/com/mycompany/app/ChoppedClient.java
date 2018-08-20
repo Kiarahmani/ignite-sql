@@ -165,14 +165,14 @@ public class ChoppedClient {
 			item_keys.add(iRand);
 			stock_keys.add(skey);
 		}
-
+		int w_tax = caches.warehouse_scache.get(wid).w_tax;
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 
 			DoubleKey d_key = new DoubleKey(did, wid);
 			TrippleKey c_key = new TrippleKey(cid, did, wid);
 			// read district and warehouse tax rate
-			int w_tax = caches.warehouse_cache.get(wid).w_tax;
+			
 			District dist = caches.district_cache.get(d_key);
 			int d_tax = dist.d_tax;
 			// update district's next order id
