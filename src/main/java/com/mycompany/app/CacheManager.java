@@ -308,14 +308,14 @@ public class CacheManager {
 		// order
 		for (TrippleKey key : cons.all_keys_order) {
 			System.out.println("init(order)" + key.toString());
-			order_cache.put(key, new Order(0,0, "", false));
-			order_scache.put(key, new Order(0,0, "", false));
+			order_cache.put(key, new Order(0, 0, "", false));
+			order_scache.put(key, new Order(0, 0, "", false));
 		}
 		// orderLine
 		for (QuadKey key : cons.all_keys_orderLine) {
 			System.out.println("init(orderLine)" + key.toString());
-			orderLine_cache.put(key, new OrderLine( 0, "", "", false));
-			orderLine_scache.put(key, new OrderLine( 0, "", "", false));
+			orderLine_cache.put(key, new OrderLine(0, "", "", false));
+			orderLine_scache.put(key, new OrderLine(0, "", "", false));
 		}
 		// item
 		for (int key : cons.all_keys_item) {
@@ -392,7 +392,8 @@ public class CacheManager {
 			System.out.println(
 					"----------------------------------\nkey	   	   value\n----------------------------------");
 			for (TrippleKey key : cons.all_keys_order) {
-				System.out.println(key.toString() + "	| " + order_cache.get(key).toString() + "");
+				if (order_cache.get(key).isAlive)
+					System.out.println(key.toString() + "	| " + order_cache.get(key).toString() + "");
 			}
 		}
 		// orderLine
@@ -401,7 +402,8 @@ public class CacheManager {
 			System.out.println(
 					"----------------------------------\nkey	   	   value\n----------------------------------");
 			for (QuadKey key : cons.all_keys_orderLine) {
-				System.out.println(key.toString() + "	| " + orderLine_cache.get(key).toString() + "");
+				if (orderLine_cache.get(key).isAlive)
+					System.out.println(key.toString() + "	| " + orderLine_cache.get(key).toString() + "");
 			}
 		}
 		// item
@@ -428,7 +430,8 @@ public class CacheManager {
 			System.out.println(
 					"----------------------------------\nkey	   	   value\n----------------------------------");
 			for (TrippleKey key : cons.all_keys_newOrder) {
-				System.out.println(key + "	| " + newOrder_cache.get(key) + "");
+				if (newOrder_cache.get(key))
+					System.out.println(key + "	| " + newOrder_cache.get(key) + "");
 			}
 		}
 		// history
@@ -437,7 +440,8 @@ public class CacheManager {
 			System.out.println(
 					"----------------------------------\nkey	   	   value\n----------------------------------");
 			for (int key : cons.all_keys_history) {
-				System.out.println("$(" + key + ")" + "	| " + history_cache.get(key).toString() + "");
+				if (history_cache.get(key).isAlive)
+					System.out.println("$(" + key + ")" + "	| " + history_cache.get(key).toString() + "");
 			}
 		}
 
