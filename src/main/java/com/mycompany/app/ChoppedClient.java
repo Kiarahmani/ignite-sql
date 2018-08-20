@@ -123,7 +123,6 @@ public class ChoppedClient {
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
 			// update custmer 40%(60%) of the time by id (last name)
 			if (byLastName) {
-
 				// update the chosen customer
 				if (chosen_cust != null) {
 					caches.customer_cache.put(chosen_key,
@@ -133,6 +132,7 @@ public class ChoppedClient {
 					int h_key = ThreadLocalRandom.current().nextInt(0, cons._HISTORY_NUMBER);
 					caches.history_cache.put(h_key, new History("payment by: " + String.valueOf(chosen_key.k1), true));
 				}
+				else {System.out.println("LAST NAME DOES NOT EXIST!");}
 			} else {
 				int cid = ThreadLocalRandom.current().nextInt(0, cons._CUSTOMER_NUMBER);
 				TrippleKey c_key = new TrippleKey(cid, did, wid);
