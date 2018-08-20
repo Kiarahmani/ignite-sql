@@ -350,18 +350,18 @@ public class ChoppedClient {
 		int threshold = ThreadLocalRandom.current().nextInt(10, 21);
 		IgniteTransactions transactions = ignite.transactions();
 		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-			District dist = caches.district_cache.get(new DoubleKey(did, wid));
+			District dist = caches.district_scache.get(new DoubleKey(did, wid));
 			Set<QuadKey> partial_orderLine_keys = new TreeSet<QuadKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
 			for (QuadKey k : cons.all_keys_orderLine) {
 				if (k.k2 == did && k.k3 == wid && k.k1 <= dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
 			}
-			Map<QuadKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
+			Map<QuadKey, OrderLine> filtered_orderLines = caches.orderLine_scache.getAll(partial_orderLine_keys);
 			// get stocks and filter them according to the threshold
 			for (OrderLine o : filtered_orderLines.values())
 				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
-			Map<DoubleKey, Stock> filtered_stocks = caches.stock_cache.getAll(filtered_stock_keys);
+			Map<DoubleKey, Stock> filtered_stocks = caches.stock_scache.getAll(filtered_stock_keys);
 			Set<Stock> final_stocks = new HashSet<Stock>();
 			for (Stock s : filtered_stocks.values())
 				if (s.s_quant < threshold)
@@ -383,39 +383,42 @@ public class ChoppedClient {
 			public void run() {
 				long estimatedTime = -1000000;
 				String kind = "";
+				String line="----";
 				int threadId = (int) (Thread.currentThread().getId() % cons._CLIENT_NUMBER);
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
+					if(rd>=10)
+						line="---";
 					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
 						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime / 200 + " rtt)");
+								"tid-" + threadId + "(" + rd + ")"+line+"ORDRSTS(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
 						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime / 200 + " rtt)");
+								"tid-" + threadId + "(" + rd + ")"+line+"DELIVRY(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
 						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime / 200 + " rtt)");
+								"tid-" + threadId + "(" + rd + ")"+line+"STCKLVL(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
 						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime / 200 + " rtt)");
+								"tid-" + threadId + "(" + rd + ")"+line+"PAYMENT(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
 						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
+								"tid-" + threadId + "(" + rd + ")"+line+"NEWORDR(" + estimatedTime / 200 + " rtt)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 
