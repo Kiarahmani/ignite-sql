@@ -272,7 +272,7 @@ public class Client {
 						new Customer(cust.c_name, cust.c_address, cust.c_balance - sum_ol_amount, cust.c_discount,
 								cust.c_credit, cust.c_payment_count, cust.c_ytd, cust.c_deliverycnt + 1, true));
 			} else {
-				System.err.println("There is no order to be delivered");
+				//System.err.println("There is no order to be delivered");
 			}
 			tx.commit();
 			tx.close();
