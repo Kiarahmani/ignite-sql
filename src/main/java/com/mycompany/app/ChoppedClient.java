@@ -379,7 +379,7 @@ public class ChoppedClient {
 	}
 
 	public ChoppedClient(Ignite ignite, Constants cons) {
-		System.out.println("\n\n\n<<<<<<<CHOPPED CLIENT STARTED>>>>>>>>\n\n\n");
+		System.out.println("\n\n\n<<<<<<<CHOPPED CLIENT STARTED>>>>>>>>\n");
 		myArray = new Stat[cons._CLIENT_NUMBER * cons._ROUNDS];
 		at = new AtomicReferenceArray<Stat>(myArray);
 		task = new Runnable() {
@@ -394,7 +394,7 @@ public class ChoppedClient {
 					if (rd >= 10)
 						line = "---";
 					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
-					if (txn_type_rand < 26) {
+					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
 						System.out.println(
