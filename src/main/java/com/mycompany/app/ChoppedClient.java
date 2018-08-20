@@ -228,6 +228,7 @@ public class ChoppedClient {
 
 	// DELIVERY (6%)
 	public long delivery(Ignite ignite, Constants cons) {
+		TrippleKey selected_no_key = null;
 		long startTime = System.currentTimeMillis();
 		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
@@ -242,13 +243,16 @@ public class ChoppedClient {
 			Map<TrippleKey, Boolean> partial_newOrders = caches.newOrder_cache.getAll(partial_newOrder_keys);
 			// pick the oldest order
 			int oldest_oid = cons._ORDER_NUMBER;
-			TrippleKey selected_no_key = null;
 			for (TrippleKey k : partial_newOrders.keySet())
 				if (k.k1 < oldest_oid && partial_newOrders.get(k)) {
 					oldest_oid = k.k1;
 					selected_no_key = k;
 				}
 			// delete the selected new_order
+			tx.commit();
+			tx.close();
+		}
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			if (selected_no_key != null) {
 				caches.newOrder_cache.put(selected_no_key, false);
 				// select the matching order
@@ -284,6 +288,7 @@ public class ChoppedClient {
 			tx.commit();
 			tx.close();
 		}
+
 		// System.out.println("doing delivery");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
