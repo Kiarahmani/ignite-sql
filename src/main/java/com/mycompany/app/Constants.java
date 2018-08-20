@@ -40,7 +40,7 @@ public class Constants {
 		this._ORDER_NUMBER = 30;
 		this._HISTORY_NUMBER = 50;
 		this._ITEM_NUMBER = 40;
-
+		this._ORDERLINE_NUMBER = 20;
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
 		this._ROUNDS = totals;// _TOTAL_REPS / _CLIENT_NUMBER;
