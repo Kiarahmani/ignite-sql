@@ -223,12 +223,12 @@ public class Client {
 		// all orders from this w_id and d_id must be fetched
 		for (TrippleKey k : cons.all_keys_newOrder)
 			if (k.k2 == did && k.k3 == wid) {
-				System.out.println("<<<<" + k);
 				partial_newOrder_keys.add(k);
 			}
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			Map<TrippleKey, Boolean> partial_newOrders = caches.newOrder_cache.getAll(partial_newOrder_keys);
+			System.out.println(partial_newOrders);
 			// pick the oldest order
 			int oldest_oid = cons._ORDER_NUMBER;
 			TrippleKey selected_no_key = null;
