@@ -23,7 +23,7 @@ public class Constants {
 	Set<TrippleKey> all_keys_customer;
 	Set<QuadKey> all_keys_orderLine;
 	Set<TrippleKey> all_keys_newOrder;
-	Set<QuadKey> all_keys_order;
+	Set<TrippleKey> all_keys_order;
 	Set<Integer> all_keys_item;
 	Set<Integer> all_keys_history;
 	Set<DoubleKey> all_keys_stock;
@@ -71,14 +71,13 @@ public class Constants {
 				}
 			}
 		// create all orders keys
-		all_keys_order = new TreeSet<QuadKey>();
+		all_keys_order = new TreeSet<TrippleKey>();
 		for (int o = 0; o < _ORDER_NUMBER; o++)
-			for (int c = 0; c < _CUSTOMER_NUMBER; c++) {
-				for (int d = 0; d < _DISTRICT_NUMBER; d++) {
-					for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
-						all_keys_order.add(new QuadKey(o, c, d, w));
-					}
+			for (int d = 0; d < _DISTRICT_NUMBER; d++) {
+				for (int w = 0; w < _WAREHOUSE_NUMBER; w++) {
+					all_keys_order.add(new TrippleKey(o, d, w));
 				}
+
 			}
 		// create all orderline keys
 		all_keys_orderLine = new TreeSet<QuadKey>();

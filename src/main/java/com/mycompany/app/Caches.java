@@ -14,8 +14,8 @@ public class Caches {
 	IgniteCache<TrippleKey, Customer> customer_cache;
 	IgniteCache<TrippleKey, Customer> customer_scache;
 
-	IgniteCache<QuadKey, Order> order_cache;
-	IgniteCache<QuadKey, Order> order_scache;
+	IgniteCache<TrippleKey, Order> order_cache;
+	IgniteCache<TrippleKey, Order> order_scache;
 
 	IgniteCache<Integer, Item> item_cache;
 	IgniteCache<Integer, Item> item_scache;
@@ -45,7 +45,7 @@ public class Caches {
 		this.customer_cache = ignite.cache("customer_ser");
 		this.customer_scache = ignite.getOrCreateNearCache("customer_stale", customer_nearCfg);
 
-		NearCacheConfiguration<QuadKey, Order> order_nearCfg = new NearCacheConfiguration<QuadKey, Order>();
+		NearCacheConfiguration<TrippleKey, Order> order_nearCfg = new NearCacheConfiguration<TrippleKey, Order>();
 		this.order_cache = ignite.cache("order_ser");
 		this.order_scache = ignite.getOrCreateNearCache("order_stale", order_nearCfg);
 

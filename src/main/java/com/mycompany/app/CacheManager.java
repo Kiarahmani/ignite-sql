@@ -128,7 +128,7 @@ public class CacheManager {
 		// ----------------------------------------------------------------------------------------------------
 		// INITILIZE CACHE: orders
 		// ser: main config
-		CacheConfiguration<QuadKey, Order> order_ccfg = new CacheConfiguration<QuadKey, Order>("order_ser");
+		CacheConfiguration<TrippleKey, Order> order_ccfg = new CacheConfiguration<TrippleKey, Order>("order_ser");
 		order_ccfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 		order_ccfg.setCacheMode(CacheMode.REPLICATED);
 		// ser: affinity config
@@ -137,8 +137,8 @@ public class CacheManager {
 		order_affFunc.setPartitions(1);
 		order_ccfg.setAffinity(order_affFunc);
 		// stale config
-		NearCacheConfiguration<QuadKey, Order> order_nearCfg = new NearCacheConfiguration<>();
-		CacheConfiguration<QuadKey, Order> order_sccfg = new CacheConfiguration<QuadKey, Order>("order_stale");
+		NearCacheConfiguration<TrippleKey, Order> order_nearCfg = new NearCacheConfiguration<>();
+		CacheConfiguration<TrippleKey, Order> order_sccfg = new CacheConfiguration<TrippleKey, Order>("order_stale");
 		order_sccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
 		order_sccfg.setCacheMode(CacheMode.REPLICATED);
 		order_sccfg.setWriteSynchronizationMode(CacheWriteSynchronizationMode.FULL_ASYNC);
@@ -263,8 +263,8 @@ public class CacheManager {
 		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
 		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
-		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
-		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
+		IgniteCache<TrippleKey, Order> order_cache = ignite.cache("order_ser");
+		IgniteCache<TrippleKey, Order> order_scache = ignite.cache("order_stale");
 		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<QuadKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
@@ -306,10 +306,10 @@ public class CacheManager {
 			customer_scache.put(key, new Customer(name, address, balance, discount, credit, 0, 0, 0, true));
 		}
 		// order
-		for (QuadKey key : cons.all_keys_order) {
+		for (TrippleKey key : cons.all_keys_order) {
 			System.out.println("init(order)" + key.toString());
-			order_cache.put(key, new Order(0, "", false));
-			order_scache.put(key, new Order(0, "", false));
+			order_cache.put(key, new Order(0,0, "", false));
+			order_scache.put(key, new Order(0,0, "", false));
 		}
 		// orderLine
 		for (QuadKey key : cons.all_keys_orderLine) {
@@ -353,7 +353,7 @@ public class CacheManager {
 		IgniteCache<DoubleKey, District> district_cache = ignite.cache("district_ser");
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
-		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
+		IgniteCache<TrippleKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
@@ -391,7 +391,7 @@ public class CacheManager {
 			System.out.println("\n<<order>>");
 			System.out.println(
 					"----------------------------------\nkey	   	   value\n----------------------------------");
-			for (QuadKey key : cons.all_keys_order) {
+			for (TrippleKey key : cons.all_keys_order) {
 				System.out.println(key.toString() + "	| " + order_cache.get(key).toString() + "");
 			}
 		}
@@ -451,8 +451,8 @@ public class CacheManager {
 		IgniteCache<Integer, Warehouse> warehouse_scache = ignite.cache("warehouse_stale");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
 		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
-		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
-		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
+		IgniteCache<TrippleKey, Order> order_cache = ignite.cache("order_ser");
+		IgniteCache<TrippleKey, Order> order_scache = ignite.cache("order_stale");
 		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<QuadKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");

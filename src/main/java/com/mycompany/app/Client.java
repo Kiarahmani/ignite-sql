@@ -176,8 +176,8 @@ public class Client {
 			Customer cust = caches.customer_cache.get(c_key);
 			// insret a new order
 			int carrier_id = ThreadLocalRandom.current().nextInt(0, 100);
-			Order order = new Order(carrier_id, "08/18/2018", true);
-			QuadKey order_key = new QuadKey(dist.d_nextoid + 1, cid, did, wid);
+			Order order = new Order(cid, carrier_id, "08/18/2018", true);
+			TrippleKey order_key = new TrippleKey(dist.d_nextoid + 1, did, wid);
 			// create all partial orderLine keys for this order
 			for (int i = 0; i < cons._ORDERLINE_NUMBER; i++)
 				orderLine_keys.add(new QuadKey(i, order_key.k1, did, wid));
@@ -186,12 +186,12 @@ public class Client {
 			caches.newOrder_cache.put(newOrder_key, true);
 			Map<Integer, Item> all_items = caches.item_cache.getAll(item_keys);
 			Map<DoubleKey, Stock> all_stocks = caches.stock_cache.getAll(stock_keys);
-			//Map<QuadKey, OrderLine> all_orderLines = caches.orderLine_cache.getAll(orderLine_keys);
+			Map<QuadKey, OrderLine> all_orderLines = caches.orderLine_cache.getAll(orderLine_keys);
 			int ol_number = 0;
 			for (DoubleKey st_key : all_stocks.keySet()) {
 				// insert a new orderLine
-				//all_orderLines.put(new QuadKey(ol_number, order_key.k1, did, wid),
-				//		new OrderLine(st_key.k1, "", "S_DIST_" + String.valueOf(did), true));
+				all_orderLines.put(new QuadKey(ol_number, order_key.k1, did, wid),
+						new OrderLine(st_key.k1, "", "S_DIST_" + String.valueOf(did), true));
 				ol_number++;
 				// read the corresponding stock
 				int ol_quant = ThreadLocalRandom.current().nextInt(1, 11);
@@ -204,7 +204,7 @@ public class Client {
 					all_stocks.put(st_key, new Stock(stck.s_ytd + ol_quant, stck.s_quant - ol_quant + 91,
 							stck.s_ordercnt + 1, stck.s_info, true));
 			}
-			//caches.orderLine_cache.putAll(all_orderLines);
+			caches.orderLine_cache.putAll(all_orderLines);
 			caches.stock_cache.putAll(all_stocks);
 			tx.commit();
 			tx.close();
@@ -217,6 +217,26 @@ public class Client {
 	// DELIVERY (6%)
 	public long delivery(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
+		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		Set<TrippleKey> partial_newOrder_keys = new TreeSet<TrippleKey>();
+		// all orders from this w_id and d_id must be fetched
+		for (TrippleKey k : cons.all_keys_newOrder)
+			if (k.k2 == did && k.k3 == wid)
+				partial_newOrder_keys.add(k);
+		Map<TrippleKey, Boolean> partial_newOrders = caches.newOrder_cache.getAll(partial_newOrder_keys);
+		// pick the oldest order
+		int oldest_oid = cons._ORDER_NUMBER;
+		TrippleKey selected_no_key = null;
+		for (TrippleKey k : partial_newOrders.keySet())
+			if (k.k1 < oldest_oid && partial_newOrders.get(k)) {
+				oldest_oid = k.k1;
+				selected_no_key = k;
+			}
+		// delete the selected new_order
+		if (selected_no_key != null)
+			caches.newOrder_cache.put(selected_no_key, false);
+
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			tx.commit();
@@ -261,17 +281,18 @@ public class Client {
 			}
 			// query orders based on the chosen customer (if exists)
 			if (chosen_key != null) {
-				Set<QuadKey> partial_order_keys = new TreeSet<QuadKey>();
-				for (QuadKey k : cons.all_keys_order)
-					if (k.k2 == chosen_key.k1 && k.k3 == did && k.k4 == wid)
+				Set<TrippleKey> partial_order_keys = new TreeSet<TrippleKey>();
+				for (TrippleKey k : cons.all_keys_order)
+					if (k.k2 == did && k.k3 == wid)
 						partial_order_keys.add(k);
-				Map<QuadKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
+
+				Map<TrippleKey, Order> filtered_ords = caches.order_cache.getAll(partial_order_keys);
 				// pick the order with the largest o_id
 				Order chosen_ord;
-				QuadKey chosen_oid;
+				TrippleKey chosen_oid;
 				int max_key = 0;
-				for (QuadKey k : filtered_ords.keySet())
-					if (filtered_ords.get(k).isAlive && k.k1 > max_key) {
+				for (TrippleKey k : filtered_ords.keySet())
+					if (filtered_ords.get(k).isAlive && k.k1 > max_key && filtered_ords.get(k).o_cid == chosen_key.k1) {
 						max_key = k.k1;
 						chosen_oid = k;
 						chosen_ord = filtered_ords.get(k);
