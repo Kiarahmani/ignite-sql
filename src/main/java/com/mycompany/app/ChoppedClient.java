@@ -92,6 +92,7 @@ public class ChoppedClient {
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
+		
 		// ** extracted operations
 		String givenLastName = UUID.randomUUID().toString().substring(0, 1);
 		// create a local set of keys for the current w_id and d_id
@@ -100,7 +101,7 @@ public class ChoppedClient {
 			if (k.k2 == did && k.k3 == wid)
 				partial_cust_keys.add(k);
 		// fetch all such custemrs
-		Map<TrippleKey, Customer> filtered_custs = caches.customer_cache.getAll(partial_cust_keys);
+		Map<TrippleKey, Customer> filtered_custs = caches.customer_scache.getAll(partial_cust_keys);
 		// filter them based on the current last name
 		TrippleKey chosen_key = null;
 		Customer chosen_cust = null;
@@ -110,6 +111,7 @@ public class ChoppedClient {
 				chosen_cust = filtered_custs.get(k);
 			}
 		// **
+		
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
 			Warehouse wh = caches.warehouse_scache.get(wid);
