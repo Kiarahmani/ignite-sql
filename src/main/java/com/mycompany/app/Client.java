@@ -221,11 +221,11 @@ public class Client {
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		Set<TrippleKey> partial_newOrder_keys = new TreeSet<TrippleKey>();
 		// all orders from this w_id and d_id must be fetched
-		for (TrippleKey k : cons.all_keys_newOrder) {
-			System.out.println("<<<<" + k);
-			if (k.k2 == did && k.k3 == wid)
+		for (TrippleKey k : cons.all_keys_newOrder)
+			if (k.k2 == did && k.k3 == wid) {
+				System.out.println("<<<<" + k);
 				partial_newOrder_keys.add(k);
-		}
+			}
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			Map<TrippleKey, Boolean> partial_newOrders = caches.newOrder_cache.getAll(partial_newOrder_keys);
