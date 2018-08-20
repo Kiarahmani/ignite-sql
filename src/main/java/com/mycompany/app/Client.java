@@ -239,9 +239,10 @@ public class Client {
 			if (selected_no_key != null)
 				caches.newOrder_cache.put(selected_no_key, false);
 			// select the matching order
-			Order selected_order = caches.order_cache.get(selected_no_key);
+			
 			System.out.println("selected_no_key	"+selected_no_key);
 			System.out.println("selected_order	"+selected_order);
+			Order selected_order = caches.order_cache.get(selected_no_key);
 			/*
 			int cid = selected_order.o_cid;
 			// update the carrier_id of the selected order
