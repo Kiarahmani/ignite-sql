@@ -52,14 +52,25 @@ public class App {
 			manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
 		} else {
-			Client clients = new Client(ignite, cons);
-			System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
-			Caches caches = clients.announceReady(ignite, cons);
-			clients.waitForAll(ignite, _FOLLOWER_COUNT);
-			clients.startAll(caches, cons);
-			clients.joinAll(cons);
-			clients.printStats(ignite, cons);
-			clients.announceFinished(ignite, cons);
+			if (!cons._CHOPPED) {
+				Client clients = new Client(ignite, cons);
+				System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
+				Caches caches = clients.announceReady(ignite, cons);
+				clients.waitForAll(ignite, _FOLLOWER_COUNT);
+				clients.startAll(caches, cons);
+				clients.joinAll(cons);
+				clients.printStats(ignite, cons);
+				clients.announceFinished(ignite, cons);
+			} else {
+				ChoppedClient clients = new ChoppedClient(ignite, cons);
+				System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
+				Caches caches = clients.announceReady(ignite, cons);
+				clients.waitForAll(ignite, _FOLLOWER_COUNT);
+				clients.startAll(caches, cons);
+				clients.joinAll(cons);
+				clients.printStats(ignite, cons);
+				clients.announceFinished(ignite, cons);
+			}
 		}
 
 	}

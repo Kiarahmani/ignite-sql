@@ -7,6 +7,8 @@ import org.apache.ignite.transactions.TransactionConcurrency;
 import org.apache.ignite.transactions.TransactionIsolation;
 
 public class Constants {
+	
+	public boolean _CHOPPED;
 	public int _CLIENT_NUMBER;
 	public int _DISTRICT_NUMBER;
 	public int _WAREHOUSE_NUMBER;
@@ -35,6 +37,7 @@ public class Constants {
 	public Constants(int clientNumber, int totals) {
 		// change these later //TODO
 		this._DISTRICT_NUMBER = 5;
+		this._CHOPPED = false;
 		this._WAREHOUSE_NUMBER = 1;
 		this._CUSTOMER_NUMBER = 20;
 		this._ORDER_NUMBER = 30;
