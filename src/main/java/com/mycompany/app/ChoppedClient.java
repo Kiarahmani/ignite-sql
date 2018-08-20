@@ -169,7 +169,7 @@ public class ChoppedClient {
 		Map<Integer, Item> all_items = caches.item_scache.getAll(item_keys);
 		int w_tax = caches.warehouse_scache.get(wid).w_tax;
 		TrippleKey c_key = new TrippleKey(cid, did, wid);
-		Customer cust = caches.customer_cache.get(c_key);
+		Customer cust = caches.customer_scache.get(c_key);
 
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
