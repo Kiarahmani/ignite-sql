@@ -239,7 +239,7 @@ public class Client {
 			if (selected_no_key != null)
 				caches.newOrder_cache.put(selected_no_key, false);
 			// select the matching order
-			Order selected_order = caches.order_cache.get(selected_no_key);
+		/*	Order selected_order = caches.order_cache.get(selected_no_key);
 			int cid = selected_order.o_cid;
 			// update the carrier_id of the selected order
 			int car_id = ThreadLocalRandom.current().nextInt(0, 5);
@@ -251,7 +251,7 @@ public class Client {
 					partial_orderLine_keys.add(k);
 			Map<QuadKey, OrderLine> partial_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
 			// sum of ol_amount is retrieved and delivery_date is updated
-		/*	int sum_ol_amount = 0;
+			int sum_ol_amount = 0;
 			for (QuadKey k : partial_orderLines.keySet()) {
 				sum_ol_amount += 1;
 				OrderLine ol = partial_orderLines.get(k);
