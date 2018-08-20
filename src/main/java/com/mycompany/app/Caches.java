@@ -29,8 +29,8 @@ public class Caches {
 	IgniteCache<Integer, History> history_cache;
 	IgniteCache<Integer, History> history_scache;
 
-	IgniteCache<TrippleKey, OrderLine> orderLine_cache;
-	IgniteCache<TrippleKey, OrderLine> orderLine_scache;
+	IgniteCache<QuadKey, OrderLine> orderLine_cache;
+	IgniteCache<QuadKey, OrderLine> orderLine_scache;
 
 	public Caches(Ignite ignite) {
 		NearCacheConfiguration<Integer, Warehouse> warehouse_nearCfg = new NearCacheConfiguration<Integer, Warehouse>();
@@ -65,7 +65,7 @@ public class Caches {
 		this.history_cache = ignite.cache("history_ser");
 		this.history_scache = ignite.getOrCreateNearCache("history_stale", history_nearCfg);
 
-		NearCacheConfiguration<TrippleKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<TrippleKey, OrderLine>();
+		NearCacheConfiguration<QuadKey, OrderLine> orderLine_nearCfg = new NearCacheConfiguration<QuadKeyw, OrderLine>();
 		this.orderLine_cache = ignite.cache("orderLine_ser");
 		this.orderLine_scache = ignite.getOrCreateNearCache("orderLine_stale", orderLine_nearCfg);
 

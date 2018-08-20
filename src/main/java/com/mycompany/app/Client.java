@@ -282,13 +282,13 @@ public class Client {
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			District dist = caches.district_cache.get(new DoubleKey(did, wid));
-			Set<TrippleKey> partial_orderLine_keys = new TreeSet<TrippleKey>();
+			Set<QuadKey> partial_orderLine_keys = new TreeSet<QuadKey>();
 			Set<DoubleKey> filtered_stock_keys = new TreeSet<DoubleKey>();
-			for (TrippleKey k : cons.all_keys_orderLine) {
+			for (QuadKey k : cons.all_keys_orderLine) {
 				if (k.k2 == did && k.k3 == wid && k.k1 <= dist.d_nextoid && k.k1 > (dist.d_nextoid - 20))
 					partial_orderLine_keys.add(k);
 			}
-			Map<TrippleKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
+			Map<QuadKey, OrderLine> filtered_orderLines = caches.orderLine_cache.getAll(partial_orderLine_keys);
 			// get stocks and filter them according to the threshold
 			for (OrderLine o : filtered_orderLines.values())
 				filtered_stock_keys.add(new DoubleKey(o.ol_iid, wid));
