@@ -349,7 +349,7 @@ public class ChoppedClient {
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		int threshold = ThreadLocalRandom.current().nextInt(10, 21);
 		IgniteTransactions transactions = ignite.transactions();
-		//try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			
 			//1
 			District dist = caches.district_scache.get(new DoubleKey(did, wid));
@@ -373,9 +373,9 @@ public class ChoppedClient {
 			for (Stock s : filtered_stocks.values())
 				if (s.s_quant < threshold)
 					final_stocks.add(s);*/
-		//	tx.commit();
-		//	tx.close();
-		//}
+			tx.commit();
+			tx.close();
+		}
 		// System.out.println("doing order status");
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
