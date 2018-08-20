@@ -265,8 +265,8 @@ public class CacheManager {
 		IgniteCache<TrippleKey, Customer> customer_scache = ignite.cache("customer_stale");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
 		IgniteCache<QuadKey, Order> order_scache = ignite.cache("order_stale");
-		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
-		IgniteCache<TrippleKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
+		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
+		IgniteCache<QuadKey, OrderLine> orderLine_scache = ignite.cache("orderLine_stale");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<Integer, Item> item_scache = ignite.cache("item_stale");
 		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
@@ -312,10 +312,10 @@ public class CacheManager {
 			order_scache.put(key, new Order(0, "", false));
 		}
 		// orderLine
-		for (TrippleKey key : cons.all_keys_orderLine) {
+		for (QuadKey key : cons.all_keys_orderLine) {
 			System.out.println("init(orderLine)" + key.toString());
-			orderLine_cache.put(key, new OrderLine(0, 0, "", "", false));
-			orderLine_scache.put(key, new OrderLine(0, 0, "", "", false));
+			orderLine_cache.put(key, new OrderLine( 0, "", "", false));
+			orderLine_scache.put(key, new OrderLine( 0, "", "", false));
 		}
 		// item
 		for (int key : cons.all_keys_item) {
@@ -354,7 +354,7 @@ public class CacheManager {
 		IgniteCache<Integer, Warehouse> warehouse_cache = ignite.cache("warehouse_ser");
 		IgniteCache<TrippleKey, Customer> customer_cache = ignite.cache("customer_ser");
 		IgniteCache<QuadKey, Order> order_cache = ignite.cache("order_ser");
-		IgniteCache<TrippleKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
+		IgniteCache<QuadKey, OrderLine> orderLine_cache = ignite.cache("orderLine_ser");
 		IgniteCache<Integer, Item> item_cache = ignite.cache("item_ser");
 		IgniteCache<DoubleKey, Stock> stock_cache = ignite.cache("stock_ser");
 		IgniteCache<TrippleKey, Boolean> newOrder_cache = ignite.cache("newOrder_ser");
@@ -400,7 +400,7 @@ public class CacheManager {
 			System.out.println("\n<<orderLine>>");
 			System.out.println(
 					"----------------------------------\nkey	   	   value\n----------------------------------");
-			for (TrippleKey key : cons.all_keys_orderLine) {
+			for (QuadKey key : cons.all_keys_orderLine) {
 				System.out.println(key.toString() + "	| " + orderLine_cache.get(key).toString() + "");
 			}
 		}
