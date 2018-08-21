@@ -39,7 +39,7 @@ public class App {
 	public static void main(String[] args) {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
-		Constants cons = new Constants(/* clients */ 32, /* totals */ 64, /* size */ 3, true);
+		Constants cons = new Constants(/* clients */ 16, /* totals */ 64, /* size */ 3, true);
 		Ignite ignite = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.201.210.70").start();
 
 		if (_COORDINATOR) {
