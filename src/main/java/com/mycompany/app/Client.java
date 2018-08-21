@@ -1,5 +1,9 @@
 package com.mycompany.app;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -497,6 +501,25 @@ public class Client {
 			System.out.println("    |----Dlvry:   " + (sum_time_delivery / delivery_count) + "ms");
 
 		System.out.print("===========================================\n\n\n\n");
+		
+		// write to file
+		try {
+		    Files.write(Paths.get("results.txt"), "the text".getBytes(), StandardOpenOption.APPEND);
+		}catch (IOException e) {
+		    //exception handling left as an exercise for the reader
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 
 }
