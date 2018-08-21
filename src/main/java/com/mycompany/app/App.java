@@ -39,8 +39,8 @@ public class App {
 	public static void main(String[] args) {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
-		Constants cons = new Constants(1, 40);
-		Ignite ignite = new Starter("18.222.125.148", "18.222.69.139", /* server */"13.229.247.7").start();
+		Constants cons = new Constants(/* clients */ 1, /* totals */ 64, /* size */ 1, true);
+		Ignite ignite = new Starter("18.222.125.148", "18.222.69.139", /* server */"13.250.104.28").start();
 
 		if (_COORDINATOR) {
 			CacheManager manager = new CacheManager(ignite);

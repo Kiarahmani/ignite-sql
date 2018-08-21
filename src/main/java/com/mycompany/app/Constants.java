@@ -7,7 +7,7 @@ import org.apache.ignite.transactions.TransactionConcurrency;
 import org.apache.ignite.transactions.TransactionIsolation;
 
 public class Constants {
-	
+
 	public boolean _CHOPPED;
 	public int _CLIENT_NUMBER;
 	public int _DISTRICT_NUMBER;
@@ -34,19 +34,21 @@ public class Constants {
 	TransactionIsolation rc;
 	TransactionConcurrency concurrency;
 
-	public Constants(int clientNumber, int totals) {
-		// change these later //TODO
-		this._DISTRICT_NUMBER = 5;
-		this._CHOPPED = false;
-		this._WAREHOUSE_NUMBER = 1;
-		this._CUSTOMER_NUMBER = 20;
-		this._ORDER_NUMBER = 30;
-		this._HISTORY_NUMBER = 50;
-		this._ITEM_NUMBER = 40;
-		this._ORDERLINE_NUMBER = 20;
+	public Constants(int clientNumber, int totals, int size, boolean chopped) {
+		// max table sizes
+		this._DISTRICT_NUMBER = size*15;
+		this._WAREHOUSE_NUMBER = size;
+		this._CUSTOMER_NUMBER = size*30;
+		this._ORDER_NUMBER = size*40;
+		this._HISTORY_NUMBER = size*50;
+		this._ITEM_NUMBER = size*40;
+		this._ORDERLINE_NUMBER = size*40;
+		
+		// program's constants
 		this._CLIENT_NUMBER = clientNumber;
 		this._TOTAL_REPS = totals;
-		this._ROUNDS = totals;// _TOTAL_REPS / _CLIENT_NUMBER;
+		this._ROUNDS = _TOTAL_REPS / _CLIENT_NUMBER;
+		this._CHOPPED = chopped;
 
 		// create all district keys
 		all_keys_district = new TreeSet<DoubleKey>();
