@@ -39,7 +39,7 @@ public class Constants {
 		this._DISTRICT_NUMBER = size*10;
 		this._WAREHOUSE_NUMBER = size;
 		this._CUSTOMER_NUMBER = size*20;
-		this._ORDER_NUMBER = size*20;
+		this._ORDER_NUMBER = size*15;
 		this._HISTORY_NUMBER = size*30;
 		this._ITEM_NUMBER = size*30;
 		this._ORDERLINE_NUMBER = size*20;
