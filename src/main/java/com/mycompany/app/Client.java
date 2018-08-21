@@ -393,32 +393,32 @@ public class Client {
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime / 200 + " rtt)");
+						//System.out.println(
+							//	"tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 6 && txn_type_rand < 12) {
 						kind = "d";
 						estimatedTime = delivery(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime / 200 + " rtt)");
+						//System.out.println(
+							//	"tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 12 && txn_type_rand < 18) {
 						kind = "sl";
 						estimatedTime = stockLevel(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime / 200 + " rtt)");
+						//System.out.println(
+						//		"tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 18 && txn_type_rand < 59) {
 						kind = "p";
 						estimatedTime = payment(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime / 200 + " rtt)");
+						//System.out.println(
+						//		"tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime / 200 + " rtt)");
 					}
 					if (txn_type_rand >= 59 && txn_type_rand < 100) {
 						kind = "no";
 						estimatedTime = newOrder(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
+						//System.out.println(
+						//		"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
 					}
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 
@@ -457,13 +457,13 @@ public class Client {
 		results = results + "\n\n=============================================\n";
 		results = results + "[Clients Number:" + cons._CLIENT_NUMBER;
 		results = results + "]  [Chopped:" + cons._CHOPPED;
-		results = results + "]  [Size:" + cons._WAREHOUSE_NUMBER + "]\n-----------------------\n";
+		results = results + "]  [Size:" + cons._WAREHOUSE_NUMBER + "]\n---------------------------------------------\n";
 
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
 		System.out.println(ConsoleColors.YELLOW + "Throughput: "
 				+ (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s"
 				+ ConsoleColors.RESET);
-		results = results + "Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1)
+		results = results + "Throughput: " + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1)
 				+ " rounds/s";
 		int sum_time = 0;
 		int sum_time_delivery = 0, delivery_count = 0;
