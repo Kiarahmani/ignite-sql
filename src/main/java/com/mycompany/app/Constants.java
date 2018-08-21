@@ -42,7 +42,7 @@ public class Constants {
 		this._ORDER_NUMBER = size * 10;
 		this._HISTORY_NUMBER = size * 30;
 		this._ITEM_NUMBER = size * 30;
-		this._ORDERLINE_NUMBER = size * 15;
+		this._ORDERLINE_NUMBER = size * 10;
 
 		// program's constants
 		this._CLIENT_NUMBER = clientNumber;
