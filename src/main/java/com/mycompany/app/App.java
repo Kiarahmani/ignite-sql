@@ -40,7 +40,8 @@ public class App {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
 		Constants cons = new Constants(/* clients */ 2, /* totals */ 128, /* size */ 1, false);
-		Ignite ignite = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.201.210.70").start();
+		Starter starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.201.210.70");
+		Ignite ignite = starter.start();
 
 		if (_COORDINATOR) {
 			CacheManager manager = new CacheManager(ignite);
@@ -61,6 +62,7 @@ public class App {
 				clients.joinAll(cons);
 				clients.printStats(ignite, cons);
 				clients.announceFinished(ignite, cons);
+				starter.stop();
 			} else {
 				ChoppedClient clients = new ChoppedClient(ignite, cons);
 				System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
@@ -70,6 +72,7 @@ public class App {
 				clients.joinAll(cons);
 				clients.printStats(ignite, cons);
 				clients.announceFinished(ignite, cons);
+				starter.stop();
 			}
 		}
 

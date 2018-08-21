@@ -46,5 +46,8 @@ public class Starter {
 		Ignite ignite = Ignition.start(cfg);
 		return ignite;
 	}
+	public void stop() {
+		Ignition.stopAll(true);
+	}
 
 }
