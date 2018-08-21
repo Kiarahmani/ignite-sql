@@ -52,6 +52,7 @@ public class App {
 			manager.waitForFollowers(ignite, _FOLLOWER_COUNT);
 			manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
+			starter.stop();
 		} else {
 			if (!cons._CHOPPED) {
 				Client clients = new Client(ignite, cons);
