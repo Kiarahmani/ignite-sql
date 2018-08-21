@@ -39,7 +39,9 @@ public class App {
 	public static void main(String[] args) {
 		boolean _COORDINATOR = Boolean.valueOf(args[0]);
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
-		Constants cons = new Constants(/* clients */ 2, /* totals */ 128, /* size */ 1, false);
+		int _CLIENT_NUMBER = Integer.valueOf(args[2]);
+		System.out.println("Client NUmbers: " + _CLIENT_NUMBER);
+		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 128, /* size */ 1, false);
 		Starter starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.201.210.70");
 		Ignite ignite = starter.start();
 
