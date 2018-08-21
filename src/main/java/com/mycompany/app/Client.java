@@ -276,7 +276,7 @@ public class Client {
 						new Customer(cust.c_name, cust.c_address, cust.c_balance - sum_ol_amount, cust.c_discount,
 								cust.c_credit, cust.c_payment_count, cust.c_ytd, cust.c_deliverycnt + 1, true));
 			} else {
-				//System.err.println("There is no order to be delivered");
+				// System.err.println("There is no order to be delivered");
 			}
 			tx.commit();
 			tx.close();
@@ -452,11 +452,15 @@ public class Client {
 	}
 
 	public void printStats(Ignite ignite, Constants cons) {
+		String results = "";
 		System.out.print("\n\n===========================================\n");
+		results = results + "\n\n===========================================\n";
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
 		System.out.println(ConsoleColors.YELLOW + "Throughput:"
 				+ (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s"
 				+ ConsoleColors.RESET);
+		results = results + "Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1)
+				+ " rounds/s";
 		int sum_time = 0;
 		int sum_time_delivery = 0, delivery_count = 0;
 		int sum_time_newOrder = 0, newOrder_count = 0;
@@ -488,38 +492,39 @@ public class Client {
 		}
 		System.out.println(ConsoleColors.YELLOW + "Overall Latency:  "
 				+ sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms" + ConsoleColors.RESET);
+		results = results + "\nOverall Latency:  " + sum_time / (cons._CLIENT_NUMBER * (cons._ROUNDS)) + "ms";
 		// System.out.println(" |");
-		if (newOrder_count != 0)
+		if (newOrder_count != 0) {
 			System.out.println("    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms");
-		if (payment_count != 0)
+			results = results + "\n    |----NwOrdr:  " + (sum_time_newOrder / newOrder_count) + "ms";
+		}
+		if (payment_count != 0) {
 			System.out.println("    |----Pymnt:   " + (sum_time_payment / payment_count) + "ms");
-		if (stockLevel_count != 0)
+			results = results + "\n    |----Pymnt:   " + (sum_time_payment / payment_count) + "ms";
+		}
+		if (stockLevel_count != 0) {
 			System.out.println("    |----StckLvl: " + (sum_time_stockLevel / stockLevel_count) + "ms");
-		if (orderStatus_count != 0)
+			results = results + "\n    |----StckLvl: " + (sum_time_stockLevel / stockLevel_count) + "ms";
+		}
+		if (orderStatus_count != 0) {
 			System.out.println("    |----OrdrSts: " + (sum_time_orderStatus / orderStatus_count) + "ms");
-		if (delivery_count != 0)
+			results = results + "\n    |----OrdrSts: " + (sum_time_orderStatus / orderStatus_count) + "ms";
+		}
+		if (delivery_count != 0) {
 			System.out.println("    |----Dlvry:   " + (sum_time_delivery / delivery_count) + "ms");
+			results = results + "\n    |----Dlvry:   " + (sum_time_delivery / delivery_count) + "ms";
+		}
 
 		System.out.print("===========================================\n\n\n\n");
-		
+		results = results + "\n===========================================\n";
+
 		// write to file
 		try {
-		    Files.write(Paths.get("results.txt"), "the text".getBytes(), StandardOpenOption.APPEND);
-		}catch (IOException e) {
-		    //exception handling left as an exercise for the reader
+			Files.write(Paths.get("results.txt"), results.getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// exception handling left as an exercise for the reader
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 	}
 
 }
