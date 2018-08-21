@@ -454,13 +454,13 @@ public class Client {
 	public void printStats(Ignite ignite, Constants cons) {
 		String results = "";
 		System.out.print("\n\n===========================================\n");
-		results = results + "\n\n===========================================\n";
+		results = results + "\n\n=============================================\n";
 		results = results + "[Clients Number:" + cons._CLIENT_NUMBER;
 		results = results + "]  [Chopped:" + cons._CHOPPED;
-		results = results + "]  [Size:" + cons._WAREHOUSE_NUMBER + "]\n---\n";
+		results = results + "]  [Size:" + cons._WAREHOUSE_NUMBER + "]\n-----------------------\n";
 
 		long estimatedTime_tp = clientsFinishTime - clientsStartTime;
-		System.out.println(ConsoleColors.YELLOW + "Throughput:"
+		System.out.println(ConsoleColors.YELLOW + "Throughput: "
 				+ (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1) + " rounds/s"
 				+ ConsoleColors.RESET);
 		results = results + "Throughput:" + (cons._ROUNDS * cons._CLIENT_NUMBER) * 1000 / (estimatedTime_tp + 1)
@@ -520,7 +520,7 @@ public class Client {
 		}
 
 		System.out.print("===========================================\n\n\n\n");
-		results = results + "\n===========================================\n";
+		results = results + "\n=============================================\n";
 
 		// write to file
 		try {
