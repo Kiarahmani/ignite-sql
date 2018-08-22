@@ -377,6 +377,21 @@ public class Client {
 		return estimatedTime;
 	}
 
+//////////////////
+// test -> simple counter incremenet
+	public long test(Ignite ignite, Constants cons) {
+		long startTime = System.currentTimeMillis();
+		IgniteTransactions transactions = ignite.transactions();
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+			District dist = caches.district_cache.get(new DoubleKey(1, 1));
+
+			tx.commit();
+			tx.close();
+		}
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		return estimatedTime;
+	}
+
 	public Client(Ignite ignite, Constants cons) {
 		System.out.println("\n\n\n<<<<<<<NORMAL CLIENT STARTED>>>>>>>>\n\n\n");
 		myArray = new Stat[cons._CLIENT_NUMBER * cons._ROUNDS];
@@ -390,6 +405,11 @@ public class Client {
 				System.out.println("client #" + threadId + " started...");
 				for (int rd = 0; rd < cons._ROUNDS; rd++) {
 					int txn_type_rand = ThreadLocalRandom.current().nextInt(0, 100);
+					kind = "p";
+					estimatedTime = test(ignite, cons);
+					System.out.println(".");
+					
+					/*
 					if (txn_type_rand < 6) {
 						kind = "os";
 						estimatedTime = orderStatus(ignite, cons);
@@ -419,7 +439,7 @@ public class Client {
 						estimatedTime = newOrder(ignite, cons);
 						System.out.println(
 								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
-					}
+					}*/
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 
 				}
