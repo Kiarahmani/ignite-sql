@@ -46,7 +46,7 @@ public class App {
 		if (_COORDINATOR) {
 			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
 		} else {
-			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"18.219.198.133");
+			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
 		}
 		Ignite ignite = starter.start();
 
