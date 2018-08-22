@@ -95,7 +95,6 @@ public class Client {
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
 		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 40); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
-
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
 			Warehouse wh = caches.warehouse_cache.get(wid);
@@ -106,11 +105,6 @@ public class Client {
 			caches.district_cache.put(d_key,
 					new District(dist.d_name, dist.d_address, dist.d_tax, dist.d_ytd + h_amount, dist.d_nextoid, true));
 			// update custmer 40%(60%) of the time by id (last name)
-			tx.commit();
-			tx.close();
-		}
-
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			if (byLastName) {
 				String givenLastName = UUID.randomUUID().toString().substring(0, 1);
 				// create a local set of keys for the current w_id and d_id
