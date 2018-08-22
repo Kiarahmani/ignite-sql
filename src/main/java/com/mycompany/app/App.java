@@ -42,7 +42,7 @@ public class App {
 		int _CLIENT_NUMBER = Integer.valueOf(args[2]);
 		System.out.println("Client NUmbers: " + _CLIENT_NUMBER);
 		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 256, /* size */ 4, true);
-		Starter starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.201.210.70");
+		Starter starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
 		Ignite ignite = starter.start();
 
 		if (_COORDINATOR) {
