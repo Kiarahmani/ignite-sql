@@ -35,7 +35,7 @@ public class Client {
 		do {
 			System.out.println("+++waiting for coordinator to initialize");
 			try {
-				Thread.sleep(300);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
