@@ -44,9 +44,9 @@ public class App {
 		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 256, /* size */ 4, false);
 		Starter starter = null;
 		if (_COORDINATOR) {
-			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
+			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.237.222.173");
 		} else {
-			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
+			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"34.237.222.173");
 		}
 		Ignite ignite = starter.start();
 
