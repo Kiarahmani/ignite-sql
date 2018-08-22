@@ -37,12 +37,12 @@ public class Constants {
 	public Constants(int clientNumber, int totals, int size, boolean chopped) {
 		// max table sizes
 		this._DISTRICT_NUMBER = 100;
-		this._WAREHOUSE_NUMBER = 10;
-		this._CUSTOMER_NUMBER = 1;
-		this._ORDER_NUMBER = 1;
-		this._HISTORY_NUMBER = 1;
-		this._ITEM_NUMBER = 1;
-		this._ORDERLINE_NUMBER = 1;
+		this._WAREHOUSE_NUMBER = 100;
+		this._CUSTOMER_NUMBER = 0;
+		this._ORDER_NUMBER = 0;
+		this._HISTORY_NUMBER = 0;
+		this._ITEM_NUMBER = 0;
+		this._ORDERLINE_NUMBER = 0;
 
 		// program's constants
 		this._CLIENT_NUMBER = clientNumber;
