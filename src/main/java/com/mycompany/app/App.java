@@ -41,7 +41,7 @@ public class App {
 		int _FOLLOWER_COUNT = Integer.valueOf(args[1]);
 		int _CLIENT_NUMBER = Integer.valueOf(args[2]);
 		System.out.println("Client NUmbers: " + _CLIENT_NUMBER);
-		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 256, /* size */ 10, false);
+		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 256, /* size */ 2, false);
 		Starter starter = null;
 		if (_COORDINATOR) {
 			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
