@@ -382,10 +382,14 @@ public class Client {
 	public long test(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		
-			District dist = caches.district_cache.get(new DoubleKey(1, 1));
+		int wid = ThreadLocalRandom.current().nextInt(0, cons._WAREHOUSE_NUMBER);
+		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
+			District dist = caches.district_cache.get(new DoubleKey(did, wid));
 
-	
+			tx.commit();
+			tx.close();
+		}
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		return estimatedTime;
 	}
@@ -406,38 +410,23 @@ public class Client {
 					kind = "p";
 					estimatedTime = test(ignite, cons);
 					System.out.println(".");
-					
+
 					/*
-					if (txn_type_rand < 6) {
-						kind = "os";
-						estimatedTime = orderStatus(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----ORDRSTS(" + estimatedTime / 200 + " rtt)");
-					}
-					if (txn_type_rand >= 6 && txn_type_rand < 12) {
-						kind = "d";
-						estimatedTime = delivery(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime / 200 + " rtt)");
-					}
-					if (txn_type_rand >= 12 && txn_type_rand < 18) {
-						kind = "sl";
-						estimatedTime = stockLevel(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----STCKLVL(" + estimatedTime / 200 + " rtt)");
-					}
-					if (txn_type_rand >= 18 && txn_type_rand < 59) {
-						kind = "p";
-						estimatedTime = payment(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----PAYMENT(" + estimatedTime / 200 + " rtt)");
-					}
-					if (txn_type_rand >= 59 && txn_type_rand < 100) {
-						kind = "no";
-						estimatedTime = newOrder(ignite, cons);
-						System.out.println(
-								"tid-" + threadId + "(" + rd + ")----NEWORDR(" + estimatedTime / 200 + " rtt)");
-					}*/
+					 * if (txn_type_rand < 6) { kind = "os"; estimatedTime = orderStatus(ignite,
+					 * cons); System.out.println( "tid-" + threadId + "(" + rd + ")----ORDRSTS(" +
+					 * estimatedTime / 200 + " rtt)"); } if (txn_type_rand >= 6 && txn_type_rand <
+					 * 12) { kind = "d"; estimatedTime = delivery(ignite, cons); System.out.println(
+					 * "tid-" + threadId + "(" + rd + ")----DELIVRY(" + estimatedTime / 200 +
+					 * " rtt)"); } if (txn_type_rand >= 12 && txn_type_rand < 18) { kind = "sl";
+					 * estimatedTime = stockLevel(ignite, cons); System.out.println( "tid-" +
+					 * threadId + "(" + rd + ")----STCKLVL(" + estimatedTime / 200 + " rtt)"); } if
+					 * (txn_type_rand >= 18 && txn_type_rand < 59) { kind = "p"; estimatedTime =
+					 * payment(ignite, cons); System.out.println( "tid-" + threadId + "(" + rd +
+					 * ")----PAYMENT(" + estimatedTime / 200 + " rtt)"); } if (txn_type_rand >= 59
+					 * && txn_type_rand < 100) { kind = "no"; estimatedTime = newOrder(ignite,
+					 * cons); System.out.println( "tid-" + threadId + "(" + rd + ")----NEWORDR(" +
+					 * estimatedTime / 200 + " rtt)"); }
+					 */
 					at.set(threadId * cons._ROUNDS + rd, new Stat(estimatedTime, kind));
 
 				}
