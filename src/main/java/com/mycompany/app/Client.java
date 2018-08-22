@@ -382,7 +382,7 @@ public class Client {
 	public long test(Ignite ignite, Constants cons) {
 		long startTime = System.currentTimeMillis();
 		IgniteTransactions transactions = ignite.transactions();
-		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
+		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			District dist = caches.district_cache.get(new DoubleKey(1, 1));
 
 			tx.commit();
