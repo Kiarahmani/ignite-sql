@@ -93,7 +93,7 @@ public class Client {
 		DoubleKey d_key = new DoubleKey(did, wid);
 		int h_amount = ThreadLocalRandom.current().nextInt(1, 5001);
 		String h_info = "H" + UUID.randomUUID().toString().substring(0, 15);
-		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 0); // 60% chance of query by last name
+		boolean byLastName = (ThreadLocalRandom.current().nextInt(0, 100) > 100); // 60% chance of query by last name
 		IgniteTransactions transactions = ignite.transactions();
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
 			// update w_ytd
