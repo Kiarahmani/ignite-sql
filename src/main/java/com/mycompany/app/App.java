@@ -42,7 +42,12 @@ public class App {
 		int _CLIENT_NUMBER = Integer.valueOf(args[2]);
 		System.out.println("Client NUmbers: " + _CLIENT_NUMBER);
 		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 256, /* size */ 10, false);
-		Starter starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
+		Starter starter = null;
+		if (_COORDINATOR) {
+			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"107.23.89.220");
+		} else {
+			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"18.219.198.133");
+		}
 		Ignite ignite = starter.start();
 
 		if (_COORDINATOR) {
@@ -52,7 +57,7 @@ public class App {
 			manager.populateAllCaches(ignite, cons);
 			manager.dispatchFollowers(ignite);
 			manager.waitForFollowers(ignite, _FOLLOWER_COUNT);
-			//manager.printAll(ignite, cons);
+			// manager.printAll(ignite, cons);
 			manager.destroyAll(ignite, cons);
 			starter.stop();
 		} else {
