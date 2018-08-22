@@ -386,6 +386,7 @@ public class Client {
 		int did = ThreadLocalRandom.current().nextInt(0, cons._DISTRICT_NUMBER);
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.rc)) {
 			District dist = caches.district_cache.get(new DoubleKey(did, wid));
+			caches.district_cache.put(new DoubleKey(did, wid), new District("", "", 0, dist.d_ytd + 1, 0, true));
 
 			tx.commit();
 			tx.close();
