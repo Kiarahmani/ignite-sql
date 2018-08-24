@@ -64,6 +64,12 @@ public class App {
 			if (!cons._CHOPPED) {
 				Client clients = new Client(ignite, cons);
 				System.out.print("\n\n\n\nTXN EXECUTION" + "\n===========================================\n");
+				try {
+					Thread.sleep(1300);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Caches caches = clients.announceReady(ignite, cons);
 				clients.waitForAll(ignite, _FOLLOWER_COUNT);
 				clients.startAll(caches, cons);
