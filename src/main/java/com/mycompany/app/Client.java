@@ -42,6 +42,12 @@ public class Client {
 			}
 			if (coordination_cache != null) {
 				System.out.println("coordination_cache: " + coordination_cache);
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				i = coordination_cache.get("initialized");
 				System.out.println("i: "+i);
 			} else
