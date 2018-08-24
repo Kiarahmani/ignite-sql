@@ -48,7 +48,16 @@ public class Client {
 		// getting all the caches (it's better to do it once here)
 		Caches caches = new Caches(ignite);
 		try (Transaction tx = transactions.txStart(cons.concurrency, cons.ser)) {
-			int v = coordination_cache.get("ready");
+			Integer v = null;
+			do {
+				v = coordination_cache.get("ready");
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} while (v != null);
 			coordination_cache.put("ready", v + 1);
 			tx.commit();
 			tx.close();
