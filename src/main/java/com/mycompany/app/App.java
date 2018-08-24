@@ -1,4 +1,4 @@
-// aug 2
+// aug 8:26
 
 package com.mycompany.app;
 
@@ -44,9 +44,9 @@ public class App {
 		Constants cons = new Constants(/* clients */ _CLIENT_NUMBER, /* totals */ 256, /* size */ 12, false);
 		Starter starter = null;
 		if (_COORDINATOR) {
-			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"172.31.12.83");
+			starter = new Starter("172.31.18.27", "18.191.249.13", /* server */"172.31.18.27");
 		} else {
-			starter = new Starter("18.222.125.148", "18.222.69.139", /* server */"172.31.12.83");
+			starter = new Starter("172.31.18.27", "18.191.249.13", /* server */"172.31.18.27");
 		}
 		Ignite ignite = starter.start();
 
