@@ -40,9 +40,11 @@ public class Client {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (coordination_cache != null)
+			if (coordination_cache != null) {
+				System.out.println("coordination_cache: " + coordination_cache);
 				i = coordination_cache.get("initialized");
-			else
+				System.out.println("i: "+i);
+			} else
 				coordination_cache = ignite.cache("coordination");
 		} while (i != 1);
 		// getting all the caches (it's better to do it once here)
